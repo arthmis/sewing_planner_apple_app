@@ -1,0 +1,47 @@
+@Environment
+- this is used to dismiss a view, among other things, if you want to do it programmatically (lesson 36, showing and hiding views)
+
+## Animations
+- Project 6 is all about animations, look at this later when learning about animations
+
+
+## Classes
+- add @Observable to classes to tell swift to track the variables like they do in structs with @State, lesson 36
+## Lists
+- adding delete functionality, native, lesson 36, deleting items
+- 
+
+## User settings
+- storing settings with `userdefaults`, lesson 36, storing user settings
+    - userdefaults is good for simple user data
+    - like the theme, maybe a view layout, just a simple key value store 
+    - lesson that uses codable, lesson 36, information on how to convert structs to JSON and other types
+
+## Images
+- resizing them to fit available space, lesson 39
+- 
+
+## Scrolling
+- virtual scrolling, lesson 39, use Lazy Hstack and Vstack
+
+## Navigation
+- lesson 43, has more information to lazy load views when a navigation view is clicked
+- apparently if you specify a view to display when using `navigationLink` it will get immediately created which can be costly in a list view
+- can store navigation stack on device and restore it later
+- can also store `codable` navigation paths, basically if they can be serialized then its possible to store more complex data than simple arrays (lesson 44)
+- navigation title can be made editable (lesson 45)
+
+`@Binding`
+- to use two way binding in your own custom view
+
+## Warnings
+### List
+- do not mix list views that only use strings array as the backing data type
+- it seems if you use the string in an editable text field then if all your textfields are empty and you try to modify them, they will get rerendered and the other textfields that are empty will take focus, because in swift's view the now not empty textfield isn't the same anymore and it moves you to the next empty textfield because it thinks that's what 
+- basically the id of an empty text field is an empty string and if you have many of them, if you modify one, it's id will change but swift i guess tries to make keep you on focus on a textfield with the same empty string id
+- the solve the issue the backing data need to have stable/unique ids, so you can use incrementing number or uuid
+
+### Warning
+- deleting a textfield that is binded, especially in a List view or Foreach will cause a crash with index out of bound
+    - usually i can get this crash if i swipe delete the item the textfield that is focused
+    - if the textfield isn't focused then it should be fine
