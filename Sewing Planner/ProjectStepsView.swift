@@ -18,7 +18,7 @@ struct ProjectStepsView: View {
   var body: some View {
     List {
       ForEach($projectSteps, id: \.id) { $step in
-        ProjectStep(text: $step.text, isEditing: $step.isEditing)
+        ProjectStep(text: $step.text, isEditing: $step.isEditing, isComplete: $step.isComplete)
       }
       .onDelete(perform: deleteStep)
       .onMove { indexSet, offset in

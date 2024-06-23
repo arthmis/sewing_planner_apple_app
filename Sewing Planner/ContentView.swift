@@ -11,11 +11,13 @@ struct ProjectStepData: Hashable, Identifiable {
   var id: UUID
   var text: String
   var isEditing: Bool
+  var isComplete: Bool
 
-  init(text: String, isEditing: Bool) {
+  init(text: String, isEditing: Bool, isComplete: Bool) {
     self.id = UUID()
     self.text = text
     self.isEditing = isEditing
+    self.isComplete = isComplete
   }
 
   func getId() -> UUID {
@@ -45,7 +47,7 @@ struct ContentView: View {
           // add a popup telling user that instruction can't be empty
           guard !newStep.isEmpty else { return }
 
-          projectSteps.append(ProjectStepData(text: newStep, isEditing: false))
+          projectSteps.append(ProjectStepData(text: newStep, isEditing: false, isComplete: false))
           newStep = ""
           isAddingInstruction = false
         }.textFieldStyle(.plain)
@@ -58,7 +60,7 @@ struct ContentView: View {
           // add a popup telling user that instruction can't be empty
           guard !newStep.isEmpty else { return }
 
-          projectSteps.append(ProjectStepData(text: newStep, isEditing: false))
+          projectSteps.append(ProjectStepData(text: newStep, isEditing: false, isComplete: false))
           newStep = ""
           isAddingInstruction = false
 

@@ -10,11 +10,12 @@ import SwiftUI
 struct ProjectStep: View {
   @Binding var text: String
   @Binding var isEditing: Bool
+  @Binding var isComplete: Bool
   @State var newText = ""
 
   var body: some View {
     HStack {
-      Text(text)
+      Toggle(text, isOn: $isComplete).toggleStyle(.checkbox)
       Button("\(Image(systemName: "pencil"))") {
         isEditing = true
       }
