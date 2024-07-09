@@ -10,6 +10,15 @@
 		6E2F6ABA2C263B8E0022A9E2 /* AddStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F6AB92C263B8E0022A9E2 /* AddStepView.swift */; };
 		6E2F6ABC2C2661CB0022A9E2 /* ProjectStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F6ABB2C2661CB0022A9E2 /* ProjectStep.swift */; };
 		6E2F6ABE2C266FDA0022A9E2 /* ProjectStepsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F6ABD2C266FDA0022A9E2 /* ProjectStepsView.swift */; };
+		6E572DB32C3DA71C008BCF24 /* NewProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DB22C3DA71C008BCF24 /* NewProjectView.swift */; };
+		6E572DB42C3DA71C008BCF24 /* NewProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DB22C3DA71C008BCF24 /* NewProjectView.swift */; };
+		6E572DB52C3DA71C008BCF24 /* NewProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DB22C3DA71C008BCF24 /* NewProjectView.swift */; };
+		6E572DB82C3DA8F6008BCF24 /* ProjectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DB72C3DA8F6008BCF24 /* ProjectsView.swift */; };
+		6E572DB92C3DA8F6008BCF24 /* ProjectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DB72C3DA8F6008BCF24 /* ProjectsView.swift */; };
+		6E572DBA2C3DA8F6008BCF24 /* ProjectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DB72C3DA8F6008BCF24 /* ProjectsView.swift */; };
+		6E572DBC2C3DC12F008BCF24 /* UnfinishedSteps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DBB2C3DC12F008BCF24 /* UnfinishedSteps.swift */; };
+		6E572DBD2C3DC12F008BCF24 /* UnfinishedSteps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DBB2C3DC12F008BCF24 /* UnfinishedSteps.swift */; };
+		6E572DBE2C3DC12F008BCF24 /* UnfinishedSteps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DBB2C3DC12F008BCF24 /* UnfinishedSteps.swift */; };
 		6EF0C83D2BED3CE200E7576F /* Sewing_PlannerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF0C83C2BED3CE200E7576F /* Sewing_PlannerApp.swift */; };
 		6EF0C83F2BED3CE200E7576F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF0C83E2BED3CE200E7576F /* ContentView.swift */; };
 		6EF0C8412BED3CE400E7576F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EF0C8402BED3CE400E7576F /* Assets.xcassets */; };
@@ -40,6 +49,9 @@
 		6E2F6AB92C263B8E0022A9E2 /* AddStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddStepView.swift; sourceTree = "<group>"; };
 		6E2F6ABB2C2661CB0022A9E2 /* ProjectStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectStep.swift; sourceTree = "<group>"; };
 		6E2F6ABD2C266FDA0022A9E2 /* ProjectStepsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectStepsView.swift; sourceTree = "<group>"; };
+		6E572DB22C3DA71C008BCF24 /* NewProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewProjectView.swift; sourceTree = "<group>"; };
+		6E572DB72C3DA8F6008BCF24 /* ProjectsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsView.swift; sourceTree = "<group>"; };
+		6E572DBB2C3DC12F008BCF24 /* UnfinishedSteps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnfinishedSteps.swift; sourceTree = "<group>"; };
 		6EF0C8392BED3CE200E7576F /* Sewing Planner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Sewing Planner.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EF0C83C2BED3CE200E7576F /* Sewing_PlannerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sewing_PlannerApp.swift; sourceTree = "<group>"; };
 		6EF0C83E2BED3CE200E7576F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -78,6 +90,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6E572DB12C3DA6B9008BCF24 /* ProjectScreen */ = {
+			isa = PBXGroup;
+			children = (
+				6E2F6ABD2C266FDA0022A9E2 /* ProjectStepsView.swift */,
+				6E2F6ABB2C2661CB0022A9E2 /* ProjectStep.swift */,
+				6E2F6AB92C263B8E0022A9E2 /* AddStepView.swift */,
+				6E572DB22C3DA71C008BCF24 /* NewProjectView.swift */,
+			);
+			path = ProjectScreen;
+			sourceTree = "<group>";
+		};
+		6E572DB62C3DA8C0008BCF24 /* AllProjectsScreen */ = {
+			isa = PBXGroup;
+			children = (
+				6E572DB72C3DA8F6008BCF24 /* ProjectsView.swift */,
+				6E572DBB2C3DC12F008BCF24 /* UnfinishedSteps.swift */,
+			);
+			path = AllProjectsScreen;
+			sourceTree = "<group>";
+		};
 		6EF0C8302BED3CE200E7576F = {
 			isa = PBXGroup;
 			children = (
@@ -101,14 +133,13 @@
 		6EF0C83B2BED3CE200E7576F /* Sewing Planner */ = {
 			isa = PBXGroup;
 			children = (
+				6E572DB62C3DA8C0008BCF24 /* AllProjectsScreen */,
+				6E572DB12C3DA6B9008BCF24 /* ProjectScreen */,
 				6EF0C83C2BED3CE200E7576F /* Sewing_PlannerApp.swift */,
 				6EF0C83E2BED3CE200E7576F /* ContentView.swift */,
 				6EF0C8402BED3CE400E7576F /* Assets.xcassets */,
 				6EF0C8452BED3CE400E7576F /* Sewing_Planner.entitlements */,
 				6EF0C8422BED3CE400E7576F /* Preview Content */,
-				6E2F6AB92C263B8E0022A9E2 /* AddStepView.swift */,
-				6E2F6ABB2C2661CB0022A9E2 /* ProjectStep.swift */,
-				6E2F6ABD2C266FDA0022A9E2 /* ProjectStepsView.swift */,
 			);
 			path = "Sewing Planner";
 			sourceTree = "<group>";
@@ -268,8 +299,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E572DB32C3DA71C008BCF24 /* NewProjectView.swift in Sources */,
+				6E572DB82C3DA8F6008BCF24 /* ProjectsView.swift in Sources */,
 				6EF0C83F2BED3CE200E7576F /* ContentView.swift in Sources */,
 				6EF0C83D2BED3CE200E7576F /* Sewing_PlannerApp.swift in Sources */,
+				6E572DBC2C3DC12F008BCF24 /* UnfinishedSteps.swift in Sources */,
 				6E2F6ABA2C263B8E0022A9E2 /* AddStepView.swift in Sources */,
 				6E2F6ABC2C2661CB0022A9E2 /* ProjectStep.swift in Sources */,
 				6E2F6ABE2C266FDA0022A9E2 /* ProjectStepsView.swift in Sources */,
@@ -280,7 +314,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E572DBD2C3DC12F008BCF24 /* UnfinishedSteps.swift in Sources */,
+				6E572DB42C3DA71C008BCF24 /* NewProjectView.swift in Sources */,
 				6EF0C84F2BED3CE400E7576F /* Sewing_PlannerTests.swift in Sources */,
+				6E572DB92C3DA8F6008BCF24 /* ProjectsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -288,7 +325,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E572DB52C3DA71C008BCF24 /* NewProjectView.swift in Sources */,
 				6EF0C85B2BED3CE400E7576F /* Sewing_PlannerUITestsLaunchTests.swift in Sources */,
+				6E572DBE2C3DC12F008BCF24 /* UnfinishedSteps.swift in Sources */,
+				6E572DBA2C3DA8F6008BCF24 /* ProjectsView.swift in Sources */,
 				6EF0C8592BED3CE400E7576F /* Sewing_PlannerUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

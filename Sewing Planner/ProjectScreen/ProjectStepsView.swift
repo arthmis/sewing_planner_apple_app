@@ -29,6 +29,20 @@ struct ProjectStepsView: View {
   }
 }
 
-// #Preview {
-//   ProjectStepsView()
-// }
+struct ProjectStepData: Hashable, Identifiable {
+  var id: UUID
+  var text: String
+  var isEditing: Bool
+  var isComplete: Bool
+
+  init(text: String, isEditing: Bool, isComplete: Bool) {
+    self.id = UUID()
+    self.text = text
+    self.isEditing = isEditing
+    self.isComplete = isComplete
+  }
+
+  func getId() -> UUID {
+    return self.id
+  }
+}
