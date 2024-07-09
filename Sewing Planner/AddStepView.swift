@@ -16,9 +16,10 @@ struct AddStepView: View {
     Form {
       TextField("Write new step", text: $newStep)
       Button("Add step") {
-        self.steps.append(self.newStep)
+        self.steps.append(self.newStep.trimmingCharacters(in: .whitespacesAndNewlines))
         // self.showAddTextboxPopup = false
       }
+      .disabled(!newStep.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
     }
   }
 }

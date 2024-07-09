@@ -23,7 +23,8 @@ struct ProjectStepsView: View {
       .onDelete(perform: deleteStep)
       .onMove { indexSet, offset in
         projectSteps.move(fromOffsets: indexSet, toOffset: offset)
-      }
+      }.accessibilityIdentifier("AllSteps")
+
     }
   }
 }

@@ -36,12 +36,15 @@ struct ContentView: View {
   @State private var time = Date.now
   @State var isAddingInstruction = false
 
+  private var isNewStepValid: Bool {
+    newStep.trimmingCharacters(in: .whitespaces).isEmpty
+  }
+
   var body: some View {
     TextField("Enter project name", text: $name)
     Text(name)
     ProjectStepsView(projectSteps: self.$projectSteps)
     if isAddingInstruction {
-
       HStack {
         TextField("write your instruction", text: $newStep).onSubmit {
           // add a popup telling user that instruction can't be empty
@@ -51,6 +54,7 @@ struct ContentView: View {
           newStep = ""
           isAddingInstruction = false
         }.textFieldStyle(.plain)
+          .accessibilityIdentifier("NewStepTextField")
 
         Button("Cancel") {
           isAddingInstruction = false
@@ -58,19 +62,21 @@ struct ContentView: View {
         }
         Button("Add") {
           // add a popup telling user that instruction can't be empty
-          guard !newStep.isEmpty else { return }
+          // guard !newStep.trimmingCharacters(in: .whitespaces).isEmpty else { return }
+          guard !isNewStepValid else { return }
 
           projectSteps.append(ProjectStepData(text: newStep, isEditing: false, isComplete: false))
           newStep = ""
           isAddingInstruction = false
 
-        }
+        }.disabled(isNewStepValid)
+          .accessibilityIdentifier("AddNewStepButton")
       }
     }
     Form {
       Button("New Step") {
         isAddingInstruction = true
-      }
+      }.accessibilityIdentifier("NewStepButton")
     }
   }
 }

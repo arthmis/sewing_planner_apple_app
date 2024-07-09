@@ -35,25 +35,29 @@ struct EditStep: View {
   @State var newText: String
   @Binding var isEditing: Bool
 
+  private var isNewTextValid: Bool {
+    newText.trimmingCharacters(in: .whitespaces).isEmpty
+  }
+
   var body: some View {
 
     HStack {
       TextField("write your instruction", text: $newText).onSubmit {
-        guard !newText.isEmpty else { return }
+        guard !isNewTextValid else { return }
 
         originalText = newText
         newText = ""
         isEditing = false
       }.textFieldStyle(.plain)
       Button("Cancel") {
-        newText = ""
+        newText = originalText
         isEditing = false
       }
       Button("Update") {
-        originalText = newText
-        newText = ""
+        originalText = newText.trimmingCharacters(in: .whitespacesAndNewlines)
+        newText = originalText
         isEditing = false
-      }
+      }.disabled(isNewTextValid)
     }
   }
 }

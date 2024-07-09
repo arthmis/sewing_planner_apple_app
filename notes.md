@@ -45,3 +45,20 @@
 - deleting a textfield that is binded, especially in a List view or Foreach will cause a crash with index out of bound
     - usually i can get this crash if i swipe delete the item the textfield that is focused
     - if the textfield isn't focused then it should be fine
+
+## Debugging Tests
+#### UI Test Recorder
+1. Click inside test
+2. click on the red circle on the bottom of the code
+3. tap around in simulator and see the updated code
+
+#### Accessibility Inspector
+1. Click on Xcode > Open Developer Tool > Accessibility Inspector
+2. Select simulator as the target being inspected
+3. Now can select Inspection follows point and hover it over the elements on simulator screen
+
+#### iOS App debugging with po
+1. create a debug point in the test
+2. run the test and it will stop at the breakpoint
+3. you can run po commands in the console where (lldb) is
+4. with this you can filter out elements and get their descriptions
