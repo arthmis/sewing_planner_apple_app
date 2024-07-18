@@ -21,8 +21,8 @@ struct NewProjectView: View {
 
   var body: some View {
     VStack {
-
       TextField("Enter project name", text: $name)
+        .accessibilityIdentifier("ProjectNameTextfield")
       Text(name)
       ProjectStepsView(projectSteps: self.$projectSteps)
       if isAddingInstruction {

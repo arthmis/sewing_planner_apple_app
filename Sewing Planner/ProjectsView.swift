@@ -16,7 +16,7 @@ struct ProjectsView: View {
                     NewProjectView()
                 } label: {
                     Text("New Project")
-                }
+                }.accessibilityIdentifier("AddNewProjectButton")
             }
             .navigationTitle("Projects")
             HStack {
