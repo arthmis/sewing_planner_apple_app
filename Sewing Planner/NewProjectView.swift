@@ -5,9 +5,11 @@
 //  Created by Art on 7/9/24.
 //
 
+import GRDB
 import SwiftUI
 
 struct NewProjectView: View {
+    @Environment(\.appDatabase) private var appDatabase
   @State var clicked = true
   @State var name = ""
   @State var newStep = ""
@@ -58,6 +60,9 @@ struct NewProjectView: View {
         Button("New Step") {
           isAddingInstruction = true
         }.accessibilityIdentifier("NewStepButton")
+        Button("Save") {
+            
+        }.accessibilityIdentifier("SaveButton")
       }
     }
   }

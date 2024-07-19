@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ProjectsView: View {
+    @Environment(\.appDatabase) private var appDatabase
     @State var data: [ProjectStepPreviewData]
     var body: some View {
         NavigationStack {

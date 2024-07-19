@@ -6,12 +6,24 @@
 //
 
 import SwiftUI
+import GRDB
 
 @main
 struct Sewing_PlannerApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView().environment(\.appDatabase, .empty())
         }
+    }
+}
+
+private struct AppDatabaseKey: EnvironmentKey {
+    static var defaultValue: AppDatabase { .db }
+}
+
+extension EnvironmentValues {
+    var appDatabase: AppDatabase {
+        get { self[AppDatabaseKey.self]}
+        set { self[AppDatabaseKey.self] = newValue}
     }
 }
