@@ -10,16 +10,31 @@ import SwiftUI
 struct ProjectsView: View {
     @Environment(\.appDatabase) private var appDatabase
     @State var data: [ProjectStepPreviewData]
+    @State var projects: [Project] = []
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $projects) {
             HStack {
-                NavigationLink {
-                    NewProjectView()
-                } label: {
-                    Text("New Project")
-                }.accessibilityIdentifier("AddNewProjectButton")
+                Button("New Project") {
+                    projects.append(Project())
+                }
+                .navigationDestination(for: Project.self) { project in
+                    NewProjectView(projectsNavigation: $projects)
+                    //                    NavigationLink(value: NewProjectView(isAddingProject: $isAddingProject), isActive: $isAddingProject)  {
+                    //                    NewProjectView(
+                    //                }
+                }
+                .accessibilityIdentifier("AddNewProjectButton")
+//                NavigationLink("New Project", value: Project())
+                //                NavigationLink(value: NewProjectView(isAddingProject: $isAddingProject), isActive: $isAddingProject)  {
+                //                    Text("New Project")
+                //                }
             }
-            .navigationTitle("Projects")
+            
+            //                NavigationLink {
+            //                    NewProjectView()
+            //                } label: {
+            //                    Text("New Project")
+            //                }.accessibilityIdentifier("AddNewProjectButton")
             HStack {
                 Image("Landscape_4")
                     .resizable()
@@ -34,8 +49,10 @@ struct ProjectsView: View {
             .frame(width: 300, height: 300)
             .navigationTitle("Projects")
         }
+        .navigationTitle("Projects")
     }
 }
+
 
 #Preview {
     ProjectsView(data: [])
