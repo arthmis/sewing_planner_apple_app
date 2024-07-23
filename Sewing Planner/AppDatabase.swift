@@ -15,6 +15,10 @@ struct AppDatabase {
         try migrator.migrate(dbWriter)
     }
     
+    //    static func setup(for application: UIApplication) throws {
+    //        try migrator.migrate(dbWriter)
+    //    }
+    
     private let dbWriter: any DatabaseWriter
 }
 
@@ -22,22 +26,23 @@ extension AppDatabase {
     func addProject(name: String) throws -> Int64 {
         try dbWriter.write { db in
             let now = Date()
-            try db.execute(sql: "INSERT INTO project (name, createDate, updateDate) VALUES (?, ?, ?)", arguments: [name, now, now])
+            try db.execute(sql: "INSERT INTO project (name, completed, createDate, updateDate) VALUES (?, ?, ?, ?)", arguments: [name, false, now, now])
             return db.lastInsertedRowID
         }
     }
+    
     func updateProjectName(name: String, projectId: Int64) throws {
         try dbWriter.write { db in
             try print(db.columns(in: "project").map(\.name))
             try db.execute(sql: "UPDATE project SET name = ? WHERE id = ?", arguments: [name, projectId])
         }
     }
-
+    
     func addProjectStep(text: String, projectId: Int64) throws {
         try dbWriter.write { db in
             try print(db.columns(in: "projectStep").map(\.name))
             let now = Date()
-            try db.execute(sql: "INSERT INTO projectStep (text, createDate, updateDate, projectId) VALUES (?, ?, ?, ?)", arguments: [text, now, now, projectId])
+            try db.execute(sql: "INSERT INTO projectStep (text, completed, createDate, updateDate, projectId) VALUES (?, ?, ?, ?, ?)", arguments: [text, false, now, now, projectId])
         }
     }
 }
@@ -46,22 +51,29 @@ extension AppDatabase {
     private var migrator: DatabaseMigrator {
         var migrator = DatabaseMigrator()
         
-        //        migrator.registerMigration("projects") { db in
-        //            try db.create(table: "project") { table in
-        //                table.autoIncrementedPrimaryKey("id")
-        //                table.column("name", .text)
-        //                table.column("create_date", .datetime)
-        //                table.column("update_date", .datetime)
-        //            }
-        //
-        //            try db.create(table: "project_step") { table in
-        //                table.autoIncrementedPrimaryKey("id")
-        //                table.column("project_id", .integer)
-        //                table.column("text", .text)
-        //                table.column("create_date", .datetime)
-        //                table.column("update_date", .datetime)
-        //            }
-        //        }
+        migrator.registerMigration("projects") { db in
+            try db.create(table: "project", options: [.ifNotExists]) { table in
+                table.autoIncrementedPrimaryKey("id")
+                table.column("name", .text).notNull()
+                table.column("completed", .boolean).notNull()
+                table.column("createDate", .datetime).notNull()
+                table.column("updateDate", .datetime).notNull()
+            }
+            
+            try db.create(table: "projectStep", options: [.ifNotExists]) { table in
+                table.autoIncrementedPrimaryKey("id")
+                table.belongsTo("project").notNull()
+                table.column("text", .text).notNull()
+                table.column("completed", .boolean).notNull()
+                table.column("createDate", .datetime).notNull()
+                table.column("updateDate", .datetime).notNull()
+            }
+        }
+        
+#if DEBUG
+        migrator.eraseDatabaseOnSchemaChange = true
+#endif
+        
         return migrator
     }
 }
@@ -96,31 +108,6 @@ extension AppDatabase {
             // open or create database
             let databaseUrl  = directoryUrl.appendingPathComponent("db.sqlite")
             let dbQueue = try DatabaseQueue(path: databaseUrl.path)
-            
-            // delete tables to start fresh every app run
-            try dbQueue.write { db in
-                try db.drop(table: "projectStep")
-                try db.drop(table: "project")
-            }
-            
-            // create tables
-            try dbQueue.write { db in
-                try db.create(table: "project", options: [.ifNotExists]) { table in
-                    table.autoIncrementedPrimaryKey("id")
-                    table.column("name", .text).notNull()
-                    table.column("createDate", .datetime).notNull()
-                    table.column("updateDate", .datetime).notNull()
-                }
-                
-                try db.create(table: "projectStep", options: [.ifNotExists]) { table in
-                    table.autoIncrementedPrimaryKey("id")
-                    //                    table.column("projectId", .integer).notNull()
-                    table.column("text", .text).notNull()
-                    table.column("createDate", .datetime).notNull()
-                    table.column("updateDate", .datetime).notNull()
-                    table.belongsTo("project").notNull()
-                }
-            }
             
             // create AppDatabase
             let appDatabase = try AppDatabase(dbQueue)
