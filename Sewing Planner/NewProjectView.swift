@@ -8,11 +8,6 @@
 import GRDB
 import SwiftUI
 
-struct Project: Hashable {
-    var name = ""
-    var id: Int64 = 0
-}
-
 struct NewProjectView: View {
     @Environment(\.appDatabase) private var appDatabase
     @State var clicked = true
@@ -25,28 +20,18 @@ struct NewProjectView: View {
     @State var isAddingInstruction = false
     @Binding var projectsNavigation: [Project]
     
+    
     private var isNewStepValid: Bool {
         newStep.trimmingCharacters(in: .whitespaces).isEmpty
     }
     
     private var isProjectValid: Bool {
-        !name.trimmingCharacters(in: .whitespaces).isEmpty && !projectSteps.isEmpty
+        !project.name.trimmingCharacters(in: .whitespaces).isEmpty && !projectSteps.isEmpty
     }
     
     var body: some View {
         VStack {
-            TextField("Enter project name", text: $name)
-                .accessibilityIdentifier("ProjectNameTextfield").onSubmit {
-                    // add a popup telling user that name can't be empty
-                    guard !project.name.isEmpty else { return }
-                    do {
-                        try appDatabase.updateProjectName(name: name, projectId: project.id)
-                    } catch {
-                        fatalError("error when inserting step: \(newStep) for project id: \(project.id)\n\n\(error)")
-                    }
-                    project.name = name
-                }
-            Text(name)
+            ProjectName(project: $project)
             ProjectStepsView(projectSteps: self.$projectSteps)
             if isAddingInstruction {
                 HStack {
@@ -104,7 +89,7 @@ struct NewProjectView: View {
             }
         }.onAppear {
             let projectId = try! appDatabase.addProject(name: "")
-            project = Project(name: "", id: projectId)
+            project = Project(name: "New Project", id: projectId)
             print("creating project with id: \(projectId)")
         }
     }

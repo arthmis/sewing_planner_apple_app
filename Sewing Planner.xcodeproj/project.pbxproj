@@ -16,6 +16,7 @@
 		6E572DC82C497C63008BCF24 /* AllProjectsScreenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DC72C497C63008BCF24 /* AllProjectsScreenTests.swift */; };
 		6E572DCB2C49E03F008BCF24 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 6E572DCA2C49E03F008BCF24 /* GRDB */; };
 		6E572DCD2C49F22E008BCF24 /* AppDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DCC2C49F22E008BCF24 /* AppDatabase.swift */; };
+		6E572DD12C5020D3008BCF24 /* ProjectName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DD02C5020D3008BCF24 /* ProjectName.swift */; };
 		6EF0C83D2BED3CE200E7576F /* Sewing_PlannerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF0C83C2BED3CE200E7576F /* Sewing_PlannerApp.swift */; };
 		6EF0C83F2BED3CE200E7576F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF0C83E2BED3CE200E7576F /* ContentView.swift */; };
 		6EF0C8412BED3CE400E7576F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EF0C8402BED3CE400E7576F /* Assets.xcassets */; };
@@ -51,6 +52,7 @@
 		6E572DBB2C3DC12F008BCF24 /* UnfinishedSteps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnfinishedSteps.swift; sourceTree = "<group>"; };
 		6E572DC72C497C63008BCF24 /* AllProjectsScreenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllProjectsScreenTests.swift; sourceTree = "<group>"; };
 		6E572DCC2C49F22E008BCF24 /* AppDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDatabase.swift; sourceTree = "<group>"; };
+		6E572DD02C5020D3008BCF24 /* ProjectName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectName.swift; sourceTree = "<group>"; };
 		6EF0C8392BED3CE200E7576F /* Sewing Planner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Sewing Planner.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EF0C83C2BED3CE200E7576F /* Sewing_PlannerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sewing_PlannerApp.swift; sourceTree = "<group>"; };
 		6EF0C83E2BED3CE200E7576F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -141,6 +143,7 @@
 				6EF0C8402BED3CE400E7576F /* Assets.xcassets */,
 				6EF0C8452BED3CE400E7576F /* Sewing_Planner.entitlements */,
 				6EF0C8422BED3CE400E7576F /* Preview Content */,
+				6E572DD02C5020D3008BCF24 /* ProjectName.swift */,
 			);
 			path = "Sewing Planner";
 			sourceTree = "<group>";
@@ -311,6 +314,7 @@
 				6E572DB32C3DA71C008BCF24 /* NewProjectView.swift in Sources */,
 				6E572DB82C3DA8F6008BCF24 /* ProjectsView.swift in Sources */,
 				6EF0C83F2BED3CE200E7576F /* ContentView.swift in Sources */,
+				6E572DD12C5020D3008BCF24 /* ProjectName.swift in Sources */,
 				6EF0C83D2BED3CE200E7576F /* Sewing_PlannerApp.swift in Sources */,
 				6E572DBC2C3DC12F008BCF24 /* UnfinishedSteps.swift in Sources */,
 				6E2F6ABA2C263B8E0022A9E2 /* AddStepView.swift in Sources */,
