@@ -9,6 +9,8 @@ import GRDB
 import SwiftUI
 
 struct NewProjectView: View {
+    // used for dismissing a view(basically the back button)
+    @Environment(\.dismiss) private var dismiss
     @Environment(\.appDatabase) private var appDatabase
     @State var clicked = true
     var projectId: Int64 = 0
@@ -18,6 +20,7 @@ struct NewProjectView: View {
     @State var projectSteps: [ProjectStepData] = [ProjectStepData]()
     @State var showAddTextboxPopup = false
     @State var isAddingInstruction = false
+    @State var unsaved = false
     @Binding var projectsNavigation: [Project]
     
     
@@ -26,7 +29,7 @@ struct NewProjectView: View {
     }
     
     private var isProjectValid: Bool {
-        !project.name.trimmingCharacters(in: .whitespaces).isEmpty && !projectSteps.isEmpty
+        !project.name.trimmingCharacters(in: .whitespaces).isEmpty
     }
     
     var body: some View {
@@ -91,6 +94,40 @@ struct NewProjectView: View {
             let projectId = try! appDatabase.addProject(name: "")
             project = Project(name: "New Project", id: projectId)
             print("creating project with id: \(projectId)")
+        }.navigationBarBackButtonHidden(true).toolbar {
+            ToolbarItem(placement: .navigation) {
+                Button {
+                    // TODO: check that project is valid
+                    guard isProjectValid else {
+                        unsaved = true
+                        return
+                    }
+                    dismiss()
+                } label: {
+                    HStack(alignment: VerticalAlignment.center) {
+                        Image(systemName: "arrowshape.backward.fill")
+                        Text("Back")
+                    }
+                }
+                .alert("Unsaved Changes", isPresented: $unsaved) {
+                    HStack {
+                        
+                        Button(role: .destructive) {
+                            // TODO: do deletion
+                            dismiss()
+                        } label: {
+                            Text("Discard")
+                        }
+                        Button("Save") {
+                            // TODO: handle saving the data
+                            dismiss()
+                        }
+                    }
+                } message: {
+                    Text("Do you want to save this project?")
+                }
+            }
         }
+        
     }
 }
