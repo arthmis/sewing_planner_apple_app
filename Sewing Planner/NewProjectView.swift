@@ -20,8 +20,10 @@ struct NewProjectView: View {
     @State var projectSteps: [ProjectStepData] = [ProjectStepData]()
     @State var showAddTextboxPopup = false
     @State var isAddingInstruction = false
-    @State var unsaved = false
+    @State var doesProjectHaveName = false
+    @State var showAlertIfProjectNotSaved = false
     @Binding var projectsNavigation: [Project]
+    
     
     
     private var isNewStepValid: Bool {
@@ -30,6 +32,10 @@ struct NewProjectView: View {
     
     private var isProjectValid: Bool {
         !project.name.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+    
+    private var isNewProjectEmpty: Bool {
+        project.name.trimmingCharacters(in: .whitespaces).isEmpty && projectSteps.isEmpty
     }
     
     var body: some View {
@@ -41,12 +47,6 @@ struct NewProjectView: View {
                     TextField("write your instruction", text: $newStep).onSubmit {
                         // add a popup telling user that instruction can't be empty
                         guard !newStep.isEmpty else { return }
-                        
-                        do {
-                            try appDatabase.addProjectStep(text: newStep, projectId: project.id)
-                        } catch {
-                            fatalError("error when inserting step: \(newStep) for project id: \(project.id)\n\n\(error)")
-                        }
                         projectSteps.append(ProjectStepData(text: newStep, isEditing: false, isComplete: false))
                         newStep = ""
                         isAddingInstruction = false
@@ -81,47 +81,99 @@ struct NewProjectView: View {
                     isAddingInstruction = true
                 }.accessibilityIdentifier("NewStepButton")
                 Button("Save") {
+                    guard isProjectValid else {
+                        showAlertIfProjectNotSaved = true
+                        return }
+                    
+                    let projectId = try! appDatabase.addProject(name: "")
+                    project = Project(name: "", id: projectId)
+                    print("creating project with id: \(projectId)")
                     // add alert that says they need to pass validation
                     print(project.name)
                     print(projectSteps.count)
-                    guard isProjectValid else { return }
+                    
+                    do {
+                        for step in projectSteps {
+                            try appDatabase.addProjectStep(text: step.text, projectId: project.id)
+                        }
+                    } catch {
+                        fatalError("error when inserting step: \(newStep) for project id: \(project.id)\n\n\(error)")
+                    }
+                    
                     
                     projectsNavigation.removeLast()
                     
                 }.accessibilityIdentifier("SaveButton")
+                    .alert("Unsaved Changes", isPresented: $showAlertIfProjectNotSaved) {
+                        HStack {
+                            TextField("Enter a project name", text: $project.name)
+                            Button("Save") {
+                                let projectId = try! appDatabase.addProject(name: project.name)
+                                project = Project(name: project.name, id: projectId)
+                                print("creating project with id: \(projectId)")
+                                
+                                do {
+                                    for step in projectSteps {
+                                        try appDatabase.addProjectStep(text: step.text, projectId: project.id)
+                                    }
+                                } catch {
+                                    fatalError("error when inserting step: \(newStep) for project id: \(project.id)\n\n\(error)")
+                                }
+                                
+                                dismiss()
+                            }
+                            Button(role: .destructive) {
+                                dismiss()
+                            } label: {
+                                Text("Discard")
+                            }
+                            
+                        }
+                    } message: {
+                        Text("Enter a name to save this project.")
+                    }
+                
             }
-        }.onAppear {
-            let projectId = try! appDatabase.addProject(name: "")
-            project = Project(name: "New Project", id: projectId)
-            print("creating project with id: \(projectId)")
-        }.navigationBarBackButtonHidden(true).toolbar {
+        }
+        .navigationBarBackButtonHidden(true).toolbar {
             ToolbarItem(placement: .navigation) {
                 Button {
-                    // TODO: check that project is valid
-                    guard isProjectValid else {
-                        unsaved = true
+                    if isNewProjectEmpty {
+                        dismiss()
                         return
                     }
-                    dismiss()
+                    
+                    showAlertIfProjectNotSaved = true
                 } label: {
                     HStack(alignment: VerticalAlignment.center) {
                         Image(systemName: "arrowshape.backward.fill")
                         Text("Back")
                     }
                 }
-                .alert("Unsaved Changes", isPresented: $unsaved) {
-                    HStack {
+                .alert("Unsaved Changes", isPresented: $showAlertIfProjectNotSaved) {
+                    VStack {
                         
                         Button(role: .destructive) {
-                            // TODO: do deletion
+                            // no need to do anything as changes haven't been saved yet
                             dismiss()
                         } label: {
                             Text("Discard")
                         }
                         Button("Save") {
-                            // TODO: handle saving the data
+                            let projectId = try! appDatabase.addProject(name: project.name)
+                            project = Project(name: project.name, id: projectId)
+                            print("creating project with id: \(projectId)")
+                            
+                            do {
+                                for step in projectSteps {
+                                    try appDatabase.addProjectStep(text: step.text, projectId: project.id)
+                                }
+                            } catch {
+                                fatalError("error when inserting step: \(newStep) for project id: \(project.id)\n\n\(error)")
+                            }
+                            
                             dismiss()
-                        }
+                        }.keyboardShortcut(/*@START_MENU_TOKEN@*/.defaultAction/*@END_MENU_TOKEN@*/)
                     }
                 } message: {
                     Text("Do you want to save this project?")

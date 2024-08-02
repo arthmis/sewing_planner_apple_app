@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct Project: Hashable {
-    var name = "New Project"
+    var name = ""
     var id: Int64 = 0
 }
 
@@ -41,6 +41,10 @@ struct ProjectName: View {
                 }
                 
                 isEditing.toggle()
+            }
+        }.onAppear {
+            if project.name.isEmpty {
+                isEditing = true
             }
         }
     }
