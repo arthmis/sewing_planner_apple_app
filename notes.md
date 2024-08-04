@@ -63,3 +63,9 @@
 3. you can run po commands in the console where (lldb) is
 4. with this you can filter out elements and get their descriptions
 
+## Alerts
+- can potentially only have one alert per view?? Will have to investigate this
+    - can maybe look at this link to solve the problem https://stackoverflow.com/questions/58069516/how-can-i-have-two-alerts-on-one-view-in-swiftui
+    - https://www.hackingwithswift.com/quick-start/swiftui/how-to-show-multiple-alerts-in-a-single-view
+- I tried to have two different alerts that I thought modified the buttons they were attached to
+    but swiftui only displayed the first defined alert(attached to the save button) and ignored the second one(the one on the back button)
