@@ -50,9 +50,6 @@ final class NewProjectViewTest: XCTestCase {
     }
     
     func testBackButtonForProjectWithName() throws {
-        let newStepButton = app.buttons["NewStepButton"]
-        XCTAssertTrue(newStepButton.exists)
-        
         let projectNameTextfield = app.textFields["ProjectNameTextfield"]
         XCTAssertTrue(projectNameTextfield.exists)
         projectNameTextfield.click()
@@ -117,6 +114,81 @@ final class NewProjectViewTest: XCTestCase {
         XCTAssertTrue(addNewProjectButton.exists)
     }
     
+    func testSaveButtonForProjectWithoutNameWithProjectSteps() throws {
+        let newStepButton = app.buttons["NewStepButton"]
+        XCTAssertTrue(newStepButton.exists)
+        newStepButton.click()
+        
+        let newStepTextField = app.textFields["NewStepTextField"]
+        XCTAssertTrue(newStepTextField.exists)
+        
+        newStepTextField.click()
+        newStepTextField.typeText("step 1")
+        
+        let addStepButton = app.buttons["AddNewStepButton"]
+        addStepButton.click()
+        
+        let saveButton = app.buttons["SaveButton"]
+        XCTAssertTrue(saveButton.exists)
+        saveButton.click()
+
+//        var wait = app.waitForExistence(timeout: TimeInterval(1))
+
+        let alertTextField = app.sheets["alert"].textFields["Enter a project name"]
+        XCTAssertTrue(alertTextField.exists)
+        alertTextField.click()
+        alertTextField.typeText("project 1")
+        
+        let alertSaveButton = app.buttons["SaveButtonInAlertUnsavedProject"]
+        XCTAssertTrue(alertSaveButton.exists)
+        alertSaveButton.click()
+        
+//        wait = app.waitForExistence(timeout: TimeInterval(1))
+        
+        let addNewProjectButton = app.buttons["AddNewProjectButton"]
+        XCTAssertTrue(addNewProjectButton.exists)
+    }
+
+    func testSaveButtonForEmptyProject() throws {
+        let saveButton = app.buttons["SaveButton"]
+        XCTAssertTrue(saveButton.exists)
+        saveButton.click()
+
+//        var wait = app.waitForExistence(timeout: TimeInterval(1))
+
+        let alertTextField = app.sheets["alert"].textFields["Enter a project name"]
+        XCTAssertTrue(alertTextField.exists)
+        alertTextField.click()
+        alertTextField.typeText("project 1")
+        
+        let alertSaveButton = app.buttons["SaveButtonInAlertUnsavedProject"]
+        XCTAssertTrue(alertSaveButton.exists)
+        alertSaveButton.click()
+        
+//        wait = app.waitForExistence(timeout: TimeInterval(1))
+        
+        let addNewProjectButton = app.buttons["AddNewProjectButton"]
+        XCTAssertTrue(addNewProjectButton.exists)
+    }
+    
+    func testSaveButtonForProjectWithName() throws {
+        let projectNameTextfield = app.textFields["ProjectNameTextfield"]
+        XCTAssertTrue(projectNameTextfield.exists)
+        projectNameTextfield.click()
+        projectNameTextfield.typeText("Project 1")
+        // figure out how to type enter key without using a modifier
+        projectNameTextfield.typeKey(.enter, modifierFlags: .capsLock)
+        
+        let saveButton = app.buttons["SaveButton"]
+        XCTAssertTrue(saveButton.exists)
+        saveButton.click()
+
+//        let _ = app.waitForExistence(timeout: TimeInterval(1))
+        
+        let addNewProjectButton = app.buttons["AddNewProjectButton"]
+        XCTAssertTrue(addNewProjectButton.exists)
+    }
+
     func testLaunchPerformance() throws {
         if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *) {
             // This measures how long it takes to launch your application.
