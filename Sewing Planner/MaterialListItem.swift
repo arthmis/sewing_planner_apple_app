@@ -11,12 +11,10 @@ struct MaterialListItem: View {
     @State var isComplete = false
     @State var isEditing = false
     @Binding var materialData: MaterialData
-    @State var newText = ""
-    @State var linkDestination: URL? = URL(string: "www.google.com")
     
     var body: some View {
         HStack {
-            if let link = linkDestination {
+            if let link = materialData.link {
                 Link(destination: link) {
                     Image(systemName: "link")
                 }

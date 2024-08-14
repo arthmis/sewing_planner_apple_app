@@ -23,7 +23,8 @@ struct NewProjectView: View {
     @State var doesProjectHaveName = false
     @State var showAlertIfProjectNotSaved = false
     @Binding var projectsNavigation: [Project]
-    
+    @State var materials: [MaterialData] = []
+
     private var isNewStepValid: Bool {
         newStep.trimmingCharacters(in: .whitespaces).isEmpty
     }
@@ -79,7 +80,7 @@ struct NewProjectView: View {
                 
             }
             Divider()
-            MaterialList()
+            MaterialList(materials: $materials)
             Button("Save") {
                 guard isProjectValid else {
                     showAlertIfProjectNotSaved = true

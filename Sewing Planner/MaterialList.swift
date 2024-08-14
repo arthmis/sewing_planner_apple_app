@@ -11,11 +11,12 @@ struct MaterialData {
     var material: String = ""
     var link: URL?
 }
+
 struct MaterialList: View {
     @State var isAddingMaterial = false
     @State var newMaterial = ""
     @State var newLink = ""
-    @State var materials: [MaterialData] = []
+    @Binding var materials: [MaterialData]
     
     func deleteMaterial(at offsets: IndexSet) {
         self.materials.remove(atOffsets: offsets)
