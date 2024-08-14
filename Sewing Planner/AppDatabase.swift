@@ -45,6 +45,28 @@ extension AppDatabase {
             try db.execute(sql: "INSERT INTO projectStep (text, completed, createDate, updateDate, projectId) VALUES (?, ?, ?, ?, ?)", arguments: [text, false, now, now, projectId])
         }
     }
+    
+    func addProjectSteps(steps: [ProjectStepData], projectId: Int64) throws {
+        for step in steps {
+            try addProjectStep(text: step.text, projectId: projectId)
+        }
+    }
+    
+    func addProjectMaterials(materialData: [MaterialData], projectId: Int64) throws {
+        for material in materialData {
+            try dbWriter.write { db in
+                let now = Date()
+                try db.execute(sql: "INSERT INTO projectMaterials(text, link, completed, createDate, updateDate, projectId) VALUES (?, ?, ?, ?, ?, ?)", arguments: [material.material, material.link, false, now, now, projectId])
+            }
+        }
+    }
+    
+    func getProject(projectId: Int64) throws {
+        try dbWriter.read { db in
+            let value = try db.execute(sql: "SELECT * FROM project LEFT JOIN projectStep ON project.id = projectStep.projectId LEFT JOIN projectMaterials ON project.id = projectMaterials.projectId WHERE project.id = ?", arguments: [projectId])
+            print(value)
+        }
+    }
 }
 
 extension AppDatabase {
@@ -64,6 +86,16 @@ extension AppDatabase {
                 table.autoIncrementedPrimaryKey("id")
                 table.belongsTo("project").notNull()
                 table.column("text", .text).notNull()
+                table.column("completed", .boolean).notNull()
+                table.column("createDate", .datetime).notNull()
+                table.column("updateDate", .datetime).notNull()
+            }
+            
+            try db.create(table: "projectMaterials", options: [.ifNotExists]) { table in
+                table.autoIncrementedPrimaryKey("id")
+                table.belongsTo("project").notNull()
+                table.column("text", .text).notNull()
+                table.column("link", .text).notNull()
                 table.column("completed", .boolean).notNull()
                 table.column("createDate", .datetime).notNull()
                 table.column("updateDate", .datetime).notNull()

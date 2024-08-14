@@ -89,19 +89,21 @@ struct NewProjectView: View {
                 
                 let projectId = try! appDatabase.addProject(name: "")
                 project = Project(name: "", id: projectId)
-                print("creating project with id: \(projectId)")
+                print("creating project with id and steps, materials: \(projectId)")
+                print(materials)
+                print(projectSteps)
                 // add alert that says they need to pass validation
-                print(project.name)
-                print(projectSteps.count)
-                
                 do {
-                    for step in projectSteps {
-                        try appDatabase.addProjectStep(text: step.text, projectId: project.id)
-                    }
+                    try appDatabase.addProjectSteps(steps: projectSteps, projectId: project.id)
+                    try appDatabase.addProjectMaterials(materialData: materials, projectId: project.id)
                 } catch {
+                    print(project)
+                    print(materials)
+                    print(projectSteps)
                     fatalError(
-                        "error when inserting step: \(newStep) for project id: \(project.id)\n\n\(error)")
+                        "error adding steps and materials for project id: \(project.id)\n\n\(error)")
                 }
+                try! appDatabase.getProject(projectId: projectId)
                 
                 projectsNavigation.removeLast()
                 
