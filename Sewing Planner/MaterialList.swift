@@ -7,10 +7,15 @@
 
 import SwiftUI
 
+struct MaterialData {
+    var material: String = ""
+    var link: URL?
+}
 struct MaterialList: View {
     @State var isAddingMaterial = false
     @State var newMaterial = ""
-    @State var materials: [String] = []
+    @State var newLink = ""
+    @State var materials: [MaterialData] = []
     
     func deleteMaterial(at offsets: IndexSet) {
         self.materials.remove(atOffsets: offsets)
@@ -20,8 +25,8 @@ struct MaterialList: View {
         
         VStack {
             List {
-                ForEach($materials, id: \.self) { $material in
-                    MaterialListItem(text: $material)
+                ForEach($materials, id: \.self.material) { $materialData in
+                    MaterialListItem(materialData: $materialData)
                 }
                 .onDelete(perform: deleteMaterial)
                 .onMove { indexSet, offset in
@@ -32,29 +37,49 @@ struct MaterialList: View {
             if isAddingMaterial {
                 HStack {
                     TextField("write material", text: $newMaterial).onSubmit {
-                        // add a popup telling user that instruction can't be empty
+                        // add a popup telling user that material can't be empty
                         guard !newMaterial.isEmpty else { return }
-                        materials.append(newMaterial)
+                        let newData = if newLink.isEmpty {
+                            MaterialData(material: newMaterial, link: nil)
+                        } else {
+                            MaterialData(material: newMaterial, link: URL(string: newLink))
+                        }
+                        materials.append(newData)
                         newMaterial = ""
+                        newLink = ""
                         isAddingMaterial = false
                     }.textFieldStyle(.plain)
                         .accessibilityIdentifier("NewMaterialTextField")
-                    
+                    TextField("optional link", text: $newLink).onSubmit {
+                        let newData = if newLink.isEmpty {
+                            MaterialData(material: newMaterial, link: nil)
+                        } else {
+                            MaterialData(material: newMaterial, link: URL(string: newLink))
+                        }
+                        materials.append(newData)
+                        newMaterial = ""
+                        newLink = ""
+                        isAddingMaterial = false
+                    }.textFieldStyle(.plain)
+                        .accessibilityIdentifier("NewMaterialLinkField")
+
                     Button("Cancel") {
                         isAddingMaterial = false
                         newMaterial = ""
+                        newLink = ""
                     }
                     Button("Add") {
-                        // add a popup telling user that instruction can't be empty
-                        // guard !newStep.trimmingCharacters(in: .whitespaces).isEmpty else { return }
-                        //                        guard !isNewStepValid else { return }
-                        
-                        // think about what to do here for validation or something
-                        
-                        materials.append(newMaterial)
+                        guard !newMaterial.isEmpty else { return }
+                        let newData = if newLink.isEmpty {
+                            MaterialData(material: newMaterial, link: nil)
+                        } else {
+                            MaterialData(material: newMaterial, link: URL(string: newLink))
+                        }
+                        materials.append(newData)
                         newMaterial = ""
+                        newLink = ""
                         isAddingMaterial = false
-                        
+
                     }.accessibilityIdentifier("AddNewMaterialButton")
                 }
             }
