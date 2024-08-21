@@ -6,10 +6,27 @@
 //
 
 import SwiftUI
+import GRDB
 
-struct Project: Hashable {
+struct Project: Hashable, Codable, EncodableRecord, FetchableRecord, MutablePersistableRecord, TableRecord {
+    var id: Int64?
     var name = ""
-    var id: Int64 = 0
+    var completed: Bool
+    var createDate: Date
+    var updateDate: Date
+    static let databaseTableName = "project"
+    
+    mutating func didInsert(with rowID: Int64, for column: String?) {
+        self.id = rowID
+    }
+    
+    init() {
+        self.name = ""
+        self.completed = false
+        let now = Date()
+        self.createDate = now
+        self.updateDate = now
+    }
 }
 
 struct ProjectName: View {
@@ -26,20 +43,12 @@ struct ProjectName: View {
                     print("\(project.name)")
                     // add a popup telling user that name can't be empty
                     guard !projectName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
-                    do {
-                        try appDatabase.updateProjectName(name: projectName, projectId: project.id)
-                    } catch {
-                        fatalError("error when updating name: \(projectName) for project id: \(project.id)\n\n\(error)")
-                    }
                     project.name = projectName
                     isEditing = false
                 }.accessibilityIdentifier("ProjectNameTextfield")
             }
             Button("Edit") {
-                if isEditing {
-                    projectName = ""
-                }
-                
+                projectName = project.name
                 isEditing.toggle()
             }
         }.onAppear {

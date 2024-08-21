@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		6E2F6ABA2C263B8E0022A9E2 /* AddStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F6AB92C263B8E0022A9E2 /* AddStepView.swift */; };
-		6E2F6ABC2C2661CB0022A9E2 /* ProjectStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F6ABB2C2661CB0022A9E2 /* ProjectStep.swift */; };
+		6E2F6ABC2C2661CB0022A9E2 /* ProjectStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F6ABB2C2661CB0022A9E2 /* ProjectStepView.swift */; };
 		6E2F6ABE2C266FDA0022A9E2 /* ProjectStepsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F6ABD2C266FDA0022A9E2 /* ProjectStepsView.swift */; };
 		6E572DB32C3DA71C008BCF24 /* NewProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DB22C3DA71C008BCF24 /* NewProjectView.swift */; };
 		6E572DB82C3DA8F6008BCF24 /* ProjectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DB72C3DA8F6008BCF24 /* ProjectsView.swift */; };
@@ -48,7 +48,7 @@
 
 /* Begin PBXFileReference section */
 		6E2F6AB92C263B8E0022A9E2 /* AddStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddStepView.swift; sourceTree = "<group>"; };
-		6E2F6ABB2C2661CB0022A9E2 /* ProjectStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectStep.swift; sourceTree = "<group>"; };
+		6E2F6ABB2C2661CB0022A9E2 /* ProjectStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectStepView.swift; sourceTree = "<group>"; };
 		6E2F6ABD2C266FDA0022A9E2 /* ProjectStepsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectStepsView.swift; sourceTree = "<group>"; };
 		6E572DB22C3DA71C008BCF24 /* NewProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewProjectView.swift; sourceTree = "<group>"; };
 		6E572DB72C3DA8F6008BCF24 /* ProjectsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsView.swift; sourceTree = "<group>"; };
@@ -142,7 +142,7 @@
 				6E572DB72C3DA8F6008BCF24 /* ProjectsView.swift */,
 				6E572DBB2C3DC12F008BCF24 /* UnfinishedSteps.swift */,
 				6E2F6ABD2C266FDA0022A9E2 /* ProjectStepsView.swift */,
-				6E2F6ABB2C2661CB0022A9E2 /* ProjectStep.swift */,
+				6E2F6ABB2C2661CB0022A9E2 /* ProjectStepView.swift */,
 				6E2F6AB92C263B8E0022A9E2 /* AddStepView.swift */,
 				6E572DB22C3DA71C008BCF24 /* NewProjectView.swift */,
 				6EF0C83E2BED3CE200E7576F /* ContentView.swift */,
@@ -329,7 +329,7 @@
 				6EF0C83D2BED3CE200E7576F /* Sewing_PlannerApp.swift in Sources */,
 				6E572DBC2C3DC12F008BCF24 /* UnfinishedSteps.swift in Sources */,
 				6E2F6ABA2C263B8E0022A9E2 /* AddStepView.swift in Sources */,
-				6E2F6ABC2C2661CB0022A9E2 /* ProjectStep.swift in Sources */,
+				6E2F6ABC2C2661CB0022A9E2 /* ProjectStepView.swift in Sources */,
 				6E2F6ABE2C266FDA0022A9E2 /* ProjectStepsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ProjectStep: View {
+struct ProjectStepView: View {
     @Binding var text: String
     @Binding var isEditing: Bool
     @Binding var isComplete: Bool

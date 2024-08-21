@@ -10,7 +10,7 @@ import SwiftUI
 struct MaterialListItem: View {
     @State var isComplete = false
     @State var isEditing = false
-    @Binding var materialData: MaterialData
+    @Binding var materialData: MaterialRecord
     
     var body: some View {
         HStack {
@@ -35,7 +35,7 @@ struct MaterialListItem: View {
 }
 
 struct EditMaterial: View {
-    @Binding var originalData: MaterialData
+    @Binding var originalData: MaterialRecord
     @State var newMaterial =  ""
     @State var newLink = ""
     @Binding var isEditing: Bool

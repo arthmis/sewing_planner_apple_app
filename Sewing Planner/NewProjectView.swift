@@ -17,16 +17,16 @@ struct NewProjectView: View {
     @State var project = Project()
     @State var name = ""
     @State var newStep = ""
-    @State var projectSteps: [ProjectStepData] = [ProjectStepData]()
+    @State var projectSteps: [ProjectStep] = [ProjectStep]()
     @State var showAddTextboxPopup = false
     @State var isAddingInstruction = false
     @State var doesProjectHaveName = false
     @State var showAlertIfProjectNotSaved = false
     @Binding var projectsNavigation: [Project]
-    @State var materials: [MaterialData] = []
-
+    @State var materials: [MaterialRecord] = []
+    
     private var isNewStepValid: Bool {
-        newStep.trimmingCharacters(in: .whitespaces).isEmpty
+        newStep.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
     
     private var isProjectValid: Bool {
@@ -34,7 +34,7 @@ struct NewProjectView: View {
     }
     
     private var isNewProjectEmpty: Bool {
-        project.name.trimmingCharacters(in: .whitespaces).isEmpty && projectSteps.isEmpty
+        project.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && projectSteps.isEmpty
     }
     
     var body: some View {
@@ -48,12 +48,11 @@ struct NewProjectView: View {
                             // add a popup telling user that instruction can't be empty
                             guard !newStep.isEmpty else { return }
                             projectSteps.append(
-                                ProjectStepData(text: newStep, isEditing: false, isComplete: false))
+                                ProjectStep(text: newStep, isComplete: false, isEditing: false))
                             newStep = ""
                             isAddingInstruction = false
                         }.textFieldStyle(.plain)
                             .accessibilityIdentifier("NewStepTextField")
-                        
                         Button("Cancel") {
                             isAddingInstruction = false
                             newStep = ""
@@ -66,7 +65,7 @@ struct NewProjectView: View {
                             // think about what to do here for validation or something
                             
                             projectSteps.append(
-                                ProjectStepData(text: newStep, isEditing: false, isComplete: false))
+                                ProjectStep(text: newStep, isComplete: false, isEditing: false))
                             newStep = ""
                             isAddingInstruction = false
                             
@@ -87,15 +86,8 @@ struct NewProjectView: View {
                     return
                 }
                 
-                let projectId = try! appDatabase.addProject(name: "")
-                project = Project(name: "", id: projectId)
-                print("creating project with id and steps, materials: \(projectId)")
-                print(materials)
-                print(projectSteps)
-                // add alert that says they need to pass validation
                 do {
-                    try appDatabase.addProjectSteps(steps: projectSteps, projectId: project.id)
-                    try appDatabase.addProjectMaterials(materialData: materials, projectId: project.id)
+                    try appDatabase.saveProject(project: &project, projectSteps: projectSteps, materialData: materials)
                 } catch {
                     print(project)
                     print(materials)
@@ -103,7 +95,7 @@ struct NewProjectView: View {
                     fatalError(
                         "error adding steps and materials for project id: \(project.id)\n\n\(error)")
                 }
-                try! appDatabase.getProject(projectId: projectId)
+                //                try! appDatabase.getProject(projectId: projectId)
                 
                 projectsNavigation.removeLast()
                 
@@ -133,14 +125,8 @@ struct NewProjectView: View {
                                     Text("Discard")
                                 }
                                 Button("Save") {
-                                    let projectId = try! appDatabase.addProject(name: project.name)
-                                    project = Project(name: project.name, id: projectId)
-                                    print("creating project with id: \(projectId)")
-                                    
                                     do {
-                                        for step in projectSteps {
-                                            try appDatabase.addProjectStep(text: step.text, projectId: project.id)
-                                        }
+                                        try appDatabase.saveProject(project: &project, projectSteps: projectSteps, materialData: materials)
                                     } catch {
                                         fatalError(
                                             "error when inserting step: \(newStep) for project id: \(project.id)\n\n\(error)"

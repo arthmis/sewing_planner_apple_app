@@ -38,25 +38,27 @@ extension AppDatabase {
         }
     }
     
-    func addProjectStep(text: String, projectId: Int64) throws {
+    func saveProject(project: inout Project, projectSteps: [ProjectStep], materialData: [MaterialRecord]) throws {
+        print(project)
+        print(materialData)
+        print(projectSteps)
         try dbWriter.write { db in
-            try print(db.columns(in: "projectStep").map(\.name))
-            let now = Date()
-            try db.execute(sql: "INSERT INTO projectStep (text, completed, createDate, updateDate, projectId) VALUES (?, ?, ?, ?, ?)", arguments: [text, false, now, now, projectId])
-        }
-    }
-    
-    func addProjectSteps(steps: [ProjectStepData], projectId: Int64) throws {
-        for step in steps {
-            try addProjectStep(text: step.text, projectId: projectId)
-        }
-    }
-    
-    func addProjectMaterials(materialData: [MaterialData], projectId: Int64) throws {
-        for material in materialData {
-            try dbWriter.write { db in
-                let now = Date()
-                try db.execute(sql: "INSERT INTO projectMaterials(text, link, completed, createDate, updateDate, projectId) VALUES (?, ?, ?, ?, ?, ?)", arguments: [material.material, material.link, false, now, now, projectId])
+            // save project
+//            try project.save(db)
+            try project.save(db)
+            print(project)
+            print("creating project with id: \(project.id)")
+
+            // save materials
+            for var material in materialData {
+                material.projectId = project.id!
+                try material.save(db)
+            }
+            
+            // save project steps
+            for var step in projectSteps {
+                step.data.projectId = project.id!
+                try step.data.save(db)
             }
         }
     }

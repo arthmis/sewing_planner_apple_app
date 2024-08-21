@@ -6,27 +6,42 @@
 //
 
 import SwiftUI
+import GRDB
 
-struct ProjectStepData: Hashable, Identifiable {
-    var id: UUID
+struct ProjectStepData: Hashable, Identifiable, Codable, EncodableRecord, FetchableRecord, MutablePersistableRecord, TableRecord {
+    var id: Int64?
+    var projectId: Int64 = 0
     var text: String
-    var isEditing: Bool
     var isComplete: Bool
-    
-    init(text: String, isEditing: Bool, isComplete: Bool) {
-        self.id = UUID()
-        self.text = text
-        self.isEditing = isEditing
-        self.isComplete = isComplete
+    var createDate: Date
+    var updateDate: Date
+    static let databaseTableName = "projectStep"
+
+    mutating func didInsert(rowID: Int64, column: String?) {
+        id = rowID
     }
     
-    func getId() -> UUID {
-        return self.id
+    init(text: String, isComplete: Bool) {
+        self.text = text
+        self.isComplete = isComplete
+        let now = Date()
+        self.createDate = now
+        self.updateDate = now
+    }
+}
+
+struct ProjectStep: Hashable {
+    var isEditing: Bool
+    var data: ProjectStepData
+    
+    init(text: String, isComplete: Bool, isEditing: Bool) {
+        self.isEditing = isEditing
+        self.data = ProjectStepData(text: text, isComplete: isComplete)
     }
 }
 
 struct ProjectStepsView: View {
-    @Binding var projectSteps: [ProjectStepData]
+    @Binding var projectSteps: [ProjectStep]
     @FocusState var isFocused: Bool
     
     func deleteStep(at offsets: IndexSet) {
@@ -35,8 +50,8 @@ struct ProjectStepsView: View {
     
     var body: some View {
         List {
-            ForEach($projectSteps, id: \.id) { $step in
-                ProjectStep(text: $step.text, isEditing: $step.isEditing, isComplete: $step.isComplete)
+            ForEach($projectSteps, id: \.self.data.id) { $step in
+                ProjectStepView(text: $step.data.text, isEditing: $step.isEditing, isComplete: $step.data.isComplete)
             }
             .onDelete(perform: deleteStep)
             .onMove { indexSet, offset in
