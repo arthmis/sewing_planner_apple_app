@@ -12,18 +12,18 @@ struct ProjectStepData: Hashable, Identifiable, Codable, EncodableRecord, Fetcha
     var id: Int64?
     var projectId: Int64 = 0
     var text: String
-    var isComplete: Bool
+    var completed: Bool
     var createDate: Date
     var updateDate: Date
     static let databaseTableName = "projectStep"
 
-    mutating func didInsert(rowID: Int64, column: String?) {
-        id = rowID
+    mutating func didInsert(_ inserted: InsertionSuccess) {
+        id = inserted.rowID
     }
-    
+
     init(text: String, isComplete: Bool) {
         self.text = text
-        self.isComplete = isComplete
+        self.completed = isComplete
         let now = Date()
         self.createDate = now
         self.updateDate = now
@@ -51,7 +51,7 @@ struct ProjectStepsView: View {
     var body: some View {
         List {
             ForEach($projectSteps, id: \.self.data.id) { $step in
-                ProjectStepView(text: $step.data.text, isEditing: $step.isEditing, isComplete: $step.data.isComplete)
+                ProjectStepView(text: $step.data.text, isEditing: $step.isEditing, isComplete: $step.data.completed)
             }
             .onDelete(perform: deleteStep)
             .onMove { indexSet, offset in

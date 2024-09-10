@@ -10,63 +10,54 @@ import GRDB
 import os.log
 
 struct AppDatabase {
+    private let dbWriter: any DatabaseWriter
+    
     init(_ dbWriter: any DatabaseWriter) throws {
         self.dbWriter = dbWriter
         try migrator.migrate(dbWriter)
     }
-    
-    //    static func setup(for application: UIApplication) throws {
-    //        try migrator.migrate(dbWriter)
-    //    }
-    
-    private let dbWriter: any DatabaseWriter
 }
 
 extension AppDatabase {
-    func addProject(name: String) throws -> Int64 {
+    func addProject(project: inout Project) throws -> Project {
         try dbWriter.write { db in
             let now = Date()
-            try db.execute(sql: "INSERT INTO project (name, completed, createDate, updateDate) VALUES (?, ?, ?, ?)", arguments: [name, false, now, now])
-            return db.lastInsertedRowID
+            try db.execute(sql: "INSERT INTO project (name, completed, createDate, updateDate) VALUES (?, ?, ?, ?)", arguments: [project.name, project.completed, now, now])
+            project.id = db.lastInsertedRowID
+            project.createDate = now
+            project.updateDate = now
+            return project
         }
+        
     }
     
-    func updateProjectName(name: String, projectId: Int64) throws {
-        try dbWriter.write { db in
-            try print(db.columns(in: "project").map(\.name))
-            try db.execute(sql: "UPDATE project SET name = ? WHERE id = ?", arguments: [name, projectId])
-        }
+    func getWriter() -> any DatabaseWriter {
+        return dbWriter
     }
-    
     func saveProject(project: inout Project, projectSteps: [ProjectStep], materialData: [MaterialRecord]) throws {
-        print(project)
-        print(materialData)
-        print(projectSteps)
         try dbWriter.write { db in
+            
             // save project
-//            try project.save(db)
-            try project.save(db)
-            print(project)
-            print("creating project with id: \(project.id)")
+            let now = try db.transactionDate
+            project.createDate = now
+            project.updateDate = now
+            try project.insert(db)
 
             // save materials
             for var material in materialData {
                 material.projectId = project.id!
+                material.createDate = now
+                material.updateDate = now
                 try material.save(db)
             }
             
             // save project steps
             for var step in projectSteps {
                 step.data.projectId = project.id!
+                step.data.createDate = now
+                step.data.updateDate = now
                 try step.data.save(db)
             }
-        }
-    }
-    
-    func getProject(projectId: Int64) throws {
-        try dbWriter.read { db in
-            let value = try db.execute(sql: "SELECT * FROM project LEFT JOIN projectStep ON project.id = projectStep.projectId LEFT JOIN projectMaterials ON project.id = projectMaterials.projectId WHERE project.id = ?", arguments: [projectId])
-            print(value)
         }
     }
 }
@@ -78,8 +69,8 @@ extension AppDatabase {
         migrator.registerMigration("projects") { db in
             try db.create(table: "project", options: [.ifNotExists]) { table in
                 table.autoIncrementedPrimaryKey("id")
-                table.column("name", .text).notNull()
-                table.column("completed", .boolean).notNull()
+                table.column("name", .text).notNull().indexed()
+                table.column("completed", .boolean).notNull().indexed()
                 table.column("createDate", .datetime).notNull()
                 table.column("updateDate", .datetime).notNull()
             }
@@ -87,7 +78,7 @@ extension AppDatabase {
             try db.create(table: "projectStep", options: [.ifNotExists]) { table in
                 table.autoIncrementedPrimaryKey("id")
                 table.belongsTo("project").notNull()
-                table.column("text", .text).notNull()
+                table.column("text", .text).notNull().indexed()
                 table.column("completed", .boolean).notNull()
                 table.column("createDate", .datetime).notNull()
                 table.column("updateDate", .datetime).notNull()
@@ -97,7 +88,7 @@ extension AppDatabase {
                 table.autoIncrementedPrimaryKey("id")
                 table.belongsTo("project").notNull()
                 table.column("text", .text).notNull()
-                table.column("link", .text).notNull()
+                table.column("link", .text)
                 table.column("completed", .boolean).notNull()
                 table.column("createDate", .datetime).notNull()
                 table.column("updateDate", .datetime).notNull()
@@ -141,6 +132,7 @@ extension AppDatabase {
             
             // open or create database
             let databaseUrl  = directoryUrl.appendingPathComponent("db.sqlite")
+            NSLog("Database stored at \(databaseUrl.path)")
             let dbQueue = try DatabaseQueue(path: databaseUrl.path)
             
             // create AppDatabase

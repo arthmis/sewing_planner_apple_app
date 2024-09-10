@@ -12,24 +12,25 @@ struct MaterialRecord: Codable, EncodableRecord, FetchableRecord, MutablePersist
     var id: Int64?
     // using a default which will be updated before the material is stored
     var projectId: Int64 = 0
-    var material: String = ""
+    var text: String = ""
     var link: URL?
     var completed: Bool
     var createDate: Date
     var updateDate: Date
     static let databaseTableName = "projectMaterials"
     
-    mutating func didInsert(with rowID: Int64, for column: String?) {
-        id = rowID
+    mutating func didInsert(_ inserted: InsertionSuccess) {
+        id = inserted.rowID
     }
+//    mutating func didInsert(with rowID: Int64, for column: String?)
     
     init(material: String, link: URL?) {
         let currentTime = Date()
         self.link = link
-        self.material = material
-        self.completed = false
-        self.createDate = currentTime
-        self.updateDate = currentTime
+        self.text = material
+        completed = false
+        createDate = currentTime
+        updateDate = currentTime
     }
 }
 
@@ -47,7 +48,7 @@ struct MaterialList: View {
         
         VStack {
             List {
-                ForEach($materials, id: \.self.material) { $materialData in
+                ForEach($materials, id: \.self.text) { $materialData in
                     MaterialListItem(materialData: $materialData)
                 }
                 .onDelete(perform: deleteMaterial)

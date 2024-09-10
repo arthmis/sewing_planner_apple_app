@@ -19,7 +19,7 @@ struct MaterialListItem: View {
                     Image(systemName: "link")
                 }
             }
-            Toggle(materialData.material, isOn: $isComplete).toggleStyle(.checkbox)
+            Toggle(materialData.text, isOn: $isComplete).toggleStyle(.checkbox)
             Button("\(Image(systemName: "pencil"))") {
                 isEditing = true
             }
@@ -50,7 +50,7 @@ struct EditMaterial: View {
             TextField("update material", text: $newMaterial).onSubmit {
                 guard !isNewTextValid else { return }
                 
-                originalData.material = newMaterial
+                originalData.text = newMaterial
                 originalData.link = newLink.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : URL(string: newLink)
                 
                 newMaterial = ""
@@ -60,7 +60,7 @@ struct EditMaterial: View {
             TextField("update link", text: $newLink).onSubmit {
                 guard !isNewTextValid else { return }
                 
-                originalData.material = newMaterial
+                originalData.text = newMaterial
                 originalData.link = newLink.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : URL(string: newLink)
 
                 newMaterial = ""
@@ -75,7 +75,7 @@ struct EditMaterial: View {
             Button("Update") {
                 guard !isNewTextValid else { return }
                 
-                originalData.material = newMaterial
+                originalData.text = newMaterial
                 originalData.link = newLink.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : URL(string: newLink)
 
                 newMaterial = ""

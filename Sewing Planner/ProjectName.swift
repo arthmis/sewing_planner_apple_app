@@ -8,24 +8,33 @@
 import SwiftUI
 import GRDB
 
+//struct Project: Hashable, Codable, FetchableRecord, PersistableRecord, TableRecord {
 struct Project: Hashable, Codable, EncodableRecord, FetchableRecord, MutablePersistableRecord, TableRecord {
     var id: Int64?
-    var name = ""
+    var name: String
     var completed: Bool
     var createDate: Date
     var updateDate: Date
     static let databaseTableName = "project"
     
-    mutating func didInsert(with rowID: Int64, for column: String?) {
-        self.id = rowID
+    mutating func didInsert(_ inserted: InsertionSuccess) {
+        id = inserted.rowID
     }
     
+    init(id: Int64?, name: String, completed: Bool, createDate: Date, updateDate: Date) {
+        self.id = id
+        self.name = name
+        self.completed = completed
+        self.createDate = createDate
+        self.updateDate = updateDate
+    }
+
     init() {
-        self.name = ""
-        self.completed = false
+        name = ""
+        completed = false
         let now = Date()
-        self.createDate = now
-        self.updateDate = now
+        createDate = now
+        updateDate = now
     }
 }
 
