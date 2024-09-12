@@ -26,13 +26,12 @@ final class DatabaseTest: XCTestCase {
         // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
         // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
         let db = AppDatabase.empty()
+        
         let now = Date()
         var project = Project(id: nil, name: "Project", completed: false, createDate: now, updateDate: now)
         try db.saveProject(project: &project, projectSteps: [], materialData: [])
+        
         let writer = db.getWriter()
-//        try writer.write { db in
-//            try! project.save(db)
-//        }
         try writer.read { db in
             let latestId = db.lastInsertedRowID
             let projectOne = try Project.fetchOne(
@@ -43,11 +42,13 @@ final class DatabaseTest: XCTestCase {
             XCTAssertEqual(project.id, Optional(1))
             XCTAssertEqual(project.name, projectOne.name)
             XCTAssertEqual(project.completed, projectOne.completed)
-            XCTAssertEqual(project.createDate, projectOne.createDate)
-            XCTAssertEqual(project.updateDate, projectOne.updateDate)
-    }
-        
-        
+            // have to compare dates with a specific granularity because the data accuracy isn't guaranteed
+            // it's possible to get the current with Date() and save it in the database, however the value from Date() might end up
+            // different when you retrieve it from the database due to accuracy lost
+            // more info here: https://github.com/groue/GRDB.swift/issues/492
+            XCTAssertTrue(Calendar.current.isDate(project.createDate, equalTo: projectOne.createDate, toGranularity: Calendar.Component.second))
+            XCTAssertTrue(Calendar.current.isDate(project.updateDate, equalTo: projectOne.updateDate, toGranularity: Calendar.Component.second))
+        }
     }
     
     func testPerformanceExample() throws {
