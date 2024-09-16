@@ -19,7 +19,7 @@ struct ProjectsView: View {
                 }
                 .navigationDestination(for: Project.self) { project in
                     VStack {
-                        NewProjectView(projectsNavigation: $projects)
+                        ProjectView(projectsNavigation: $projects)
                     }
                 }
                 .accessibilityIdentifier("AddNewProjectButton")

@@ -69,3 +69,8 @@
     - https://www.hackingwithswift.com/quick-start/swiftui/how-to-show-multiple-alerts-in-a-single-view
 - I tried to have two different alerts that I thought modified the buttons they were attached to
     but swiftui only displayed the first defined alert(attached to the save button) and ignored the second one(the one on the back button)
+
+### Dates
+- have to compare dates with a specific granularity because the data accuracy isn't guaranteed
+- it's possible to get the current with Date() and save it in the database, however the value from Date() might end up different when you retrieve it from the database due to accuracy lost
+- more info here: https://github.com/groue/GRDB.swift/issues/492

@@ -9,6 +9,7 @@ import Foundation
 import GRDB
 import os.log
 
+/// docs on implementing this struct https://github.com/groue/GRDB.swift/blob/master/Documentation/DemoApps/GRDBDemoiOS/GRDBDemoiOS/AppDatabase.swift
 struct AppDatabase {
     private let dbWriter: any DatabaseWriter
     

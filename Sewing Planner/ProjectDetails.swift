@@ -1,14 +1,13 @@
 //
-//  ProjectView.swift
+//  ProjectDetails.swift
 //  Sewing Planner
 //
-//  Created by Art on 7/9/24.
+//  Created by Art on 9/12/24.
 //
 
-import GRDB
 import SwiftUI
 
-struct NewProjectView: View {
+struct ProjectDetails: View {
     // used for dismissing a view(basically the back button)
     @Environment(\.dismiss) private var dismiss
     @Environment(\.appDatabase) private var appDatabase
@@ -36,12 +35,12 @@ struct NewProjectView: View {
     private var isNewProjectEmpty: Bool {
         project.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && projectSteps.isEmpty
     }
-    
     var body: some View {
         VStack {
+            ProjectName(project: $project)
             VStack {
-                ProjectName(project: $project)
                 ProjectStepsView(projectSteps: self.$projectSteps)
+                
                 if isAddingInstruction {
                     HStack {
                         TextField("write your instruction", text: $newStep).onSubmit {
@@ -143,18 +142,10 @@ struct NewProjectView: View {
                         }
                     }
                 }
-        }
+        }.background(Color.white).border(.red, width: 4)
     }
 }
 
-struct BackButton: View {
-    let buttonAction: () -> Void
-    var body: some View {
-        Button(action: buttonAction) {
-            HStack(alignment: VerticalAlignment.center) {
-                Image(systemName: "arrowshape.backward.fill")
-                Text("Back")
-            }
-        }
-    }
-}
+//#Preview {
+//    ProjectDetails()
+//}

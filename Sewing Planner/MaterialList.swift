@@ -11,7 +11,7 @@ import GRDB
 struct MaterialRecord: Codable, EncodableRecord, FetchableRecord, MutablePersistableRecord, TableRecord {
     var id: Int64?
     // using a default which will be updated before the material is stored
-    var projectId: Int64 = 0
+    var projectId: Int64?
     var text: String = ""
     var link: URL?
     var completed: Bool
