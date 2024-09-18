@@ -6,19 +6,22 @@
 //
 
 import SwiftUI
+import AppKit
 
 struct SketchData: Identifiable {
     var id: Int64?
     var projectId: Int64
     var name: String
     var path: URL
+    var image: NSImage?
     var createDate: Date
     var updateDate: Date
     
-    init(name: String, path: URL) {
+    init(name: String, path: URL, image: NSImage? = nil) {
         projectId = 0
         self.name = name
         self.path = path
+        self.image = image
         let now = Date()
         createDate = now
         updateDate = now
@@ -66,6 +69,23 @@ struct ImageSketchesView: View {
                     let images: [SketchData] = files.map { file in
                         let name = file.lastPathComponent
                         let path = file
+                        
+                        // need this to access the file content
+                        let hasAccess = file.startAccessingSecurityScopedResource()
+                        if !hasAccess {
+                            // must relinquish access once it isn't needed
+                            // hence needing a call at every return point
+                            file.stopAccessingSecurityScopedResource()
+                            return SketchData(name: name, path: path)
+                        }
+                        
+                        let data = try! Data(contentsOf: path)
+                        if let img = NSImage(data: data) {
+                            file.stopAccessingSecurityScopedResource()
+                            return SketchData(name: name, path: path, image: img)
+                        }
+                        
+                        file.stopAccessingSecurityScopedResource()
                         return SketchData(name: name, path: path)
                     }
                     print(images)
@@ -78,12 +98,32 @@ struct ImageSketchesView: View {
             }
             List {
                 ForEach($projectImages, id: \.self.path) { $image in
-                    Text(image.name)
+                    if let img = image.image {
+                        Image(nsImage: img)
+                            .resizable()
+                            .scaledToFit()
+                        Text(image.name)
+                    } else {
+                        // TODO: put a placeholder image if image displaying or loading fails
+                        Text(image.name)
+                    }
                 }
             }
-        }.frame(width: .infinity, height: .infinity, alignment: .top).border(Color.green)
+        }.border(Color.green)
     }
 }
+
+//var body: some View {
+//    VStack(alignment: .center) {
+//        PhotosPicker("Select image", selection: $pickerItem, matching: .images)
+//            .onChange(of: pickerItem) {
+//                Task {
+//                    selectedImage = try await pickerItem?.loadTransferable(type: Image.self)
+//                }
+//            }
+//        selectedImage?.resizable().scaledToFit()
+//    }
+//}
 
 #Preview {
     ImageSketchesView()
