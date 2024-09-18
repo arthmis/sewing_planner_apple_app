@@ -96,22 +96,32 @@ struct ImageSketchesView: View {
                     print(error)
                 }
             }
-            List {
-                ForEach($projectImages, id: \.self.path) { $image in
-                    if let img = image.image {
-                        Image(nsImage: img)
-                            .resizable()
-                            .interpolation(.high)
-                            .aspectRatio(contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
-                            .frame(width: 150, height: 150, alignment: .center)
-                        Text(image.name)
-                    } else {
-                        // TODO: put a placeholder image if image displaying or loading fails
-                        Text(image.name)
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 150))]) {
+                    ForEach($projectImages, id: \.self.path) { $image in
+                        if let img = image.image {
+                            VStack {
+                                Image(nsImage: img)
+                                    .resizable()
+                                    .interpolation(.high)
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 120, height: 120, alignment: .center)
+                                Text(image.name)
+                            }
+                        } else {
+                            // TODO: put a placeholder image if image displaying or loading fails
+                            Text(image.name)
+                        }
                     }
                 }
             }
-        }.border(Color.green)
+        }
+        .frame(
+            maxWidth: .infinity,
+            maxHeight: .infinity,
+            alignment: .topLeading
+        )
+        .border(Color.green)
     }
 }
 
