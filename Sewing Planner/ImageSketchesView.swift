@@ -101,7 +101,9 @@ struct ImageSketchesView: View {
                     if let img = image.image {
                         Image(nsImage: img)
                             .resizable()
-                            .scaledToFit()
+                            .interpolation(.high)
+                            .aspectRatio(contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
+                            .frame(width: 150, height: 150, alignment: .center)
                         Text(image.name)
                     } else {
                         // TODO: put a placeholder image if image displaying or loading fails
