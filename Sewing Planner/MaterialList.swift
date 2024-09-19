@@ -17,7 +17,7 @@ struct MaterialRecord: Codable, EncodableRecord, FetchableRecord, MutablePersist
     var completed: Bool
     var createDate: Date
     var updateDate: Date
-    static let databaseTableName = "projectMaterials"
+    static let databaseTableName = "projectMaterial"
     
     mutating func didInsert(_ inserted: InsertionSuccess) {
         id = inserted.rowID

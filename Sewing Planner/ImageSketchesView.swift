@@ -8,7 +8,23 @@
 import SwiftUI
 import AppKit
 
-struct SketchData: Identifiable {
+struct ProjectImage: Identifiable {
+    var id: Int64?
+    var projectId: Int64
+    var filePath: URL
+    var createDate: Date
+    var updateDate: Date
+    
+    init(name: String, path: URL, image: NSImage? = nil) {
+        projectId = 0
+        self.filePath = path
+        let now = Date()
+        createDate = now
+        updateDate = now
+    }
+}
+
+struct ProjectImageData: Identifiable {
     var id: Int64?
     var projectId: Int64
     var name: String
@@ -28,8 +44,8 @@ struct SketchData: Identifiable {
     }
 }
 
-extension SketchData: Hashable {
-    static func == (lhs: SketchData, rhs: SketchData) -> Bool {
+extension ProjectImageData: Hashable {
+    static func == (lhs: ProjectImageData, rhs: ProjectImageData) -> Bool {
         return lhs.path == rhs.path
     }
     
@@ -41,14 +57,14 @@ extension SketchData: Hashable {
 struct ImageSketchesView: View {
     @State var text = ""
     @State var showFileImporter = false
-    @State var projectImages: [SketchData] = []
+    @State var projectImages: [ProjectImageData] = []
     @State var selectedImageForDeletion: URL?
     @State var overlaySelectedImage = false
     @State var selectedImage: URL?
     
-    func deduplicateSelectedImages(images: [SketchData]) -> [SketchData] {
-        var result: [SketchData] = []
-        var uniqueData: Set<SketchData> = Set()
+    func deduplicateSelectedImages(images: [ProjectImageData]) -> [ProjectImageData] {
+        var result: [ProjectImageData] = []
+        var uniqueData: Set<ProjectImageData> = Set()
         
         for image in images {
             if !uniqueData.contains(image) {
@@ -60,9 +76,30 @@ struct ImageSketchesView: View {
         return result
     }
     
+    // save images in a ProjectPhotos directory
+    // within that directory save the project images in a folder(with the name of project id)
+    // consider using a uuid for a project id and use that as a folder name instead of the
+    // integer project id
+    // have an projectImages table in database
+    // schema looks like
+    // imageId : Int64
+    // projectId : Int64
+    // filePath : text
+    // createDate
+    // updateDate
     var body: some View {
         VStack(alignment: .center) {
             HStack {
+                Button("save images") {
+                    let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+                    let usersPhotosUrl = documentsURL.appendingPathComponent("ProjectPhotos")
+                    
+                    do {
+                        try FileManager.default.createDirectory(at: usersPhotosUrl, withIntermediateDirectories: true, attributes: nil)
+                    } catch {
+                        print("Error \(error)")
+                    }
+                }
                 Button {
                     showFileImporter = true
                 } label: {
@@ -70,7 +107,7 @@ struct ImageSketchesView: View {
                 }.fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.jpeg, .png, .webP, .heic, .heif], allowsMultipleSelection: true) { result in
                     switch result {
                     case .success(let files):
-                        let images: [SketchData] = files.map { file in
+                        let images: [ProjectImageData] = files.map { file in
                             let name = file.lastPathComponent
                             let path = file
                             
@@ -80,17 +117,17 @@ struct ImageSketchesView: View {
                                 // must relinquish access once it isn't needed
                                 // hence needing a call at every return point
                                 file.stopAccessingSecurityScopedResource()
-                                return SketchData(name: name, path: path)
+                                return ProjectImageData(name: name, path: path)
                             }
                             
                             let data = try! Data(contentsOf: path)
                             if let img = NSImage(data: data) {
                                 file.stopAccessingSecurityScopedResource()
-                                return SketchData(name: name, path: path, image: img)
+                                return ProjectImageData(name: name, path: path, image: img)
                             }
                             
                             file.stopAccessingSecurityScopedResource()
-                            return SketchData(name: name, path: path)
+                            return ProjectImageData(name: name, path: path)
                         }
                         print(images)
                         projectImages += images
