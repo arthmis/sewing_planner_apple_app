@@ -42,6 +42,8 @@ struct ImageSketchesView: View {
     @State var text = ""
     @State var showFileImporter = false
     @State var projectImages: [SketchData] = []
+    @State var selectedImageForDeletion: URL?
+    @State var overlaySelectedImage = false
     @State var selectedImage: URL?
     
     func deduplicateSelectedImages(images: [SketchData]) -> [SketchData] {
@@ -61,7 +63,6 @@ struct ImageSketchesView: View {
     var body: some View {
         VStack(alignment: .center) {
             HStack {
-                
                 Button {
                     showFileImporter = true
                 } label: {
@@ -99,15 +100,15 @@ struct ImageSketchesView: View {
                         print(error)
                     }
                 }
-                if let imagePath = selectedImage {
+                if let imagePath = selectedImageForDeletion {
                     HStack(alignment: .center) {
                         Button("Cancel") {
-                            selectedImage = nil
+                            selectedImageForDeletion = nil
                         }
                         Spacer()
                         Button("Delete") {
-                            self.projectImages = self.projectImages.filter { $0.path != selectedImage!}
-                            selectedImage = nil
+                            self.projectImages = self.projectImages.filter { $0.path != imagePath}
+                            selectedImageForDeletion = nil
                         }
                     }
                 }
@@ -116,7 +117,7 @@ struct ImageSketchesView: View {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 150))]) {
                     ForEach($projectImages, id: \.self.path) { $image in
                         if let img = image.image {
-                            if image.path == selectedImage {
+                            if image.path == selectedImageForDeletion {
                                 VStack {
                                     Image(nsImage: img)
                                         .resizable()
@@ -134,14 +135,10 @@ struct ImageSketchesView: View {
                                         .frame(width: 120, height: 120, alignment: .center)
                                     Text(image.name)
                                 }.onTapGesture {
-                                    print("clicking image")
-                                    print("enlarging image now..")
-                                    print(image.path)
-                                    
-                                }.onLongPressGesture {
-                                    print("long clicking image")
-                                    print(image.path)
                                     selectedImage = image.path
+                                    overlaySelectedImage = true
+                                }.onLongPressGesture {
+                                    selectedImageForDeletion = image.path
                                 }
                             }
                         } else {
@@ -151,13 +148,40 @@ struct ImageSketchesView: View {
                     }
                 }
             }
+        }.overlay(alignment: .center) {
+            if overlaySelectedImage {
+                VStack {
+                    HStack(alignment: .firstTextBaseline) {
+                        Button {
+                            overlaySelectedImage = false
+                            selectedImage = nil
+                        } label: {
+                            Image(systemName: "xmark.circle")
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    if let imgPath = selectedImage {
+                        // TODO: figure out what to do if image doesn't exist, some default image
+                        Image(nsImage: projectImages.first(where: { $0.path == imgPath })?.image ?? NSImage(size: NSZeroSize))
+                            .resizable()
+                            .interpolation(.high)
+                            .scaledToFit()
+                    } else {
+                        // TODO: display a toast saying something went wrong and say try again
+                        //                    overlaySelectedImage = false
+                        Text("Something went wrong. Image could not be displayed")
+                    }
+                }
+                .padding(20)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                .background(.ultraThinMaterial)
+            }
         }
         .frame(
             maxWidth: .infinity,
             maxHeight: .infinity,
             alignment: .topLeading
         )
-        .border(Color.green)
     }
 }
 
