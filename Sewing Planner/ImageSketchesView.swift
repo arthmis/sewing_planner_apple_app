@@ -55,6 +55,7 @@ extension ProjectImageData: Hashable {
 }
 
 struct ImageSketchesView: View {
+    let projectId: Int64
     @State var text = ""
     @State var showFileImporter = false
     @State var projectImages: [ProjectImageData] = []
@@ -94,11 +95,40 @@ struct ImageSketchesView: View {
                     let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
                     let usersPhotosUrl = documentsURL.appendingPathComponent("ProjectPhotos")
                     
+                    // TODO: check if folder exists before creating it
                     do {
                         try FileManager.default.createDirectory(at: usersPhotosUrl, withIntermediateDirectories: true, attributes: nil)
                     } catch {
                         print("Error \(error)")
                     }
+                    
+                    let projectFolder = usersPhotosUrl.appendingPathComponent(String(projectId))
+                    do {
+                        try FileManager.default.createDirectory(at: projectFolder, withIntermediateDirectories: true, attributes: nil)
+                    } catch {
+                        print("Error \(error)")
+                    }
+                    
+                    for file in projectImages {
+                        let originalFileName = file.path.deletingPathExtension().lastPathComponent
+                        var fileName = projectFolder.appendingPathComponent(originalFileName)
+                        fileName.appendPathExtension(for: .png)
+                        let createFileSuccess = FileManager.default.createFile(atPath: fileName.path(), contents: nil)
+                        
+                        if createFileSuccess {
+                            let tiffRep = file.image?.tiffRepresentation
+                            let bitmap = NSBitmapImageRep(data: tiffRep!)!
+                            let data = bitmap.representation(using: .png, properties: [:])
+                            do {
+                                try data?.write(to: fileName, options: Data.WritingOptions.atomic)
+                            } catch {
+                                print("Error: \(error)")
+                            }
+                        } else {
+                            
+                        }
+                    }
+                    
                 }
                 Button {
                     showFileImporter = true
@@ -234,6 +264,6 @@ struct ImageSketchesView: View {
 //    }
 //}
 
-#Preview {
-    ImageSketchesView()
-}
+//#Preview {
+//    ImageSketchesView()
+//}
