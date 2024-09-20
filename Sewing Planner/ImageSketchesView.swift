@@ -77,58 +77,11 @@ struct ImageSketchesView: View {
         return result
     }
     
-    // save images in a ProjectPhotos directory
-    // within that directory save the project images in a folder(with the name of project id)
-    // consider using a uuid for a project id and use that as a folder name instead of the
-    // integer project id
-    // have an projectImages table in database
-    // schema looks like
-    // imageId : Int64
-    // projectId : Int64
-    // filePath : text
-    // createDate
-    // updateDate
     var body: some View {
         VStack(alignment: .center) {
             HStack {
                 Button("save images") {
-                    let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-                    let usersPhotosUrl = documentsURL.appendingPathComponent("ProjectPhotos")
-                    
-                    // TODO: check if folder exists before creating it
-                    do {
-                        try FileManager.default.createDirectory(at: usersPhotosUrl, withIntermediateDirectories: true, attributes: nil)
-                    } catch {
-                        print("Error \(error)")
-                    }
-                    
-                    let projectFolder = usersPhotosUrl.appendingPathComponent(String(projectId))
-                    do {
-                        try FileManager.default.createDirectory(at: projectFolder, withIntermediateDirectories: true, attributes: nil)
-                    } catch {
-                        print("Error \(error)")
-                    }
-                    
-                    for file in projectImages {
-                        let originalFileName = file.path.deletingPathExtension().lastPathComponent
-                        var fileName = projectFolder.appendingPathComponent(originalFileName)
-                        fileName.appendPathExtension(for: .png)
-                        let createFileSuccess = FileManager.default.createFile(atPath: fileName.path(), contents: nil)
-                        
-                        if createFileSuccess {
-                            let tiffRep = file.image?.tiffRepresentation
-                            let bitmap = NSBitmapImageRep(data: tiffRep!)!
-                            let data = bitmap.representation(using: .png, properties: [:])
-                            do {
-                                try data?.write(to: fileName, options: Data.WritingOptions.atomic)
-                            } catch {
-                                print("Error: \(error)")
-                            }
-                        } else {
-                            
-                        }
-                    }
-                    
+                    try! AppFiles().saveProjectImages(projectId: projectId, images: projectImages)
                 }
                 Button {
                     showFileImporter = true
