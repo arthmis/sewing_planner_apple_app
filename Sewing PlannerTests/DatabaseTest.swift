@@ -32,7 +32,8 @@ final class DatabaseTest: XCTestCase {
         var project = Project(id: nil, name: "Project", completed: false, createDate: now, updateDate: now)
         var material = MaterialRecord(material: "test 1", link: nil)
         var steps = ProjectStep(text: "step 1", isComplete: false, isEditing: false)
-        let projectId = try db.saveProject(project: &project, projectSteps: [], materialData: [material])
+        var projectImages: [ProjectImage] = []
+        let projectId = try db.saveProject(project: &project, projectSteps: [], materialData: [material], projectImages: &projectImages)
         
         let writer = db.getWriter()
         try writer.read { db in

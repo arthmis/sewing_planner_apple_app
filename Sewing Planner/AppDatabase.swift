@@ -36,7 +36,7 @@ extension AppDatabase {
         return dbWriter
     }
     
-    func saveProject(project: inout Project, projectSteps: [ProjectStep], materialData: [MaterialRecord]) throws -> Int64 {
+    func saveProject(project: inout Project, projectSteps: [ProjectStep], materialData: [MaterialRecord], projectImages: inout [ProjectImage]) throws -> Int64 {
         try dbWriter.write { db in
             
             // save project
@@ -44,7 +44,7 @@ extension AppDatabase {
             project.createDate = now
             project.updateDate = now
             try project.insert(db)
-
+            
             // save project steps
             for var step in projectSteps {
                 step.data.projectId = project.id!
@@ -59,6 +59,18 @@ extension AppDatabase {
                 material.createDate = now
                 material.updateDate = now
                 try material.save(db)
+            }
+            
+            for i in 0..<projectImages.count {
+                let projectPhotosFolder = AppFiles().getProjectPhotoDirectoryPath(projectId: project.id!)
+                print(projectPhotosFolder)
+                let originalFileName = projectImages[i].path.deletingPathExtension().lastPathComponent
+                let newFilePath = projectPhotosFolder.appendingPathComponent(originalFileName).appendingPathExtension(for: .png)
+                
+                var record = ProjectImageRecord(projectId: project.id!, filePath: newFilePath, createDate: now, updateDate: now)
+                try record.save(db)
+                projectImages[i].record = record
+                projectImages[i].path = newFilePath
             }
         }
         
@@ -143,7 +155,7 @@ extension AppDatabase {
             
             
             // open or create database
-//            let databaseUrl  = directoryUrl.appendingPathComponent("db.sqlite")
+            //            let databaseUrl  = directoryUrl.appendingPathComponent("db.sqlite")
             let databaseUrl  = directoryUrl.appendingPathComponent(name).appendingPathExtension("sqlite")
             NSLog("Database stored at \(databaseUrl.path)")
             let dbQueue = try DatabaseQueue(path: databaseUrl.path)

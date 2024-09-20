@@ -21,7 +21,7 @@ struct ProjectView: View {
     @State var doesProjectHaveName = false
     @State var showAlertIfProjectNotSaved = false
     @Binding var projectsNavigation: [Project]
-    @State var projectImages: [ProjectImageData] = []
+    @State var projectImages: [ProjectImage] = []
     @State var materials: [MaterialRecord] = []
     
     private var isProjectValid: Bool {
@@ -39,8 +39,8 @@ struct ProjectView: View {
         }
         
         do {
-            let projectId = try appDatabase.saveProject(project: &project, projectSteps: projectSteps, materialData: materials)
-//            try AppFiles().saveProjectImages(projectId: projectId, images: projectImages)
+            let projectId = try appDatabase.saveProject(project: &project, projectSteps: projectSteps, materialData: materials, projectImages: &projectImages)
+            try AppFiles().saveProjectImages(projectId: projectId, images: projectImages)
         } catch {
             print(project)
             print(materials)

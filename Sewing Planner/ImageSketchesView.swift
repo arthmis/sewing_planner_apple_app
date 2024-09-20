@@ -7,45 +7,39 @@
 
 import SwiftUI
 import AppKit
+import GRDB
 
-struct ProjectImage: Identifiable {
+struct ProjectImageRecord: Identifiable, Codable, EncodableRecord, FetchableRecord, MutablePersistableRecord, TableRecord {
     var id: Int64?
     var projectId: Int64
     var filePath: URL
     var createDate: Date
     var updateDate: Date
-    
-    init(name: String, path: URL, image: NSImage? = nil) {
-        projectId = 0
-        self.filePath = path
-        let now = Date()
-        createDate = now
-        updateDate = now
-    }
+    static let databaseTableName = "projectImage"
 }
 
-struct ProjectImageData: Identifiable {
-    var id: Int64?
-    var projectId: Int64
-    var name: String
+struct ProjectImage {
+    var record: ProjectImageRecord?
     var path: URL
     var image: NSImage?
-    var createDate: Date
-    var updateDate: Date
+    var name: String {
+        path.deletingPathExtension().lastPathComponent
+    }
     
-    init(name: String, path: URL, image: NSImage? = nil) {
-        projectId = 0
-        self.name = name
+    init(path: URL, image: NSImage? = nil) {
         self.path = path
         self.image = image
-        let now = Date()
-        createDate = now
-        updateDate = now
+    }
+    
+    init(record: ProjectImageRecord, path: URL, image: NSImage? = nil) {
+        self.record = record
+        self.image = image
+        self.path = path
     }
 }
 
-extension ProjectImageData: Hashable {
-    static func == (lhs: ProjectImageData, rhs: ProjectImageData) -> Bool {
+extension ProjectImage: Hashable {
+    static func == (lhs: ProjectImage, rhs: ProjectImage) -> Bool {
         return lhs.path == rhs.path
     }
     
@@ -57,14 +51,15 @@ extension ProjectImageData: Hashable {
 struct ImageSketchesView: View {
     let projectId: Int64
     @State var showFileImporter = false
-    @Binding var projectImages: [ProjectImageData]
+    @Binding var projectImages: [ProjectImage]
+//    @Binding var newImages: [ProjectImage]
     @State var selectedImageForDeletion: URL?
     @State var overlaySelectedImage = false
     @State var selectedImage: URL?
     
-    func deduplicateSelectedImages(images: [ProjectImageData]) -> [ProjectImageData] {
-        var result: [ProjectImageData] = []
-        var uniqueData: Set<ProjectImageData> = Set()
+    func deduplicateSelectedImages(images: [ProjectImage]) -> [ProjectImage] {
+        var result: [ProjectImage] = []
+        var uniqueData: Set<ProjectImage> = Set()
         
         for image in images {
             if !uniqueData.contains(image) {
@@ -89,7 +84,7 @@ struct ImageSketchesView: View {
                 }.fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.jpeg, .png, .webP, .heic, .heif], allowsMultipleSelection: true) { result in
                     switch result {
                     case .success(let files):
-                        let images: [ProjectImageData] = files.map { file in
+                        let images: [ProjectImage] = files.map { file in
                             let name = file.lastPathComponent
                             let path = file
                             
@@ -99,17 +94,19 @@ struct ImageSketchesView: View {
                                 // must relinquish access once it isn't needed
                                 // hence needing a call at every return point
                                 file.stopAccessingSecurityScopedResource()
-                                return ProjectImageData(name: name, path: path)
+                                return ProjectImage(path: path)
                             }
                             
                             let data = try! Data(contentsOf: path)
                             if let img = NSImage(data: data) {
                                 file.stopAccessingSecurityScopedResource()
-                                return ProjectImageData(name: name, path: path, image: img)
+//                                return ProjectImage(name: name, path: path, image: img)
+                                return ProjectImage(path: path, image: img)
                             }
                             
                             file.stopAccessingSecurityScopedResource()
-                            return ProjectImageData(name: name, path: path)
+//                            return ProjectImage(name: name, path: path)
+                            return ProjectImage(path: path)
                         }
                         print(images)
                         projectImages += images
