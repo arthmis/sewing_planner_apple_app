@@ -35,7 +35,8 @@ extension AppDatabase {
     func getWriter() -> any DatabaseWriter {
         return dbWriter
     }
-    func saveProject(project: inout Project, projectSteps: [ProjectStep], materialData: [MaterialRecord]) throws {
+    
+    func saveProject(project: inout Project, projectSteps: [ProjectStep], materialData: [MaterialRecord]) throws -> Int64 {
         try dbWriter.write { db in
             
             // save project
@@ -44,14 +45,6 @@ extension AppDatabase {
             project.updateDate = now
             try project.insert(db)
 
-            // save materials
-            for var material in materialData {
-                material.projectId = project.id!
-                material.createDate = now
-                material.updateDate = now
-                try material.save(db)
-            }
-            
             // save project steps
             for var step in projectSteps {
                 step.data.projectId = project.id!
@@ -59,7 +52,17 @@ extension AppDatabase {
                 step.data.updateDate = now
                 try step.data.save(db)
             }
+            
+            // save materials
+            for var material in materialData {
+                material.projectId = project.id!
+                material.createDate = now
+                material.updateDate = now
+                try material.save(db)
+            }
         }
+        
+        return project.id!
     }
 }
 

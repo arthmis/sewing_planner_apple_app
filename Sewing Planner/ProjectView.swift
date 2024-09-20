@@ -15,19 +15,14 @@ struct ProjectView: View {
     @State var clicked = true
     var projectId: Int64 = 0
     @State var project = Project()
-    @State var name = ""
-    @State var newStep = ""
-    @State var projectSteps: [ProjectStep] = [ProjectStep]()
+    @State var projectSteps: [ProjectStep] = []
     @State var showAddTextboxPopup = false
     @State var isAddingInstruction = false
     @State var doesProjectHaveName = false
     @State var showAlertIfProjectNotSaved = false
     @Binding var projectsNavigation: [Project]
+    @State var projectImages: [ProjectImageData] = []
     @State var materials: [MaterialRecord] = []
-    
-    private var isNewStepValid: Bool {
-        newStep.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-    }
     
     private var isProjectValid: Bool {
         !project.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -37,12 +32,78 @@ struct ProjectView: View {
         project.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && projectSteps.isEmpty
     }
     
+    func saveProject() throws {
+        guard isProjectValid else {
+            showAlertIfProjectNotSaved = true
+            return
+        }
+        
+        do {
+            print(project)
+            print(projectSteps)
+            print(materials)
+            let projectId = try appDatabase.saveProject(project: &project, projectSteps: projectSteps, materialData: materials)
+//            try AppFiles().saveProjectImages(projectId: projectId, images: projectImages)
+        } catch {
+            print(project)
+            print(materials)
+            print(projectSteps)
+            fatalError(
+                "error adding steps and materials for project id: \(project.id)\n\n\(error)")
+        }
+        projectsNavigation.removeLast()
+    }
+    
     var body: some View {
         VStack {
             HSplitView {
-                ProjectDetails(projectsNavigation: $projectsNavigation)
-                ImageSketchesView()
+                ProjectDetails(project: $project, projectSteps: $projectSteps, materials: $materials, projectsNavigation: $projectsNavigation)
+                ImageSketchesView(projectId: projectId, projectImages: $projectImages)
             }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top).border(Color.green)
+            Button("Save") {
+                try! saveProject()
+            }.accessibilityIdentifier("SaveButton")
+                .navigationBarBackButtonHidden(true).toolbar {
+                    ToolbarItem(placement: .navigation) {
+                        BackButton {
+                            if isNewProjectEmpty {
+                                dismiss()
+                                return
+                            }
+                            
+                            showAlertIfProjectNotSaved = true
+                        }
+                        .accessibilityIdentifier("ProjectViewCustomBackButton")
+                        .alert("Unsaved Changes", isPresented: $showAlertIfProjectNotSaved) {
+                            VStack {
+                                if !isProjectValid {
+                                    TextField("Enter a project name", text: $project.name).accessibilityIdentifier(
+                                        "ProjectNameTextFieldInAlertUnsavedProject")
+                                    
+                                }
+                                Button(role: .destructive) {
+                                    // no need to do anything as changes haven't been saved yet
+                                    dismiss()
+                                } label: {
+                                    Text("Discard")
+                                }
+                                Button("Save") {
+                                    do {
+                                        try saveProject()
+                                    } catch {
+                                        fatalError("error: \(error)")
+                                    }
+                                    
+                                    dismiss()
+                                }
+                                .accessibilityIdentifier("SaveButtonInAlertUnsavedProject")
+                                .keyboardShortcut( /*@START_MENU_TOKEN@*/.defaultAction /*@END_MENU_TOKEN@*/)
+                            }
+                        } message: {
+                            Text("Do you want to save this project?")
+                        }
+                    }
+                }
         }.frame(maxWidth: .infinity, maxHeight: .infinity).background(Color.white).border(Color.blue)
     }
 }

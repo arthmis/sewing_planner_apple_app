@@ -56,9 +56,8 @@ extension ProjectImageData: Hashable {
 
 struct ImageSketchesView: View {
     let projectId: Int64
-    @State var text = ""
     @State var showFileImporter = false
-    @State var projectImages: [ProjectImageData] = []
+    @Binding var projectImages: [ProjectImageData]
     @State var selectedImageForDeletion: URL?
     @State var overlaySelectedImage = false
     @State var selectedImage: URL?
