@@ -73,7 +73,7 @@ extension AppDatabase {
         migrator.registerMigration("projects") { db in
             try db.create(table: "project", options: [.ifNotExists]) { table in
                 table.autoIncrementedPrimaryKey("id")
-                table.column("name", .text).notNull().indexed()
+                table.column("name", .text).notNull().unique().indexed()
                 table.column("completed", .boolean).notNull().indexed()
                 table.column("createDate", .datetime).notNull()
                 table.column("updateDate", .datetime).notNull()
@@ -129,9 +129,9 @@ extension AppDatabase {
 }
 
 extension AppDatabase {
-    static let db = makeDb()
+    static let db = makeDb(name: "db")
     
-    private static func makeDb() -> AppDatabase {
+    static func makeDb(name: String) -> AppDatabase {
         do {
             // create the "Application Support/Database" directory if needed
             let fileManager = FileManager.default
@@ -143,7 +143,8 @@ extension AppDatabase {
             
             
             // open or create database
-            let databaseUrl  = directoryUrl.appendingPathComponent("db.sqlite")
+//            let databaseUrl  = directoryUrl.appendingPathComponent("db.sqlite")
+            let databaseUrl  = directoryUrl.appendingPathComponent(name).appendingPathExtension("sqlite")
             NSLog("Database stored at \(databaseUrl.path)")
             let dbQueue = try DatabaseQueue(path: databaseUrl.path)
             
@@ -151,6 +152,23 @@ extension AppDatabase {
             let appDatabase = try AppDatabase(dbQueue)
             
             return appDatabase
+        } catch {
+            fatalError("Some error happened: \(error)")
+        }
+    }
+    
+    static func deleteDb(name: String) {
+        do {
+            // get db directory
+            let fileManager = FileManager.default
+            let appSupportUrl = try fileManager.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+            let directoryUrl = appSupportUrl.appendingPathComponent("Database", isDirectory: true)
+            
+            // get db file name
+            let databaseUrl  = directoryUrl.appendingPathComponent(name).appendingPathExtension("sqlite")
+            NSLog("Database stored at \(databaseUrl.path)")
+            
+            try! fileManager.removeItem(atPath: databaseUrl.path)
         } catch {
             fatalError("Some error happened: \(error)")
         }

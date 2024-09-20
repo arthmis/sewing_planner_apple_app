@@ -25,19 +25,21 @@ final class DatabaseTest: XCTestCase {
         // Any test you write for XCTest can be annotated as throws and async.
         // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
         // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-        let db = AppDatabase.empty()
-        
+        let dbName = "TestDb"
+        let db = AppDatabase.makeDb(name: dbName)
+
         let now = Date()
         var project = Project(id: nil, name: "Project", completed: false, createDate: now, updateDate: now)
-        try db.saveProject(project: &project, projectSteps: [], materialData: [])
+        var material = MaterialRecord(material: "test 1", link: nil)
+        var steps = ProjectStep(text: "step 1", isComplete: false, isEditing: false)
+        let projectId = try db.saveProject(project: &project, projectSteps: [], materialData: [material])
         
         let writer = db.getWriter()
         try writer.read { db in
-            let latestId = db.lastInsertedRowID
             let projectOne = try Project.fetchOne(
                 db,
                 sql: "SELECT * FROM project WHERE id = ?",
-                arguments: [latestId])!
+                arguments: [projectId])!
             
             XCTAssertEqual(project.id, Optional(1))
             XCTAssertEqual(project.name, projectOne.name)
@@ -48,7 +50,20 @@ final class DatabaseTest: XCTestCase {
             // more info here: https://github.com/groue/GRDB.swift/issues/492
             XCTAssertTrue(Calendar.current.isDate(project.createDate, equalTo: projectOne.createDate, toGranularity: Calendar.Component.second))
             XCTAssertTrue(Calendar.current.isDate(project.updateDate, equalTo: projectOne.updateDate, toGranularity: Calendar.Component.second))
+            
+            let materialOne = try MaterialRecord.fetchOne(
+                db,
+                sql: "SELECT * FROM projectMaterial WHERE id = ?",
+                arguments: [1])!
+            
+            XCTAssertEqual(materialOne.id, Optional(1))
+            XCTAssertEqual(materialOne.text, material.text)
+            XCTAssertEqual(materialOne.completed, material.completed)
+            XCTAssertTrue(Calendar.current.isDate(materialOne.createDate, equalTo: material.createDate, toGranularity: Calendar.Component.second))
+            XCTAssertTrue(Calendar.current.isDate(materialOne.updateDate, equalTo: material.updateDate, toGranularity: Calendar.Component.second))
         }
+        
+        AppDatabase.deleteDb(name: dbName)
     }
     
     func testPerformanceExample() throws {

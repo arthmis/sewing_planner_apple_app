@@ -39,9 +39,6 @@ struct ProjectView: View {
         }
         
         do {
-            print(project)
-            print(projectSteps)
-            print(materials)
             let projectId = try appDatabase.saveProject(project: &project, projectSteps: projectSteps, materialData: materials)
 //            try AppFiles().saveProjectImages(projectId: projectId, images: projectImages)
         } catch {
