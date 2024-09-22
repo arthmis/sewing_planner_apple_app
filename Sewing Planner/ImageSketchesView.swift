@@ -52,7 +52,7 @@ struct ImageSketchesView: View {
     let projectId: Int64
     @State var showFileImporter = false
     @Binding var projectImages: [ProjectImage]
-//    @Binding var newImages: [ProjectImage]
+    @Binding var deletedImages: [ProjectImage]
     @State var selectedImageForDeletion: URL?
     @State var overlaySelectedImage = false
     @State var selectedImage: URL?
@@ -100,12 +100,12 @@ struct ImageSketchesView: View {
                             let data = try! Data(contentsOf: path)
                             if let img = NSImage(data: data) {
                                 file.stopAccessingSecurityScopedResource()
-//                                return ProjectImage(name: name, path: path, image: img)
+                                //                                return ProjectImage(name: name, path: path, image: img)
                                 return ProjectImage(path: path, image: img)
                             }
                             
                             file.stopAccessingSecurityScopedResource()
-//                            return ProjectImage(name: name, path: path)
+                            //                            return ProjectImage(name: name, path: path)
                             return ProjectImage(path: path)
                         }
                         print(images)
@@ -123,7 +123,11 @@ struct ImageSketchesView: View {
                         }
                         Spacer()
                         Button("Delete") {
-                            self.projectImages = self.projectImages.filter { $0.path != imagePath}
+                            if let index = self.projectImages.firstIndex(where: {$0.path == imagePath}) {
+                                let image = self.projectImages.remove(at: index)
+                                self.deletedImages.append(image)
+                            }
+                            
                             selectedImageForDeletion = nil
                         }
                     }

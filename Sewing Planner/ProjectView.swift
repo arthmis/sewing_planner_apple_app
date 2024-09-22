@@ -22,6 +22,7 @@ struct ProjectView: View {
     @State var showAlertIfProjectNotSaved = false
     @Binding var projectsNavigation: [Project]
     @State var projectImages: [ProjectImage] = []
+    @State var deletedImages: [ProjectImage] = []
     @State var materials: [MaterialRecord] = []
     
     private var isProjectValid: Bool {
@@ -55,7 +56,7 @@ struct ProjectView: View {
         VStack {
             HSplitView {
                 ProjectDetails(project: $project, projectSteps: $projectSteps, materials: $materials, projectsNavigation: $projectsNavigation)
-                ImageSketchesView(projectId: projectId, projectImages: $projectImages)
+                ImageSketchesView(projectId: projectId, projectImages: $projectImages, deletedImages: $deletedImages)
             }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top).border(Color.green)
             Button("Save") {
                 try! saveProject()
