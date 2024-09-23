@@ -39,9 +39,14 @@ struct MaterialList: View {
     @State var newMaterial = ""
     @State var newLink = ""
     @Binding var materials: [MaterialRecord]
-    
+    @Binding var deletedMaterials: [MaterialRecord]
+
     func deleteMaterial(at offsets: IndexSet) {
-        self.materials.remove(atOffsets: offsets)
+        offsets.forEach { index in
+            let material = materials.remove(at: index)
+            deletedMaterials.append(material)
+            print(deletedMaterials)
+        }
     }
     
     var body: some View {

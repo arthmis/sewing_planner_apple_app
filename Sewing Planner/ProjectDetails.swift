@@ -18,6 +18,7 @@ struct ProjectDetails: View {
     @State var newStep = ""
     @Binding var projectSteps: [ProjectStep]
     @Binding var materials: [MaterialRecord]
+    @Binding var deletedMaterials: [MaterialRecord]
     @State var showAddTextboxPopup = false
     @State var isAddingInstruction = false
     @State var doesProjectHaveName = false
@@ -71,7 +72,7 @@ struct ProjectDetails: View {
                 
             }
             Divider()
-            MaterialList(materials: $materials)
+            MaterialList(materials: $materials, deletedMaterials: $deletedMaterials)
         }.background(Color.white).border(.red, width: 4)
     }
 }
