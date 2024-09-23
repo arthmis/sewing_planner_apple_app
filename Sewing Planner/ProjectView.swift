@@ -25,7 +25,8 @@ struct ProjectView: View {
     @State var deletedImages: [ProjectImage] = []
     @State var materials: [MaterialRecord] = []
     @State var deletedMaterials: [MaterialRecord] = []
-    
+    @State var deletedProjectSteps: [ProjectStep] = []
+
     private var isProjectValid: Bool {
         !project.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
@@ -56,7 +57,7 @@ struct ProjectView: View {
     var body: some View {
         VStack {
             HSplitView {
-                ProjectDetails(project: $project, projectSteps: $projectSteps, materials: $materials, deletedMaterials: $deletedMaterials, projectsNavigation: $projectsNavigation)
+                ProjectDetails(project: $project, projectSteps: $projectSteps, deletedProjectSteps: $deletedProjectSteps, materials: $materials, deletedMaterials: $deletedMaterials, projectsNavigation: $projectsNavigation)
                 ImageSketchesView(projectId: projectId, projectImages: $projectImages, deletedImages: $deletedImages)
             }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top).border(Color.green)
             Button("Save") {

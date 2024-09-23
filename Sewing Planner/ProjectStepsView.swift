@@ -16,11 +16,11 @@ struct ProjectStepData: Hashable, Identifiable, Codable, EncodableRecord, Fetcha
     var createDate: Date
     var updateDate: Date
     static let databaseTableName = "projectStep"
-
+    
     mutating func didInsert(_ inserted: InsertionSuccess) {
         id = inserted.rowID
     }
-
+    
     init(text: String, isComplete: Bool) {
         self.text = text
         self.completed = isComplete
@@ -42,15 +42,30 @@ struct ProjectStep: Hashable {
 
 struct ProjectStepsView: View {
     @Binding var projectSteps: [ProjectStep]
+    @Binding var deletedProjectSteps: [ProjectStep]
     @FocusState var isFocused: Bool
+    @State var isAddingInstruction = false
+    @State var newStep = ""
     
     func deleteStep(at offsets: IndexSet) {
-        self.projectSteps.remove(atOffsets: offsets)
+        offsets.forEach { index in
+            let step = projectSteps.remove(at: index)
+            deletedProjectSteps.append(step)
+        }
     }
+    private var isNewStepValid: Bool {
+        newStep.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+    
+    private func resetAddStep() {
+        isAddingInstruction = false
+        newStep = ""
+    }
+    
     
     var body: some View {
         List {
-            ForEach($projectSteps, id: \.self.data.id) { $step in
+            ForEach($projectSteps, id: \.self.data) { $step in
                 ProjectStepView(text: $step.data.text, isEditing: $step.isEditing, isComplete: $step.data.completed)
             }
             .onDelete(perform: deleteStep)
@@ -59,6 +74,40 @@ struct ProjectStepsView: View {
             }.accessibilityIdentifier("AllSteps")
             
         }
+        if isAddingInstruction {
+            HStack {
+                TextField("write your instruction", text: $newStep).onSubmit {
+                    // TODO: add a popup telling user that instruction can't be empty
+                    guard !isNewStepValid else { return }
+
+                    projectSteps.append(
+                        ProjectStep(text: newStep, isComplete: false, isEditing: false))
+                    
+                    resetAddStep()
+                }.textFieldStyle(.plain)
+                    .accessibilityIdentifier("NewStepTextField")
+                Button("Cancel") {
+                    resetAddStep()
+                }
+                Button("Add") {
+                    // add a popup telling user that instruction can't be empty
+                    // guard !newStep.trimmingCharacters(in: .whitespaces).isEmpty else { return }
+                    guard !isNewStepValid else { return }
+                    
+                    // think about what to do here for validation or something
+                    
+                    projectSteps.append(
+                        ProjectStep(text: newStep, isComplete: false, isEditing: false))
+                    
+                    resetAddStep()
+                }.accessibilityIdentifier("AddNewStepButton")
+            }
+        }
+        Button("New Step") {
+            isAddingInstruction = true
+        }.accessibilityIdentifier("NewStepButton")
+        
+        
     }
 }
 
