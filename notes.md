@@ -74,3 +74,8 @@
 - have to compare dates with a specific granularity because the data accuracy isn't guaranteed
 - it's possible to get the current with Date() and save it in the database, however the value from Date() might end up different when you retrieve it from the database due to accuracy lost
 - more info here: https://github.com/groue/GRDB.swift/issues/492
+
+### Fonts
+- roboto
+- montserrat
+- josefi

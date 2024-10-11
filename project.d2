@@ -1,0 +1,45 @@
+project: {
+    shape: sql_table
+
+    id: int {constraint: [primary_key; auto_incrementing]}
+    name: text
+    updateDate: datetime
+    createDate: datetime
+}
+
+section: {
+    shape: sql_table
+
+    id: int {constraint: [primary_key; auto_incrementing]}
+    projectId: int {constraint: foreign_key}
+    name: text
+    updateDate: datetime
+    createDate: datetime
+}
+
+project.id -> section.projectId
+
+sectionItem: {
+    shape: sql_table
+
+    id: int {constraint: [primary_key; auto_incrementing]}
+    sectionId: int {constraint: foreign_key}
+    text: string
+    isCompleted: bool
+    updateDate: datetime
+    createDate: datetime
+}
+
+section.id -> sectionItem.sectionId
+
+image: {
+    shape: sql_table
+
+    id: int {constraint: [primary_key: auto_incrementing]}
+    projectId: int {constraint: foreign_key}
+    filePath: text
+    createDate: datetime
+    updateDate: datetime
+}
+
+project.id -> image.projectId
