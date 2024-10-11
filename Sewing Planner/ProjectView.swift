@@ -12,6 +12,7 @@ struct ProjectView: View {
     // used for dismissing a view(basically the back button)
     @Environment(\.dismiss) private var dismiss
     @Environment(\.appDatabase) private var appDatabase
+    @StateObject var model = ProjectDetailData()
     @State var clicked = true
     var projectId: Int64 = 0
     @State var project = Project()
@@ -57,8 +58,9 @@ struct ProjectView: View {
     var body: some View {
         VStack {
             HSplitView {
-                ProjectDetails(project: $project, projectSteps: $projectSteps, deletedProjectSteps: $deletedProjectSteps, materials: $materials, deletedMaterials: $deletedMaterials, projectsNavigation: $projectsNavigation)
-                ImageSketchesView(projectId: projectId, projectImages: $projectImages, deletedImages: $deletedImages)
+//                ProjectDetails(project: $project, projectSteps: $projectSteps, deletedProjectSteps: $deletedProjectSteps, materials: $materials, deletedMaterials: $deletedMaterials, projectsNavigation: $projectsNavigation)
+                ProjectDetails(model: model, projectsNavigation: $projectsNavigation)
+//                ImageSketchesView(projectId: projectId, projectImages: $projectImages, deletedImages: $deletedImages)
             }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top).border(Color.green)
             Button("Save") {
                 try! saveProject()

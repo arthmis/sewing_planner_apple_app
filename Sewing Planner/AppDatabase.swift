@@ -117,6 +117,23 @@ extension AppDatabase {
                 table.column("createDate", .datetime).notNull()
                 table.column("updateDate", .datetime).notNull()
             }
+            
+            try db.create(table: "section", options: [.ifNotExists]) { table in
+                table.autoIncrementedPrimaryKey("id")
+                table.belongsTo("project").notNull()
+                table.column("name", .text).notNull().indexed()
+                table.column("createDate", .datetime).notNull()
+                table.column("updateDate", .datetime).notNull()
+            }
+            
+            try db.create(table: "sectionItem", options: [.ifNotExists]) { table in
+                table.autoIncrementedPrimaryKey("id")
+                table.belongsTo("section").notNull()
+                table.column("text", .text).notNull().indexed()
+                table.column("isComplete", .boolean).notNull().indexed()
+                table.column("createDate", .datetime).notNull()
+                table.column("updateDate", .datetime).notNull()
+            }
         }
         
 #if DEBUG

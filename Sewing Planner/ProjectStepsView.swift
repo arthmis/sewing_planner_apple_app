@@ -84,11 +84,13 @@ struct ProjectStepsView: View {
                         ProjectStep(text: newStep, isComplete: false, isEditing: false))
                     
                     resetAddStep()
-                }.textFieldStyle(.plain)
+                }
                     .accessibilityIdentifier("NewStepTextField")
+                    .textFieldStyle(PrimaryTextFieldStyle())
                 Button("Cancel") {
                     resetAddStep()
                 }
+                .buttonStyle(SecondaryButtonStyle())
                 Button("Add") {
                     // add a popup telling user that instruction can't be empty
                     // guard !newStep.trimmingCharacters(in: .whitespaces).isEmpty else { return }
@@ -100,12 +102,15 @@ struct ProjectStepsView: View {
                         ProjectStep(text: newStep, isComplete: false, isEditing: false))
                     
                     resetAddStep()
-                }.accessibilityIdentifier("AddNewStepButton")
+                }
+                .buttonStyle(PrimaryButtonStyle())
+                .accessibilityIdentifier("AddNewStepButton")
             }
         }
         Button("New Step") {
             isAddingInstruction = true
-        }.accessibilityIdentifier("NewStepButton")
+        }
+        .accessibilityIdentifier("NewStepButton")
         
         
     }
