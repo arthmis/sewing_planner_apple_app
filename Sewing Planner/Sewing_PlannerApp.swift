@@ -13,7 +13,6 @@ struct Sewing_PlannerApp: App {
   var body: some Scene {
     WindowGroup {
       ContentView().environment(\.appDatabase, .db)
-            .frame(minWidth: 650, maxWidth: .infinity, minHeight: 650,  maxHeight: .infinity)
     }.windowResizability(.contentSize)
   }
 }
