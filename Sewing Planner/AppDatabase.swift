@@ -36,45 +36,53 @@ extension AppDatabase {
         return dbWriter
     }
     
-    func saveProject(project: inout Project, projectSteps: [ProjectStep], materialData: [MaterialRecord], projectImages: inout [ProjectImage]) throws -> Int64 {
+//    func saveProject(project: inout Project, projectSteps: [ProjectStep], materialData: [MaterialRecord], projectImages: inout [ProjectImage]) throws -> Int64 {
+    func saveProject(model: ProjectDetailData) throws -> Int64 {
+        print(model)
+        print(model.project.data)
+        print(model.projectSections.sections[0].section)
+        print(model.projectSections.sections[0].items[0])
         try dbWriter.write { db in
             
             // save project
             let now = try db.transactionDate
-            project.createDate = now
-            project.updateDate = now
-            try project.insert(db)
+            model.project.data.createDate = now
+            model.project.data.updateDate = now
+            try model.project.data.insert(db)
+            let projectId = model.project.data.id!
             
-            // save project steps
-            for var step in projectSteps {
-                step.data.projectId = project.id!
-                step.data.createDate = now
-                step.data.updateDate = now
-                try step.data.save(db)
-            }
-            
-            // save materials
-            for var material in materialData {
-                material.projectId = project.id!
-                material.createDate = now
-                material.updateDate = now
-                try material.save(db)
-            }
-            
-            for i in 0..<projectImages.count {
-                let projectPhotosFolder = AppFiles().getProjectPhotoDirectoryPath(projectId: project.id!)
-                print(projectPhotosFolder)
-                let originalFileName = projectImages[i].path.deletingPathExtension().lastPathComponent
-                let newFilePath = projectPhotosFolder.appendingPathComponent(originalFileName).appendingPathExtension(for: .png)
+
+            for section in model.projectSections.sections {
+                section.section.createDate = now
+                section.section.updateDate = now
+                section.section.projectId = projectId
+                try section.section.insert(db)
+                let sectionId = section.section.id!
                 
-                var record = ProjectImageRecord(projectId: project.id!, filePath: newFilePath, createDate: now, updateDate: now)
-                try record.save(db)
-                projectImages[i].record = record
-                projectImages[i].path = newFilePath
+                for var sectionItem in section.items {
+                    sectionItem.createDate = now
+                    sectionItem.updateDate = now
+                    sectionItem.sectionId = sectionId
+                    try sectionItem.insert(db)
+                }
+
             }
+            
+//            for i in 0..<projectImages.count {
+//                let projectPhotosFolder = AppFiles().getProjectPhotoDirectoryPath(projectId: projectId)
+//                print(projectPhotosFolder)
+//                let originalFileName = projectImages[i].path.deletingPathExtension().lastPathComponent
+//                let newFilePath = projectPhotosFolder.appendingPathComponent(originalFileName).appendingPathExtension(for: .png)
+//                
+//                var record = ProjectImageRecord(projectId: project.id!, filePath: newFilePath, createDate: now, updateDate: now)
+//                try record.save(db)
+//                projectImages[i].record = record
+//                projectImages[i].path = newFilePath
+//            }
         }
         
-        return project.id!
+//        return project.id!
+        return 0
     }
 }
 

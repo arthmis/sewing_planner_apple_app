@@ -29,7 +29,7 @@ struct ProjectView: View {
     @State var deletedProjectSteps: [ProjectStep] = []
 
     private var isProjectValid: Bool {
-        !project.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        !model.project.data.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
     
     private var isNewProjectEmpty: Bool {
@@ -43,23 +43,21 @@ struct ProjectView: View {
         }
         
         do {
-            let projectId = try appDatabase.saveProject(project: &project, projectSteps: projectSteps, materialData: materials, projectImages: &projectImages)
-            try AppFiles().saveProjectImages(projectId: projectId, images: projectImages)
+//            let projectId = try appDatabase.saveProject(project: &project, projectSteps: projectSteps, materialData: materials, projectImages: &projectImages)
+            let projectId = try appDatabase.saveProject(model: model)
+//            try AppFiles().saveProjectImages(projectId: projectId, images: projectImages)
         } catch {
-            print(project)
-            print(materials)
-            print(projectSteps)
             fatalError(
-                "error adding steps and materials for project id: \(project.id)\n\n\(error)")
+                "error adding steps and materials for project id: \(model.project.data.id)\n\n\(error)")
         }
-        projectsNavigation.removeLast()
+//        projectsNavigation.removeLast()
     }
     
     var body: some View {
         VStack {
             HSplitView {
                 ProjectDetails(project: model.project, projectSections: model.projectSections, projectsNavigation: $projectsNavigation)
-//                ImageSketchesView(projectId: projectId, projectImages: $projectImages, deletedImages: $deletedImages)
+                ImageSketchesView(projectId: projectId, projectImages: $projectImages, deletedImages: $deletedImages)
             }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top).border(Color.green)
             Button("Save") {
                 try! saveProject()
