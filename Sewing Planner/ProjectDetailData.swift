@@ -56,7 +56,7 @@ struct SectionData {
 }
 
 class ProjectDetailData: ObservableObject {
-    @Published var project = Project()
+    var project = ProjectData()
     @Published var sectionData: [SectionData] = []
     @Published var projectSteps: [ProjectStep] = []
     @Published var deletedProjectSteps: [ProjectStep] = []
@@ -66,4 +66,13 @@ class ProjectDetailData: ObservableObject {
     func addSection() {
         sectionData.append(SectionData())
     }
+}
+
+class ProjectData: ObservableObject {
+    @Published var data = Project()
+    
+    func updateName(name: String) {
+        data.name = name
+    }
+    
 }

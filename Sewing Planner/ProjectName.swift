@@ -39,29 +39,30 @@ struct Project: Hashable, Codable, EncodableRecord, FetchableRecord, MutablePers
 }
 
 struct ProjectName: View {
-    @Environment(\.appDatabase) private var appDatabase
-    @Binding var project: Project
+    @Binding var project: ProjectData
     @State var projectName: String = ""
     @State var isEditing = false
     
     var body: some View {
         HStack {
-            Text(project.name)
+            Text(project.data.name)
             if isEditing {
                 TextField("Enter project name", text: $projectName).onSubmit {
-                    print("\(project.name)")
                     // add a popup telling user that name can't be empty
-                    guard !projectName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
-                    project.name = projectName
+                    
+                    let sanitizedName = projectName.trimmingCharacters(in: .whitespacesAndNewlines)
+                    guard !sanitizedName.isEmpty else { return }
+                    
+                    project.updateName(name: sanitizedName)
                     isEditing = false
                 }.accessibilityIdentifier("ProjectNameTextfield")
             }
             Button("Edit") {
-                projectName = project.name
+                projectName = project.data.name
                 isEditing.toggle()
             }
         }.onAppear {
-            if project.name.isEmpty {
+            if project.data.name.isEmpty {
                 isEditing = true
             }
         }
