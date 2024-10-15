@@ -51,8 +51,7 @@ extension ProjectImage: Hashable {
 struct ImageSketchesView: View {
     let projectId: Int64
     @State var showFileImporter = false
-    @Binding var projectImages: [ProjectImage]
-    @Binding var deletedImages: [ProjectImage]
+    @ObservedObject var projectImages: ProjectImages
     @State var selectedImageForDeletion: URL?
     @State var overlaySelectedImage = false
     @State var selectedImage: URL?
@@ -74,9 +73,6 @@ struct ImageSketchesView: View {
     var body: some View {
         VStack(alignment: .center) {
             HStack {
-                Button("save images") {
-                    try! AppFiles().saveProjectImages(projectId: projectId, images: projectImages)
-                }
                 Button {
                     showFileImporter = true
                 } label: {
@@ -109,8 +105,8 @@ struct ImageSketchesView: View {
                             return ProjectImage(path: path)
                         }
                         print(images)
-                        projectImages += images
-                        projectImages = deduplicateSelectedImages(images: projectImages)
+                        projectImages.images += images
+                        projectImages.images = deduplicateSelectedImages(images: projectImages.images)
                     case .failure(let error):
                         // Process error here
                         print(error)
@@ -123,9 +119,9 @@ struct ImageSketchesView: View {
                         }
                         Spacer()
                         Button("Delete") {
-                            if let index = self.projectImages.firstIndex(where: {$0.path == imagePath}) {
-                                let image = self.projectImages.remove(at: index)
-                                self.deletedImages.append(image)
+                            if let index = self.projectImages.images.firstIndex(where: {$0.path == imagePath}) {
+                                let image = self.projectImages.images.remove(at: index)
+                                projectImages.deletedImages.append(image)
                             }
                             
                             selectedImageForDeletion = nil
@@ -135,7 +131,7 @@ struct ImageSketchesView: View {
             }
             ScrollView {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 150))]) {
-                    ForEach($projectImages, id: \.self.path) { $image in
+                    ForEach($projectImages.images, id: \.self.path) { $image in
                         if let img = image.image {
                             if image.path == selectedImageForDeletion {
                                 VStack {
@@ -182,7 +178,7 @@ struct ImageSketchesView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     if let imgPath = selectedImage {
                         // TODO: figure out what to do if image doesn't exist, some default image
-                        Image(nsImage: projectImages.first(where: { $0.path == imgPath })?.image ?? NSImage(size: NSZeroSize))
+                        Image(nsImage: projectImages.images.first(where: { $0.path == imgPath })?.image ?? NSImage(size: NSZeroSize))
                             .resizable()
                             .interpolation(.high)
                             .scaledToFit()

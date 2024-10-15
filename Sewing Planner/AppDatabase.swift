@@ -68,17 +68,17 @@ extension AppDatabase {
 
             }
             
-//            for i in 0..<projectImages.count {
-//                let projectPhotosFolder = AppFiles().getProjectPhotoDirectoryPath(projectId: projectId)
-//                print(projectPhotosFolder)
-//                let originalFileName = projectImages[i].path.deletingPathExtension().lastPathComponent
-//                let newFilePath = projectPhotosFolder.appendingPathComponent(originalFileName).appendingPathExtension(for: .png)
-//                
-//                var record = ProjectImageRecord(projectId: project.id!, filePath: newFilePath, createDate: now, updateDate: now)
-//                try record.save(db)
-//                projectImages[i].record = record
-//                projectImages[i].path = newFilePath
-//            }
+            for i in 0..<model.projectImages.images.count {
+                let projectPhotosFolder = AppFiles().getProjectPhotoDirectoryPath(projectId: projectId)
+                print(projectPhotosFolder)
+                let originalFileName = model.projectImages.images[i].path.deletingPathExtension().lastPathComponent
+                let newFilePath = projectPhotosFolder.appendingPathComponent(originalFileName).appendingPathExtension(for: .png)
+                
+                var record = ProjectImageRecord(projectId: projectId, filePath: newFilePath, createDate: now, updateDate: now)
+                try record.save(db)
+                model.projectImages.images[i].record = record
+                model.projectImages.images[i].path = newFilePath
+            }
         }
         
 //        return project.id!
@@ -180,7 +180,6 @@ extension AppDatabase {
             
             
             // open or create database
-            //            let databaseUrl  = directoryUrl.appendingPathComponent("db.sqlite")
             let databaseUrl  = directoryUrl.appendingPathComponent(name).appendingPathExtension("sqlite")
             NSLog("Database stored at \(databaseUrl.path)")
             let dbQueue = try DatabaseQueue(path: databaseUrl.path)

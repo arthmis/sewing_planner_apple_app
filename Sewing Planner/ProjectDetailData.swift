@@ -49,7 +49,6 @@ class Section: ObservableObject  {
     @Published var section: SectionRecord = SectionRecord()
     @Published var items: [SectionItemRecord] = []
     var id: UUID
-    
     var deletedItems: [SectionItemRecord] = []
 
     init(id: UUID, name: String) {
@@ -82,8 +81,15 @@ class ProjectSections: ObservableObject {
 class ProjectDetailData: ObservableObject {
     var project = ProjectData()
     var projectSections: ProjectSections = ProjectSections()
-    @Published var projectImages: [ProjectImage] = []
+    var projectImages: ProjectImages = ProjectImages()
     @Published var deletedImages: [ProjectImage] = []
+    let appDatabase: AppDatabase = AppDatabase.db
+    
+    func saveProject() throws -> Int64 {
+        let projectId = try appDatabase.saveProject(model: self)
+        try AppFiles().saveProjectImages(projectId: projectId, images: projectImages.images)
+        return projectId
+    }
 }
 
 class ProjectData: ObservableObject {
@@ -92,5 +98,9 @@ class ProjectData: ObservableObject {
     func updateName(name: String) {
         data.name = name
     }
-    
+}
+
+class ProjectImages: ObservableObject {
+    @Published  var images: [ProjectImage] = []
+    @Published  var deletedImages: [ProjectImage] = []
 }

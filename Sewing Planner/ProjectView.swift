@@ -43,21 +43,19 @@ struct ProjectView: View {
         }
         
         do {
-//            let projectId = try appDatabase.saveProject(project: &project, projectSteps: projectSteps, materialData: materials, projectImages: &projectImages)
-            let projectId = try appDatabase.saveProject(model: model)
-//            try AppFiles().saveProjectImages(projectId: projectId, images: projectImages)
+            let projectId = try model.saveProject()
         } catch {
             fatalError(
                 "error adding steps and materials for project id: \(model.project.data.id)\n\n\(error)")
         }
-//        projectsNavigation.removeLast()
+        projectsNavigation.removeLast()
     }
     
     var body: some View {
         VStack {
             HSplitView {
                 ProjectDetails(project: model.project, projectSections: model.projectSections, projectsNavigation: $projectsNavigation)
-                ImageSketchesView(projectId: projectId, projectImages: $projectImages, deletedImages: $deletedImages)
+                ImageSketchesView(projectId: projectId, projectImages: model.projectImages)
             }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top).border(Color.green)
             Button("Save") {
                 try! saveProject()

@@ -23,6 +23,7 @@ struct AppFiles {
         return photosDirectory.appendingPathComponent(String(projectId))
     }
     
+    // TODO: handle situation where file names might be duplicates because they have the same name but comes from different file paths
     func saveProjectImages(projectId: Int64, images: [ProjectImage]) throws {
         let fileManager = FileManager.default
         let usersPhotosUrl = getPhotosDirectoryPath()
@@ -53,7 +54,7 @@ struct AppFiles {
                     print("Error: \(error)")
                 }
             } else {
-                
+                print("couldn't create file for file URL \(file.path) at file path: \(file.path.path())")
             }
         }
         
