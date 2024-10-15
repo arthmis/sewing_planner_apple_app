@@ -55,18 +55,15 @@ struct ProjectDetails: View {
         VStack {
             ProjectName(project: project)
             VStack {
-                ForEach(projectSections.sections, id: \.section) { section in
+                ForEach(projectSections.sections, id: \.id) { section in
                     SectionView(data: section)
                 }
             }
-            Divider()
             Button {
-                print("clicking add section button")
                 projectSections.addSection()
             } label: {
                 Image(systemName: "plus")
             }.padding(40)
-            //            MaterialList(materials: $materials, deletedMaterials: $deletedMaterials)
         }
     }
 }

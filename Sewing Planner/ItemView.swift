@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ItemView: View {
-    @Binding var data: SectionItem
+    @Binding var data: SectionItemRecord
     @State var isEditing = false
     @State var newText = ""
     

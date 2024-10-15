@@ -45,11 +45,18 @@ struct SectionItemRecord: Hashable, Identifiable, Codable, EncodableRecord, Fetc
     }
 }
 
-class Section: ObservableObject {
+class Section: ObservableObject  {
     @Published var section: SectionRecord = SectionRecord()
     @Published var items: [SectionItemRecord] = []
+    var id: UUID
+    
     var deletedItems: [SectionItemRecord] = []
 
+    init(id: UUID, name: String) {
+        section = SectionRecord(name: name)
+        self.id = id
+    }
+    
     func addItem(text: String) {
         items.append(SectionItemRecord(text: text))
     }
@@ -68,9 +75,7 @@ class ProjectSections: ObservableObject {
     @Published var sections: [Section] = []
     
     func addSection() {
-        print("in add section function")
-        sections.append(Section())
-        print(sections.count)
+        sections.append(Section(id: UUID(), name: "Section \(sections.count + 1)"))
     }
 }
 

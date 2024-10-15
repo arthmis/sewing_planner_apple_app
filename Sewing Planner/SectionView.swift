@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SectionView: View {
     @ObservedObject var data: Section
-    @State var isRenamingSection = true
+    @State var isRenamingSection = false
     @State var name = ""
     @State var isAddingItem = false
     @State var newItem = ""
@@ -37,10 +37,6 @@ struct SectionView: View {
                         
                         isRenamingSection = false
                         data.updateSectionName(with: name)
-                        print("submit hit")
-                        print(isRenamingSection)
-                        print(data.section.name)
-                        print(name)
                     }
                     Button("Cancel") {
                         name = data.section.name
@@ -55,12 +51,15 @@ struct SectionView: View {
                         data.section.name = name
                         
                         isRenamingSection = false
-                        print("button set clicked", isRenamingSection)
                     }
                 }
             } else {
-                Text(data.section.name)
+                Text(data.section.name).onTapGesture {
+                    isRenamingSection = true
+                    name = data.section.name
+                }
             }
+            Divider()
             List {
                 ForEach($data.items, id: \.self) { $item in
                     ItemView(data: $item)
