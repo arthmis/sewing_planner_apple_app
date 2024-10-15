@@ -41,8 +41,8 @@ struct ProjectDetails: View {
     // used for dismissing a view(basically the back button)
     @Environment(\.dismiss) private var dismiss
     @Environment(\.appDatabase) private var appDatabase
-    //    @Binding var project: Project
-    @ObservedObject var model: ProjectDetailData
+    @ObservedObject var project: ProjectData
+    @ObservedObject var projectSections: ProjectSections
     @State var clicked = true
     var projectId: Int64 = 0
     @State var name = ""
@@ -53,16 +53,16 @@ struct ProjectDetails: View {
     
     var body: some View {
         VStack {
-            ProjectName(project: $model.project)
+            ProjectName(project: project)
             VStack {
-                //                ProjectStepsView(projectSteps: self.$projectSteps, deletedProjectSteps: self.$deletedProjectSteps)
-                ForEach($model.sectionData, id: \.section) { $section in
-                    SectionView(data: $section)
+                ForEach(projectSections.sections, id: \.section) { section in
+                    SectionView(data: section)
                 }
             }
             Divider()
             Button {
-                model.addSection()
+                print("clicking add section button")
+                projectSections.addSection()
             } label: {
                 Image(systemName: "plus")
             }.padding(40)

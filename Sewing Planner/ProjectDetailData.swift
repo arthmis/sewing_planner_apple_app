@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import GRDB
 
-struct Section: Hashable, Identifiable, Codable, EncodableRecord, FetchableRecord, MutablePersistableRecord, TableRecord {
+struct SectionRecord: Hashable, Identifiable, Codable, EncodableRecord, FetchableRecord, MutablePersistableRecord, TableRecord {
     var id: Int64?
     var projectId: Int64?
     var name: String = ""
@@ -23,7 +23,7 @@ struct Section: Hashable, Identifiable, Codable, EncodableRecord, FetchableRecor
     
 }
 
-struct SectionItem: Hashable, Identifiable, Codable, EncodableRecord, FetchableRecord, MutablePersistableRecord, TableRecord {
+struct SectionItemRecord: Hashable, Identifiable, Codable, EncodableRecord, FetchableRecord, MutablePersistableRecord, TableRecord {
     var id: Int64?
     var sectionId: Int64?
     var text: String = ""
@@ -45,27 +45,40 @@ struct SectionItem: Hashable, Identifiable, Codable, EncodableRecord, FetchableR
     }
 }
 
-struct SectionData {
-    var section: Section = Section()
-    var items: [SectionItem] = []
-    var deletedItems: [SectionItem] = []
+class Section: ObservableObject {
+    @Published var section: SectionRecord = SectionRecord()
+    @Published var items: [SectionItemRecord] = []
+    var deletedItems: [SectionItemRecord] = []
 
-    mutating func addItem(text: String) {
-        items.append(SectionItem(text: text))
+    func addItem(text: String) {
+        items.append(SectionItemRecord(text: text))
+    }
+    
+    func deleteItem(index: Int) {
+        let deletedItem = items.remove(at: index)
+        deletedItems.append(deletedItem)
+    }
+    
+    func updateSectionName(with name: String) {
+        section.name = name
+    }
+}
+
+class ProjectSections: ObservableObject {
+    @Published var sections: [Section] = []
+    
+    func addSection() {
+        print("in add section function")
+        sections.append(Section())
+        print(sections.count)
     }
 }
 
 class ProjectDetailData: ObservableObject {
     var project = ProjectData()
-    @Published var sectionData: [SectionData] = []
-    @Published var projectSteps: [ProjectStep] = []
-    @Published var deletedProjectSteps: [ProjectStep] = []
+    var projectSections: ProjectSections = ProjectSections()
     @Published var projectImages: [ProjectImage] = []
     @Published var deletedImages: [ProjectImage] = []
-    
-    func addSection() {
-        sectionData.append(SectionData())
-    }
 }
 
 class ProjectData: ObservableObject {

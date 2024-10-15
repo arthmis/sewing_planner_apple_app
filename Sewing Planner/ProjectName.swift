@@ -39,7 +39,7 @@ struct Project: Hashable, Codable, EncodableRecord, FetchableRecord, MutablePers
 }
 
 struct ProjectName: View {
-    @Binding var project: ProjectData
+    @ObservedObject var project: ProjectData
     @State var projectName: String = ""
     @State var isEditing = false
     

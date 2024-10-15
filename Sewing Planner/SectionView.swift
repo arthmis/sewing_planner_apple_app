@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SectionView: View {
-    @Binding var data: SectionData
+    @ObservedObject var data: Section
     @State var isRenamingSection = true
     @State var name = ""
     @State var isAddingItem = false
@@ -36,7 +36,7 @@ struct SectionView: View {
                         
                         
                         isRenamingSection = false
-                        data.section.name = name
+                        data.updateSectionName(with: name)
                         print("submit hit")
                         print(isRenamingSection)
                         print(data.section.name)
@@ -66,9 +66,7 @@ struct SectionView: View {
                     ItemView(data: $item)
                 }
                 .onDelete(perform: deleteItem)
-                .onMove { indexSet, offset in
-                    //                projectSteps.move(fromOffsets: indexSet, toOffset: offset)
-                }.accessibilityIdentifier("AllSteps")
+                .accessibilityIdentifier("AllSteps")
                 
             }
             if isAddingItem {
