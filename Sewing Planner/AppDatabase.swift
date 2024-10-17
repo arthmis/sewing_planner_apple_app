@@ -99,25 +99,6 @@ extension AppDatabase {
                 table.column("updateDate", .datetime).notNull()
             }
             
-            try db.create(table: "projectStep", options: [.ifNotExists]) { table in
-                table.autoIncrementedPrimaryKey("id")
-                table.belongsTo("project").notNull()
-                table.column("text", .text).notNull().indexed()
-                table.column("completed", .boolean).notNull()
-                table.column("createDate", .datetime).notNull()
-                table.column("updateDate", .datetime).notNull()
-            }
-            
-            try db.create(table: "projectMaterial", options: [.ifNotExists]) { table in
-                table.autoIncrementedPrimaryKey("id")
-                table.belongsTo("project").notNull()
-                table.column("text", .text).notNull()
-                table.column("link", .text)
-                table.column("completed", .boolean).notNull()
-                table.column("createDate", .datetime).notNull()
-                table.column("updateDate", .datetime).notNull()
-            }
-            
             try db.create(table: "projectImage", options: [.ifNotExists]) { table in
                 table.autoIncrementedPrimaryKey("id")
                 table.belongsTo("project").notNull()

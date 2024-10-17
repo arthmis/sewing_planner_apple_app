@@ -16,7 +16,6 @@ struct ProjectView: View {
     @State var clicked = true
     var projectId: Int64 = 0
     @State var project = Project()
-    @State var projectSteps: [ProjectStep] = []
     @State var showAddTextboxPopup = false
     @State var isAddingInstruction = false
     @State var doesProjectHaveName = false
@@ -24,16 +23,13 @@ struct ProjectView: View {
     @Binding var projectsNavigation: [Project]
     @State var projectImages: [ProjectImage] = []
     @State var deletedImages: [ProjectImage] = []
-    @State var materials: [MaterialRecord] = []
-    @State var deletedMaterials: [MaterialRecord] = []
-    @State var deletedProjectSteps: [ProjectStep] = []
 
     private var isProjectValid: Bool {
         !model.project.data.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
     
     private var isNewProjectEmpty: Bool {
-        project.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && projectSteps.isEmpty
+        project.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
     
     func saveProject() throws {
@@ -72,6 +68,7 @@ struct ProjectView: View {
                         }
                         .accessibilityIdentifier("ProjectViewCustomBackButton")
                         .alert("Unsaved Changes", isPresented: $showAlertIfProjectNotSaved) {
+                            // make this into a view and pass in the project object for reactivity
                             VStack {
                                 if !isProjectValid {
                                     TextField("Enter a project name", text: $project.name).accessibilityIdentifier(
@@ -85,6 +82,9 @@ struct ProjectView: View {
                                     Text("Discard")
                                 }
                                 Button("Save") {
+                                    // have a toast in return or just display something under the textfield saying name can't be empty
+                                    guard isProjectValid else { return }
+                                    
                                     do {
                                         try saveProject()
                                     } catch {

@@ -38,6 +38,7 @@ struct ProjectImage {
     }
 }
 
+
 extension ProjectImage: Hashable {
     static func == (lhs: ProjectImage, rhs: ProjectImage) -> Bool {
         return lhs.path == rhs.path
