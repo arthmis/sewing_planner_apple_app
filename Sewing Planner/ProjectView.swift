@@ -13,23 +13,19 @@ struct ProjectView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.appDatabase) private var appDatabase
     @StateObject var model = ProjectDetailData()
-    @State var clicked = true
-    var projectId: Int64 = 0
-    @State var project = Project()
+    @State var name = ""
+    var projectId: Int64?
     @State var showAddTextboxPopup = false
-    @State var isAddingInstruction = false
     @State var doesProjectHaveName = false
     @State var showAlertIfProjectNotSaved = false
     @Binding var projectsNavigation: [Project]
-    @State var projectImages: [ProjectImage] = []
-    @State var deletedImages: [ProjectImage] = []
 
     private var isProjectValid: Bool {
         !model.project.data.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
     
     private var isNewProjectEmpty: Bool {
-        project.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        model.project.data.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
     
     func saveProject() throws {
@@ -71,7 +67,7 @@ struct ProjectView: View {
                             // make this into a view and pass in the project object for reactivity
                             VStack {
                                 if !isProjectValid {
-                                    TextField("Enter a project name", text: $project.name).accessibilityIdentifier(
+                                    TextField("Enter a project name", text: $name).accessibilityIdentifier(
                                         "ProjectNameTextFieldInAlertUnsavedProject")
                                     
                                 }
@@ -102,6 +98,12 @@ struct ProjectView: View {
                     }
                 }
         }.frame(maxWidth: .infinity, maxHeight: .infinity).background(Color.white).border(Color.blue)
+            .task {
+                if let id = projectId {
+                    print(id)
+
+                }
+            }
     }
 }
 

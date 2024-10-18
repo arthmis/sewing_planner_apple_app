@@ -17,30 +17,34 @@ struct ProjectsView: View {
     @State var projects: [Project] = []
     @State var projectsDisplay: [ProjectDisplay] = []
     let columns = [GridItem(.adaptive(minimum: 200, maximum: 300))]
+    
     var body: some View {
         NavigationStack(path: $projects) {
-            HStack {
-                Button("New Project") {
-                    projects.append(Project())
+            VStack {
+                HStack {
+                    Button("New Project") {
+                        projects.append(Project())
+                    }
+                    .accessibilityIdentifier("AddNewProjectButton")
                 }
-                .navigationDestination(for: Project.self) { project in
-                    VStack {
-                        ProjectView(projectsNavigation: $projects)
+                
+                ScrollView {
+                    LazyVGrid(columns: columns) {
+                        ForEach(projectsDisplay, id: \.self.project.id) { project in
+                            ProjectDisplayView(
+                                projectData: project, projects: $projects)
+                        }
+                    }
+                    .task {
+                        fetchProjects()
                     }
                 }
-                .accessibilityIdentifier("AddNewProjectButton")
             }
-            
-            ScrollView {
-                LazyVGrid(columns: columns) {
-                        ForEach(projectsDisplay, id: \.self.project.id) { project in
-                            ProjectDisplayView(projectData: project)
-                        }
+            .navigationDestination(for: Project.self) { project in
+                VStack {
+                    ProjectView(projectId: project.id, projectsNavigation: $projects)
                 }
             }
-        }
-        .onAppear {
-            fetchProjects()
         }
         .navigationTitle("Projects")
         .frame(minWidth: 600, minHeight: 300)
@@ -58,6 +62,8 @@ struct ProjectsView: View {
 
 struct ProjectDisplayView: View {
     var projectData: ProjectDisplay
+    @Binding var projects: [Project]
+    
     var body: some View {
         VStack {
             MaybeProjectImageView(projectImage: projectData.image)
@@ -74,6 +80,9 @@ struct ProjectDisplayView: View {
                 .strokeBorder(Color.gray, lineWidth: 1)
         )
         .padding(20)
+        .onTapGesture {
+            projects.append(projectData.project)
+        }
     }
 }
 struct MaybeProjectImageView: View {

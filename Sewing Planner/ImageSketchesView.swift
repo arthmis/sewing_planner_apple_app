@@ -50,7 +50,7 @@ extension ProjectImage: Hashable {
 }
 
 struct ImageSketchesView: View {
-    let projectId: Int64
+    let projectId: Int64?
     @State var showFileImporter = false
     @ObservedObject var projectImages: ProjectImages
     @State var selectedImageForDeletion: URL?
