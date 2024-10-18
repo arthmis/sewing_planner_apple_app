@@ -7,10 +7,16 @@
 
 import SwiftUI
 
+struct ProjectDisplay {
+    var project: Project
+    var image: ProjectImage?
+}
+
 struct ProjectsView: View {
     @Environment(\.appDatabase) private var appDatabase
-    @State var data: [ProjectStepPreviewData]
     @State var projects: [Project] = []
+    @State var projectsDisplay: [ProjectDisplay] = []
+    let columns = [GridItem(.adaptive(minimum: 200, maximum: 300))]
     var body: some View {
         NavigationStack(path: $projects) {
             HStack {
@@ -25,24 +31,70 @@ struct ProjectsView: View {
                 .accessibilityIdentifier("AddNewProjectButton")
             }
             
-            HStack {
-                Image("Landscape_4")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 100, height: 300)
-                UnfinishedSteps(projectSteps: data)
-                
-            }.overlay(
-                RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/ 25.0 /*@END_MENU_TOKEN@*/)
-                    .stroke(Color.blue, lineWidth: 1)
-            )
-            .frame(width: 300, height: 300)
-            .navigationTitle("Projects")
+            ScrollView {
+                LazyVGrid(columns: columns) {
+                        ForEach(projectsDisplay, id: \.self.project.id) { project in
+                            ProjectDisplayView(projectData: project)
+                        }
+                }
+            }
+        }
+        .onAppear {
+            fetchProjects()
         }
         .navigationTitle("Projects")
+        .frame(minWidth: 600, minHeight: 300)
+        .background(Color.white)
+    }
+    
+    func fetchProjects() {
+        do {
+            self.projectsDisplay = try appDatabase.fetchProjectsAndProjectImage()
+        } catch {
+            print("error: \(error)")
+        }
     }
 }
 
+struct ProjectDisplayView: View {
+    var projectData: ProjectDisplay
+    var body: some View {
+        VStack {
+            MaybeProjectImageView(projectImage: projectData.image)
+            Text(projectData.project.name)
+        }
+        .padding(10)
+        .frame(minWidth: 50, minHeight: 50)
+        .background(Color.white)
+        .cornerRadius(9)
+        .shadow(radius: 4, y: 5)
+        // apply a rounded border
+        .overlay(
+            RoundedRectangle(cornerRadius: 9)
+                .strokeBorder(Color.gray, lineWidth: 1)
+        )
+        .padding(20)
+    }
+}
+struct MaybeProjectImageView: View {
+    let projectImage: ProjectImage?
+    
+    var body: some View {
+        if projectImage != nil {
+            Image(nsImage: (projectImage?.image)!)
+                .resizable()
+                .interpolation(.high)
+                .scaledToFit()
+                .frame(width: 120, height: 120, alignment: .center)
+        } else {
+            Image("black_dress_sketch")
+                .resizable()
+                .interpolation(.high)
+                .scaledToFit()
+                .frame(width: 120, height: 120, alignment: .center)
+        }
+    }
+}
 #Preview {
-    ProjectsView(data: [])
+    ProjectsView()
 }

@@ -38,6 +38,14 @@ struct Project: Hashable, Codable, EncodableRecord, FetchableRecord, MutablePers
     }
 }
 
+enum ProjectColumns: String, ColumnExpression {
+    case id
+    case name
+    case completed
+    case updateDate
+    case createDate
+}
+
 struct ProjectName: View {
     @ObservedObject var project: ProjectData
     @State var projectName: String = ""

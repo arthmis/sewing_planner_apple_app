@@ -57,6 +57,16 @@ struct AppFiles {
                 print("couldn't create file for file URL \(file.path) at file path: \(file.path.path())")
             }
         }
+    }
+    
+    func getImage(fromPath path: URL) -> NSImage? {
+        let fileManager = FileManager.default
+        let usersPhotosUrl = getPhotosDirectoryPath()
         
+        if let data = fileManager.contents(atPath: path.path()) {
+            return NSImage(data: data)
+        }
+        
+        return nil
     }
 }

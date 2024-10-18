@@ -36,12 +36,8 @@ extension AppDatabase {
         return dbWriter
     }
     
-//    func saveProject(project: inout Project, projectSteps: [ProjectStep], materialData: [MaterialRecord], projectImages: inout [ProjectImage]) throws -> Int64 {
     func saveProject(model: ProjectDetailData) throws -> Int64 {
-        print(model)
-        print(model.project.data)
-        print(model.projectSections.sections[0].section)
-        print(model.projectSections.sections[0].items[0])
+        var projectId: Int64 = 0
         try dbWriter.write { db in
             
             // save project
@@ -49,9 +45,9 @@ extension AppDatabase {
             model.project.data.createDate = now
             model.project.data.updateDate = now
             try model.project.data.insert(db)
-            let projectId = model.project.data.id!
+            projectId = model.project.data.id!
             
-
+            
             for section in model.projectSections.sections {
                 section.section.createDate = now
                 section.section.updateDate = now
@@ -65,7 +61,7 @@ extension AppDatabase {
                     sectionItem.sectionId = sectionId
                     try sectionItem.insert(db)
                 }
-
+                
             }
             
             for i in 0..<model.projectImages.images.count {
@@ -81,8 +77,7 @@ extension AppDatabase {
             }
         }
         
-//        return project.id!
-        return 0
+        return projectId
     }
 }
 
@@ -125,9 +120,9 @@ extension AppDatabase {
             }
         }
         
-#if DEBUG
-        migrator.eraseDatabaseOnSchemaChange = true
-#endif
+//#if DEBUG
+//        migrator.eraseDatabaseOnSchemaChange = true
+//#endif
         
         return migrator
     }
@@ -136,6 +131,30 @@ extension AppDatabase {
 extension AppDatabase {
     var reader: DatabaseReader {
         dbWriter
+    }
+}
+
+extension AppDatabase {
+    func fetchProjectsAndProjectImage() throws -> [ProjectDisplay] {
+        var projectDisplayData: [ProjectDisplay] = []
+
+        try dbWriter.read { db in
+            let projects: [Project] = try Project.all().order(ProjectColumns.id)
+                    .fetchAll(db)
+        
+            for project in projects {
+                let imageIdColumn = Column("projectId")
+                if let record = try ProjectImageRecord.all().filter(imageIdColumn == project.id!).order(Column("id")).fetchOne(db) {
+                    let image = AppFiles().getImage(fromPath: record.filePath)
+                    let projectImage = ProjectImage(record: record, path: record.filePath, image: image)
+                    projectDisplayData.append(ProjectDisplay(project: project, image: projectImage))
+                } else {
+                    projectDisplayData.append(ProjectDisplay(project: project))
+                }
+            }
+        }
+        
+        return projectDisplayData
     }
 }
 
