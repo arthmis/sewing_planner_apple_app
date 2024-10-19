@@ -34,7 +34,6 @@ struct SectionView: View {
                         // TODO: add a popup telling user that instruction can't be empty
                         guard isNewNameValid else { return }
                         
-                        
                         isRenamingSection = false
                         data.updateSectionName(with: name)
                     }

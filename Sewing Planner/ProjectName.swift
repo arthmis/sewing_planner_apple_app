@@ -8,7 +8,6 @@
 import SwiftUI
 import GRDB
 
-//struct Project: Hashable, Codable, FetchableRecord, PersistableRecord, TableRecord {
 struct Project: Hashable, Codable, EncodableRecord, FetchableRecord, MutablePersistableRecord, TableRecord {
     var id: Int64?
     var name: String
@@ -30,7 +29,7 @@ struct Project: Hashable, Codable, EncodableRecord, FetchableRecord, MutablePers
     }
 
     init() {
-        name = ""
+        name = "Project Name"
         completed = false
         let now = Date()
         createDate = now
@@ -46,32 +45,53 @@ enum ProjectColumns: String, ColumnExpression {
     case createDate
 }
 
+class ProjectData: ObservableObject {
+    @Published var data = Project()
+    @Published var tempName = ""
+    
+    init() {}
+    
+    init(data: Project) {
+        self.data = data
+    }
+    
+    func updateName(name: String) {
+        data.name = name
+    }
+}
+
 struct ProjectName: View {
     @ObservedObject var project: ProjectData
-    @State var projectName: String = ""
     @State var isEditing = false
     
     var body: some View {
         HStack {
-            Text(project.data.name)
             if isEditing {
-                TextField("Enter project name", text: $projectName).onSubmit {
+                TextField("Enter project name", text: $project.data.name).onSubmit {
                     // add a popup telling user that name can't be empty
                     
-                    let sanitizedName = projectName.trimmingCharacters(in: .whitespacesAndNewlines)
+                    let sanitizedName = project.data.name.trimmingCharacters(in: .whitespacesAndNewlines)
                     guard !sanitizedName.isEmpty else { return }
                     
                     project.updateName(name: sanitizedName)
                     isEditing = false
                 }.accessibilityIdentifier("ProjectNameTextfield")
+            } else {
+                Text(project.data.name)
             }
             Button("Edit") {
-                projectName = project.data.name
-                isEditing.toggle()
+                if !isEditing {
+                    project.tempName = project.data.name
+                    isEditing.toggle()
+                }
+            }
+            Button("Cancel") {
+                project.data.name = project.tempName
+                isEditing = false
             }
         }.onAppear {
-            if project.data.name.isEmpty {
-                isEditing = true
+            if project.data.name != "" {
+                project.tempName = project.data.name
             }
         }
     }

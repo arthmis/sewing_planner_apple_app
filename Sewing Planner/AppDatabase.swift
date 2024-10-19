@@ -38,42 +38,63 @@ extension AppDatabase {
     
     func saveProject(model: ProjectDetailData) throws -> Int64 {
         var projectId: Int64 = 0
+        
         try dbWriter.write { db in
-            
-            // save project
             let now = try db.transactionDate
-            model.project.data.createDate = now
-            model.project.data.updateDate = now
-            try model.project.data.insert(db)
+
+            // save project
+            if let id = model.project.data.id {
+                try model.project.data.save(db)
+            } else {
+                model.project.data.createDate = now
+                model.project.data.updateDate = now
+                try model.project.data.save(db)
+            }
             projectId = model.project.data.id!
-            
-            
+
+            // save sections and items belonging to those sections
             for section in model.projectSections.sections {
-                section.section.createDate = now
-                section.section.updateDate = now
-                section.section.projectId = projectId
-                try section.section.insert(db)
-                let sectionId = section.section.id!
-                
-                for var sectionItem in section.items {
-                    sectionItem.createDate = now
-                    sectionItem.updateDate = now
-                    sectionItem.sectionId = sectionId
-                    try sectionItem.insert(db)
+                if section.section.id != nil {
+                    print("has id \(section.section)")
+                    try section.section.save(db)
+                } else {
+                    section.section.createDate = now
+                    section.section.updateDate = now
+                    section.section.projectId = projectId
+                    print("no id \(section.section)")
+                    try section.section.save(db)
                 }
-                
+                let sectionId = section.section.id!
+
+                for var sectionItem in section.items {
+                    if let sectionItemId = sectionItem.id  {
+                        try sectionItem.save(db)
+                    } else {
+                        sectionItem.createDate = now
+                        sectionItem.updateDate = now
+                        sectionItem.sectionId = sectionId
+                        try sectionItem.save(db)
+                    }
+                }
             }
             
+            // save project images
             for i in 0..<model.projectImages.images.count {
-                let projectPhotosFolder = AppFiles().getProjectPhotoDirectoryPath(projectId: projectId)
-                print(projectPhotosFolder)
-                let originalFileName = model.projectImages.images[i].path.deletingPathExtension().lastPathComponent
-                let newFilePath = projectPhotosFolder.appendingPathComponent(originalFileName).appendingPathExtension(for: .png)
-                
-                var record = ProjectImageRecord(projectId: projectId, filePath: newFilePath, createDate: now, updateDate: now)
-                try record.save(db)
-                model.projectImages.images[i].record = record
-                model.projectImages.images[i].path = newFilePath
+                if var record = model.projectImages.images[i].record {
+                    if let _projectImageId = record.id {
+                        try record.save(db)
+                    }
+                } else {
+                    let projectPhotosFolder = AppFiles().getProjectPhotoDirectoryPath(projectId: projectId)
+                    print("project folder for images: \(projectPhotosFolder)")
+                    let originalFileName = model.projectImages.images[i].path.deletingPathExtension().lastPathComponent
+                    let newFilePath = projectPhotosFolder.appendingPathComponent(originalFileName).appendingPathExtension(for: .png)
+                    
+                    var record = ProjectImageRecord(projectId: projectId, filePath: newFilePath, createDate: now, updateDate: now)
+                    try record.save(db)
+                    model.projectImages.images[i].record = record
+                    model.projectImages.images[i].path = newFilePath
+                }
             }
         }
         
@@ -155,6 +176,45 @@ extension AppDatabase {
         }
         
         return projectDisplayData
+    }
+    
+    func getProject(id: Int64) throws -> Project? {
+        return try dbWriter.read { db in
+            return try Project.all().filter(ProjectColumns.id == id)
+                    .fetchOne(db)
+        }
+    }
+    
+    func getSections(projectId: Int64) throws -> ProjectSections {
+        return try dbWriter.read { db in
+            var sections: [Section] = []
+            let sectionRecords: [SectionRecord] = try SectionRecord.all().order(Column("id"))
+                    .fetchAll(db)
+            
+            for sectionRecord in sectionRecords {
+                let sectionItemRecords: [SectionItemRecord] = try SectionItemRecord.all().filter(Column("sectionId") == sectionRecord.id!).order(Column("id")).fetchAll(db)
+                
+                sections.append(Section(section: sectionRecord, items: sectionItemRecords, id: UUID()))
+            }
+            
+            return ProjectSections(sections: sections)
+        }
+    }
+    
+    func getImages(projectId: Int64) throws -> ProjectImages {
+        return try dbWriter.read { db in
+            let imageIdColumn = Column("projectId")
+            let records: [ProjectImageRecord] = try ProjectImageRecord.all().filter(imageIdColumn == projectId).order(Column("id")).fetchAll(db)
+            
+            var projectImages: [ProjectImage] = []
+            for record in records {
+                let image = AppFiles().getImage(fromPath: record.filePath)
+                let projectImage = ProjectImage(record: record, path: record.filePath, image: image)
+                projectImages.append(projectImage)
+                }
+            
+            return ProjectImages(images: projectImages)
+        }
     }
 }
 

@@ -18,6 +18,7 @@ struct ProjectImageRecord: Identifiable, Codable, EncodableRecord, FetchableReco
     static let databaseTableName = "projectImage"
 }
 
+// TODO: make this a class since storing data like an image is too expensive to be copying
 struct ProjectImage {
     var record: ProjectImageRecord?
     var path: URL
