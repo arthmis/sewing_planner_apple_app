@@ -51,7 +51,7 @@ struct ProjectView: View {
                 VStack {
                     HSplitView {
                         ProjectDetails(project: model.project, projectSections: model.projectSections, projectsNavigation: $projectsNavigation)
-                        ImageSketchesView(projectId: projectId, projectImages: $model.projectImages)
+                        ImageSketchesView(projectId: projectId, projectImages: model.projectImages)
                     }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top).border(Color.green)
                     Button("Save") {
                         try! saveProject()

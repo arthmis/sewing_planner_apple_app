@@ -10,7 +10,10 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         ProjectsView()
-        //      ProjectView()
+            .environment(\.font, Font.custom("SourceSans3-Regular", size: 16))
+//            .frame(minWidth: 300, maxWidth: .infinity, minHeight: 500,  maxHeight: .infinity)
+            .frame(minWidth: 300, maxWidth: 885, minHeight: 500,  maxHeight: 500)
+
     }
 }
 

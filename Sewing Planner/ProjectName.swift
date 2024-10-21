@@ -76,18 +76,19 @@ struct ProjectName: View {
                     project.updateName(name: sanitizedName)
                     isEditing = false
                 }.accessibilityIdentifier("ProjectNameTextfield")
+                Button("Cancel") {
+                    project.data.name = project.tempName
+                    isEditing = false
+                }
             } else {
                 Text(project.data.name)
-            }
-            Button("Edit") {
-                if !isEditing {
-                    project.tempName = project.data.name
-                    isEditing.toggle()
+                    .font(.custom("CooperHewitt-medium", size: 22))
+                    .onTapGesture(count: 2) {
+                    if !isEditing {
+                        project.tempName = project.data.name
+                        isEditing.toggle()
+                    }
                 }
-            }
-            Button("Cancel") {
-                project.data.name = project.tempName
-                isEditing = false
             }
         }.onAppear {
             if project.data.name != "" {
@@ -96,7 +97,7 @@ struct ProjectName: View {
         }
     }
 }
-//
-//#Preview {
-//    ProjectName()
-//}
+
+#Preview {
+    ProjectName(project: ProjectData(data: Project(id: 2, name: "Project Name", completed: false, createDate: Date(), updateDate: Date())))
+}

@@ -10,20 +10,22 @@ import SwiftUI
 
 @main
 struct Sewing_PlannerApp: App {
-  var body: some Scene {
-    WindowGroup {
-      ContentView().environment(\.appDatabase, .db)
-    }.windowResizability(.contentSize)
-  }
+    var body: some Scene {
+        WindowGroup {
+            ContentView().environment(\.appDatabase, .db)
+        }
+        .windowResizability(.contentSize)
+        .defaultPosition(.center)
+    }
 }
 
 private struct AppDatabaseKey: EnvironmentKey {
-  static var defaultValue: AppDatabase { .db }
+    static var defaultValue: AppDatabase { .db }
 }
 
 extension EnvironmentValues {
-  var appDatabase: AppDatabase {
-    get { self[AppDatabaseKey.self] }
-    set { self[AppDatabaseKey.self] = newValue }
-  }
+    var appDatabase: AppDatabase {
+        get { self[AppDatabaseKey.self] }
+        set { self[AppDatabaseKey.self] = newValue }
+    }
 }
