@@ -26,46 +26,55 @@ struct SectionView: View {
     }
     
     var body: some View {
-        VStack {
+        VStack(alignment: .leading) {
             // TODO: this if else can become a view called SectionName
-            if isRenamingSection {
-                HStack {
-                    TextField("section name", text: $name).onSubmit {
-                        // TODO: add a popup telling user that instruction can't be empty
-                        guard isNewNameValid else { return }
-                        
-                        isRenamingSection = false
-                        data.updateSectionName(with: name)
+            HStack {
+                if isRenamingSection {
+                    HStack {
+                        TextField("section name", text: $name).onSubmit {
+                            // TODO: add a popup telling user that instruction can't be empty
+                            guard isNewNameValid else { return }
+                            
+                            isRenamingSection = false
+                            data.updateSectionName(with: name)
+                        }
+                        Button("Cancel") {
+                            name = data.section.name
+                            
+                            isRenamingSection = false
+                        }
+                        Button("Set") {
+                            // add a popup telling user that instruction can't be empty
+                            guard isNewNameValid else { return }
+                            
+                            // think about what to do here for validation or something
+                            data.section.name = name
+                            
+                            isRenamingSection = false
+                        }
                     }
-                    Button("Cancel") {
+                } else {
+                    Text(data.section.name).onTapGesture(count: 2) {
+                        isRenamingSection = true
                         name = data.section.name
-                        
-                        isRenamingSection = false
-                    }
-                    Button("Set") {
-                        // add a popup telling user that instruction can't be empty
-                        guard isNewNameValid else { return }
-                        
-                        // think about what to do here for validation or something
-                        data.section.name = name
-                        
-                        isRenamingSection = false
                     }
                 }
-            } else {
-                Text(data.section.name).onTapGesture {
-                    isRenamingSection = true
-                    name = data.section.name
+                Spacer()
+                Button {
+                    
+                } label: {
+                    Image(systemName: "ellipsis")
                 }
             }
-            Divider()
+            .font(.custom("CooperHewitt-Medium", size: 16))
+            .overlay(Divider()
+                .frame(maxWidth: .infinity, maxHeight: 1)
+                .background(Color(red: 230, green: 230, blue: 230)), alignment: .bottom)
             List {
                 ForEach($data.items, id: \.self) { $item in
                     ItemView(data: $item)
                 }
                 .onDelete(perform: deleteItem)
-                .accessibilityIdentifier("AllSteps")
-                
             }
             if isAddingItem {
                 TextField("new item", text: $newItem).onSubmit {

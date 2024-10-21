@@ -52,7 +52,7 @@ struct ProjectView: View {
                     HSplitView {
                         ProjectDetails(project: model.project, projectSections: model.projectSections, projectsNavigation: $projectsNavigation)
                         ImageSketchesView(projectId: projectId, projectImages: model.projectImages)
-                    }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top).border(Color.green)
+                    }.frame(maxWidth: .infinity, maxHeight: .infinity)
                     Button("Save") {
                         try! saveProject()
                     }.accessibilityIdentifier("SaveButton")
@@ -101,7 +101,6 @@ struct ProjectView: View {
                                 }
                             }
                         }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity).background(Color.white).border(Color.blue)
                 }
                 
             }

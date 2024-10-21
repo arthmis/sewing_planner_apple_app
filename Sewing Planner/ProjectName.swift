@@ -82,7 +82,7 @@ struct ProjectName: View {
                 }
             } else {
                 Text(project.data.name)
-                    .font(.custom("CooperHewitt-medium", size: 22))
+                    .font(.custom("CooperHewitt-medium", size: 20))
                     .onTapGesture(count: 2) {
                     if !isEditing {
                         project.tempName = project.data.name
