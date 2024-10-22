@@ -76,6 +76,8 @@ struct SectionView: View {
             .onDelete(perform: deleteItem)
             if isAddingItem {
                 TextField("new item", text: $newItem).onSubmit {
+                    guard !newItem.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+                    
                     data.addItem(text: newItem)
                     isAddingItem = false
                     newItem = ""
