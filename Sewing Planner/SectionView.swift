@@ -13,18 +13,18 @@ struct SectionView: View {
     @State var name = ""
     @State var isAddingItem = false
     @State var newItem = ""
-    
+
     func deleteItem(at offsets: IndexSet) {
-        offsets.forEach { index in
+        for index in offsets {
             let step = data.items.remove(at: index)
             data.deletedItems.append(step)
         }
     }
-    
+
     private var isNewNameValid: Bool {
         !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             // TODO: this if else can become a view called SectionName
@@ -34,35 +34,33 @@ struct SectionView: View {
                         TextField("section name", text: $name).onSubmit {
                             // TODO: add a popup telling user that instruction can't be empty
                             guard isNewNameValid else { return }
-                            
+
                             isRenamingSection = false
                             data.updateSectionName(with: name)
                         }
                         Button("Cancel") {
                             name = data.section.name
-                            
+
                             isRenamingSection = false
                         }
                         Button("Set") {
                             // add a popup telling user that instruction can't be empty
                             guard isNewNameValid else { return }
-                            
+
                             // think about what to do here for validation or something
                             data.section.name = name
-                            
+
                             isRenamingSection = false
                         }
                     }
                 } else {
-                    Text(data.section.name).onTapGesture(count: 2) {
+                    Text(data.section.name).onTapGesture {
                         isRenamingSection = true
                         name = data.section.name
                     }
                 }
                 Spacer()
-                Button {
-                    
-                } label: {
+                Button {} label: {
                     Image(systemName: "ellipsis")
                 }
             }
@@ -70,12 +68,12 @@ struct SectionView: View {
             .overlay(Divider()
                 .frame(maxWidth: .infinity, maxHeight: 1)
                 .background(Color(red: 230, green: 230, blue: 230)), alignment: .bottom)
-            List {
-                ForEach($data.items, id: \.self) { $item in
-                    ItemView(data: $item)
-                }
-                .onDelete(perform: deleteItem)
+            ForEach($data.items, id: \.self) { $item in
+                ItemView(data: $item)
+                    .frame(maxWidth: .infinity)
+                    .padding([.top, .bottom], 5)
             }
+            .onDelete(perform: deleteItem)
             if isAddingItem {
                 TextField("new item", text: $newItem).onSubmit {
                     data.addItem(text: newItem)

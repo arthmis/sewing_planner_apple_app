@@ -7,30 +7,40 @@
 
 import SwiftUI
 
+// TODO: think about how to make this better or accept strings for values instead
+extension Color {
+    init(hex: Int, opacity: Double = 1) {
+        self.init(
+            .sRGB,
+            red: Double((hex >> 16) & 0xff) / 255,
+            green: Double((hex >> 08) & 0xff) / 255,
+            blue: Double((hex >> 00) & 0xff) / 255,
+            opacity: opacity
+        )
+    }
+}
+
 struct ItemView: View {
     @Binding var data: SectionItemRecord
     @State var isEditing = false
     @State var newText = ""
-    
+
     private var isNewTextValid: Bool {
         newText.trimmingCharacters(in: .whitespaces).isEmpty
     }
+
     var body: some View {
-        HStack {
-            Toggle(data.text, isOn: $data.isComplete).toggleStyle(.checkbox)
-            Button("\(Image(systemName: "pencil"))") {
-                isEditing = true
+        if !isEditing {
+            HStack(alignment: .firstTextBaseline) {
+                Toggle(data.text, isOn: $data.isComplete).toggleStyle(.checkbox)
+                Spacer()
+                Image(systemName: "line.3.horizontal").foregroundStyle(Color(hex: 0x999999))
             }
-            Menu("\(Image(systemName: "ellipsis"))") {
-                Button("Delete") {
-                }
-            }
-        }
-        if isEditing {
+        } else {
             HStack {
                 TextField("edit text", text: $newText).onSubmit {
                     guard !isNewTextValid else { return }
-                    
+
                     data.text = newText.trimmingCharacters(in: .whitespacesAndNewlines)
                     isEditing = false
                 }.textFieldStyle(.plain)
@@ -49,6 +59,6 @@ struct ItemView: View {
     }
 }
 
-//#Preview {
+// #Preview {
 //    ItemView()
-//}
+// }

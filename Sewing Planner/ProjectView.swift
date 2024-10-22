@@ -19,21 +19,21 @@ struct ProjectView: View {
     @State var showAlertIfProjectNotSaved = false
     @State var isLoading = true
     @Binding var projectsNavigation: [Project]
-    
+
     private var isProjectValid: Bool {
         !model.project.data.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
-    
+
     private var isNewProjectEmpty: Bool {
         model.project.data.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
-    
+
     func saveProject() throws {
         guard isProjectValid else {
             showAlertIfProjectNotSaved = true
             return
         }
-        
+
         do {
             let projectId = try model.saveProject()
         } catch {
@@ -42,7 +42,7 @@ struct ProjectView: View {
         }
         projectsNavigation.removeLast()
     }
-    
+
     var body: some View {
         VStack {
             if isLoading {
@@ -63,7 +63,7 @@ struct ProjectView: View {
                                         dismiss()
                                         return
                                     }
-                                    
+
                                     showAlertIfProjectNotSaved = true
                                 }
                                 .accessibilityIdentifier("ProjectViewCustomBackButton")
@@ -73,7 +73,6 @@ struct ProjectView: View {
                                         if !isProjectValid {
                                             TextField("Enter a project name", text: $name).accessibilityIdentifier(
                                                 "ProjectNameTextFieldInAlertUnsavedProject")
-                                            
                                         }
                                         Button(role: .destructive) {
                                             // no need to do anything as changes haven't been saved yet
@@ -84,17 +83,17 @@ struct ProjectView: View {
                                         Button("Save") {
                                             // have a toast in return or just display something under the textfield saying name can't be empty
                                             guard isProjectValid else { return }
-                                            
+
                                             do {
                                                 try saveProject()
                                             } catch {
                                                 fatalError("error: \(error)")
                                             }
-                                            
+
                                             dismiss()
                                         }
                                         .accessibilityIdentifier("SaveButtonInAlertUnsavedProject")
-                                        .keyboardShortcut( /*@START_MENU_TOKEN@*/.defaultAction /*@END_MENU_TOKEN@*/)
+                                        .keyboardShortcut( /*@START_MENU_TOKEN@*/ .defaultAction /*@END_MENU_TOKEN@*/)
                                     }
                                 } message: {
                                     Text("Do you want to save this project?")
@@ -102,7 +101,6 @@ struct ProjectView: View {
                             }
                         }
                 }
-                
             }
         }
         .task {
@@ -112,7 +110,6 @@ struct ProjectView: View {
             }
             isLoading = false
         }
-        
     }
 }
 
