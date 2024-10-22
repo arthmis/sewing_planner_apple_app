@@ -17,9 +17,10 @@ struct ProjectDetails: View {
             HStack {
                 ProjectName(project: project)
                 Spacer()
-                Button("Save") {
+                Button(project.data.id != nil ? "Save Changes" : "Save Project") {
                     print("saving project")
                 }
+                .buttonStyle(SaveProjectButtonStyle())
                 .accessibilityIdentifier("SaveButton")
             }
             .frame(maxWidth: .infinity)
