@@ -71,3 +71,18 @@ struct AddNewSectionButtonStyle: ButtonStyle {
             .animation(.easeIn(duration: 0.1), value: isPressed)
     }
 }
+
+struct AddImageButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        let isPressed = configuration.isPressed
+        configuration.label
+            .foregroundColor(Color(hex: 0x131944, opacity: 1.0))
+            .font(.system(size: 28))
+            .padding(10)
+            .clipShape(RoundedRectangle(cornerRadius: 9))
+            .scaleEffect(isPressed ? 0.95 : 1)
+            .brightness(isPressed ? -0.05 : 0)
+            .shadow(color: Color(hex: 0x000000, opacity: 0.25), radius: isPressed ? 1.5 : 3, x: 0, y: 4)
+            .animation(.easeIn(duration: 0.1), value: isPressed)
+    }
+}

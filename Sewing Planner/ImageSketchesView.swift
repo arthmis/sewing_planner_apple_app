@@ -72,48 +72,11 @@ struct ImageSketchesView: View {
         return result
     }
     
+//    func handleFileImport()
+    
     var body: some View {
         VStack(alignment: .center) {
             HStack {
-                Button {
-                    showFileImporter = true
-                } label: {
-                    Label("Select image", systemImage: "doc.circle")
-                }.fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.jpeg, .png, .webP, .heic, .heif], allowsMultipleSelection: true) { result in
-                    switch result {
-                    case .success(let files):
-                        let images: [ProjectImage] = files.map { file in
-                            let name = file.lastPathComponent
-                            let path = file
-                            
-                            // need this to access the file content
-                            let hasAccess = file.startAccessingSecurityScopedResource()
-                            if !hasAccess {
-                                // must relinquish access once it isn't needed
-                                // hence needing a call at every return point
-                                file.stopAccessingSecurityScopedResource()
-                                return ProjectImage(path: path)
-                            }
-                            
-                            let data = try! Data(contentsOf: path)
-                            if let img = NSImage(data: data) {
-                                file.stopAccessingSecurityScopedResource()
-                                //                                return ProjectImage(name: name, path: path, image: img)
-                                return ProjectImage(path: path, image: img)
-                            }
-                            
-                            file.stopAccessingSecurityScopedResource()
-                            //                            return ProjectImage(name: name, path: path)
-                            return ProjectImage(path: path)
-                        }
-                        print(images)
-                        projectImages.images += images
-                        projectImages.images = deduplicateSelectedImages(images: projectImages.images)
-                    case .failure(let error):
-                        // Process error here
-                        print(error)
-                    }
-                }
                 if let imagePath = selectedImageForDeletion {
                     HStack(alignment: .center) {
                         Button("Cancel") {
@@ -166,6 +129,50 @@ struct ImageSketchesView: View {
                     }
                 }
             }
+            Button {
+                showFileImporter = true
+            } label: {
+                Image(systemName: "photo.badge.plus")
+            }
+            .buttonStyle(AddImageButtonStyle())
+            .frame(maxWidth: .infinity, alignment: .trailing)
+            .padding(10)
+            .padding(.trailing, 10)
+            .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.jpeg, .png, .webP, .heic, .heif], allowsMultipleSelection: true) { result in
+                switch result {
+                case .success(let files):
+                    let images: [ProjectImage] = files.map { file in
+                        let name = file.lastPathComponent
+                        let path = file
+                        
+                        // need this to access the file content
+                        let hasAccess = file.startAccessingSecurityScopedResource()
+                        if !hasAccess {
+                            // must relinquish access once it isn't needed
+                            // hence needing a call at every return point
+                            file.stopAccessingSecurityScopedResource()
+                            return ProjectImage(path: path)
+                        }
+                        
+                        let data = try! Data(contentsOf: path)
+                        if let img = NSImage(data: data) {
+                            file.stopAccessingSecurityScopedResource()
+                            //                                return ProjectImage(name: name, path: path, image: img)
+                            return ProjectImage(path: path, image: img)
+                        }
+                        
+                        file.stopAccessingSecurityScopedResource()
+                        //                            return ProjectImage(name: name, path: path)
+                        return ProjectImage(path: path)
+                    }
+                    print(images)
+                    projectImages.images += images
+                    projectImages.images = deduplicateSelectedImages(images: projectImages.images)
+                case .failure(let error):
+                    // Process error here
+                    print(error)
+                }
+            }
         }.overlay(alignment: .center) {
             if overlaySelectedImage {
                 VStack {
@@ -195,6 +202,7 @@ struct ImageSketchesView: View {
                 .background(.ultraThinMaterial)
             }
         }
+        .padding(.top, 50)
         .frame(
             maxWidth: .infinity,
             maxHeight: .infinity,
