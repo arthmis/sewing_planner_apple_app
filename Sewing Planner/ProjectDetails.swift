@@ -23,14 +23,15 @@ struct ProjectDetails: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.bottom, 25)
-//                ScrollView {
-            VStack(alignment: .leading) {
-                ForEach(projectSections.sections, id: \.id) { section in
-                    SectionView(data: section)
-                        .padding(.bottom, 20)
+            ScrollView {
+                VStack(alignment: .leading) {
+                    ForEach(projectSections.sections, id: \.id) { section in
+                        SectionView(data: section)
+                            .padding(.bottom, 20)
+                    }
                 }
             }
-//                }
+            .frame(maxHeight: .infinity)
             Spacer()
             Button {
                 projectSections.addSection()

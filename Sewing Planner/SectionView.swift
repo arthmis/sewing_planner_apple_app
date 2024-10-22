@@ -103,11 +103,12 @@ struct SectionView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
+            } else {
+                Button("Add Item") {
+                    isAddingItem = true
+                }
+                .accessibilityIdentifier("NewStepButton")
             }
-            Button("Add Item") {
-                isAddingItem = true
-            }
-            .accessibilityIdentifier("NewStepButton")
         }
     }
 }
