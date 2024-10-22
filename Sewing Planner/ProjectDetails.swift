@@ -40,6 +40,7 @@ struct ProjectDetails: View {
             } label: {
                 Image(systemName: "plus")
             }
+            .buttonStyle(AddNewSectionButtonStyle())
             .frame(maxWidth: .infinity, alignment: .trailing)
         }
         .padding([.leading, .trailing], 50)
