@@ -13,7 +13,6 @@ struct ProjectDetails: View {
     @Binding var projectsNavigation: [Project]
 
     var body: some View {
-//        ScrollView {
         VStack(alignment: .leading) {
             HStack {
                 ProjectName(project: project)
@@ -23,23 +22,25 @@ struct ProjectDetails: View {
                 }.accessibilityIdentifier("SaveButton")
             }
             .frame(maxWidth: .infinity)
+            .padding(.bottom, 25)
 //                ScrollView {
-
             VStack(alignment: .leading) {
                 ForEach(projectSections.sections, id: \.id) { section in
                     SectionView(data: section)
+                        .padding(.bottom, 20)
                 }
             }
-            .frame(maxWidth: .infinity)
 //                }
+            Spacer()
             Button {
                 projectSections.addSection()
             } label: {
                 Image(systemName: "plus")
             }
+            .frame(maxWidth: .infinity, alignment: .trailing)
         }
-        .padding(50)
-//        }
+        .padding([.leading, .trailing], 50)
+        .padding([.top, .bottom], 20)
     }
 }
 
