@@ -25,6 +25,10 @@ struct SectionView: View {
         !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
+    private var isNewItemTextValid: Bool {
+        !newItem.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
     var body: some View {
         VStack(alignment: .leading) {
             // TODO: this if else can become a view called SectionName
@@ -75,12 +79,29 @@ struct SectionView: View {
             }
             .onDelete(perform: deleteItem)
             if isAddingItem {
-                TextField("new item", text: $newItem).onSubmit {
-                    guard !newItem.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
-                    
-                    data.addItem(text: newItem)
-                    isAddingItem = false
-                    newItem = ""
+                VStack(alignment: .leading) {
+                    TextField("new item", text: $newItem).onSubmit {
+                        guard isNewItemTextValid else { return }
+
+                        data.addItem(text: newItem)
+                        isAddingItem = false
+                        newItem = ""
+                    }
+                    HStack(alignment: .center) {
+                        Button("add") {
+                            guard isNewItemTextValid else { return }
+
+                            data.addItem(text: newItem)
+                            isAddingItem = false
+                            newItem = ""
+                        }
+                        Button("Cancel") {
+                            isAddingItem = false
+                            newItem = ""
+                        }
+                        .padding([.leading], 10)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
             Button("Add Item") {
