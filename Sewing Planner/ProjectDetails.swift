@@ -19,7 +19,8 @@ struct ProjectDetails: View {
                 Spacer()
                 Button("Save") {
                     print("saving project")
-                }.accessibilityIdentifier("SaveButton")
+                }
+                .accessibilityIdentifier("SaveButton")
             }
             .frame(maxWidth: .infinity)
             .padding(.bottom, 25)

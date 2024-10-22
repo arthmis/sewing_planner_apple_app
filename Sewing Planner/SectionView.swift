@@ -99,6 +99,7 @@ struct SectionView: View {
                             isAddingItem = false
                             newItem = ""
                         }
+                        .buttonStyle(SecondaryButtonStyle())
                         .padding([.leading], 10)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -107,6 +108,7 @@ struct SectionView: View {
                 Button("Add Item") {
                     isAddingItem = true
                 }
+                .buttonStyle(SecondaryButtonStyle())
                 .accessibilityIdentifier("NewStepButton")
             }
         }
