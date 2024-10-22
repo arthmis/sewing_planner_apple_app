@@ -10,15 +10,34 @@ import SwiftUI
 struct ProjectDetails: View {
     @ObservedObject var project: ProjectData
     @ObservedObject var projectSections: ProjectSections
+    var modelSaveProject: () throws -> Int64
     @Binding var projectsNavigation: [Project]
+
+    private var isProjectValid: Bool {
+        !project.data.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    func saveProject() {
+        guard isProjectValid else {
+            return
+        }
+
+        do {
+            let projectId = try modelSaveProject()
+        } catch {
+            fatalError(
+                "error adding steps and materials for project id: \(project.data.id)\n\n\(error)")
+        }
+        projectsNavigation.removeLast()
+    }
 
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
                 ProjectName(project: project)
                 Spacer()
-                Button(project.data.id != nil ? "Save Changes" : "Save Project") {
-                    print("saving project")
+                Button("Save Project") {
+                    saveProject()
                 }
                 .buttonStyle(SaveProjectButtonStyle())
                 .accessibilityIdentifier("SaveButton")

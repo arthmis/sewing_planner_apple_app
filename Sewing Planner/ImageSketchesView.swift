@@ -5,9 +5,9 @@
 //  Created by Art on 9/12/24.
 //
 
-import SwiftUI
 import AppKit
 import GRDB
+import SwiftUI
 
 struct ProjectImageRecord: Identifiable, Codable, EncodableRecord, FetchableRecord, MutablePersistableRecord, TableRecord {
     var id: Int64?
@@ -26,12 +26,12 @@ struct ProjectImage {
     var name: String {
         path.deletingPathExtension().lastPathComponent
     }
-    
+
     init(path: URL, image: NSImage? = nil) {
         self.path = path
         self.image = image
     }
-    
+
     init(record: ProjectImageRecord, path: URL, image: NSImage? = nil) {
         self.record = record
         self.image = image
@@ -39,12 +39,11 @@ struct ProjectImage {
     }
 }
 
-
 extension ProjectImage: Hashable {
     static func == (lhs: ProjectImage, rhs: ProjectImage) -> Bool {
         return lhs.path == rhs.path
     }
-    
+
     func hash(into hasher: inout Hasher) {
         hasher.combine(path)
     }
@@ -57,23 +56,23 @@ struct ImageSketchesView: View {
     @State var selectedImageForDeletion: URL?
     @State var overlaySelectedImage = false
     @State var selectedImage: URL?
-    
+
     func deduplicateSelectedImages(images: [ProjectImage]) -> [ProjectImage] {
         var result: [ProjectImage] = []
         var uniqueData: Set<ProjectImage> = Set()
-        
+
         for image in images {
             if !uniqueData.contains(image) {
                 result.append(image)
                 uniqueData.insert(image)
             }
         }
-        
+
         return result
     }
-    
+
 //    func handleFileImport()
-    
+
     var body: some View {
         VStack(alignment: .center) {
             HStack {
@@ -84,11 +83,11 @@ struct ImageSketchesView: View {
                         }
                         Spacer()
                         Button("Delete") {
-                            if let index = self.projectImages.images.firstIndex(where: {$0.path == imagePath}) {
+                            if let index = self.projectImages.images.firstIndex(where: { $0.path == imagePath }) {
                                 let image = self.projectImages.images.remove(at: index)
                                 projectImages.deletedImages.append(image)
                             }
-                            
+
                             selectedImageForDeletion = nil
                         }
                     }
@@ -140,11 +139,11 @@ struct ImageSketchesView: View {
             .padding(.trailing, 10)
             .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.jpeg, .png, .webP, .heic, .heif], allowsMultipleSelection: true) { result in
                 switch result {
-                case .success(let files):
+                case let .success(files):
                     let images: [ProjectImage] = files.map { file in
                         let name = file.lastPathComponent
                         let path = file
-                        
+
                         // need this to access the file content
                         let hasAccess = file.startAccessingSecurityScopedResource()
                         if !hasAccess {
@@ -153,14 +152,14 @@ struct ImageSketchesView: View {
                             file.stopAccessingSecurityScopedResource()
                             return ProjectImage(path: path)
                         }
-                        
+
                         let data = try! Data(contentsOf: path)
                         if let img = NSImage(data: data) {
                             file.stopAccessingSecurityScopedResource()
                             //                                return ProjectImage(name: name, path: path, image: img)
                             return ProjectImage(path: path, image: img)
                         }
-                        
+
                         file.stopAccessingSecurityScopedResource()
                         //                            return ProjectImage(name: name, path: path)
                         return ProjectImage(path: path)
@@ -168,7 +167,7 @@ struct ImageSketchesView: View {
                     print(images)
                     projectImages.images += images
                     projectImages.images = deduplicateSelectedImages(images: projectImages.images)
-                case .failure(let error):
+                case let .failure(error):
                     // Process error here
                     print(error)
                 }
@@ -211,7 +210,7 @@ struct ImageSketchesView: View {
     }
 }
 
-//var body: some View {
+// var body: some View {
 //    VStack(alignment: .center) {
 //        PhotosPicker("Select image", selection: $pickerItem, matching: .images)
 //            .onChange(of: pickerItem) {
@@ -221,8 +220,8 @@ struct ImageSketchesView: View {
 //            }
 //        selectedImage?.resizable().scaledToFit()
 //    }
-//}
+// }
 
-//#Preview {
+// #Preview {
 //    ImageSketchesView()
-//}
+// }
