@@ -88,13 +88,14 @@ struct SectionView: View {
                         newItem = ""
                     }
                     HStack(alignment: .center) {
-                        Button("add") {
+                        Button("Add") {
                             guard isNewItemTextValid else { return }
 
                             data.addItem(text: newItem)
                             isAddingItem = false
                             newItem = ""
                         }
+                        .buttonStyle(PrimaryButtonStyle())
                         Button("Cancel") {
                             isAddingItem = false
                             newItem = ""
