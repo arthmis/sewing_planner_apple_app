@@ -51,6 +51,7 @@ struct ProjectView: View {
                 VStack {
                     HSplitView {
                         ProjectDetails(project: model.project, projectSections: model.projectSections, modelSaveProject: model.saveProject, projectsNavigation: $projectsNavigation)
+                            .frame(minWidth: 400, maxWidth: 600)
                         ImageSketchesView(projectId: projectId, projectImages: model.projectImages)
                     }.frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
