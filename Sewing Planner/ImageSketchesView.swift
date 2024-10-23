@@ -94,40 +94,55 @@ struct ImageSketchesView: View {
                 }
             }
             ScrollView {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 150))]) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 150), spacing: 10)]) {
                     ForEach($projectImages.images, id: \.self.path) { $image in
                         if let img = image.image {
                             if image.path == selectedImageForDeletion {
-                                VStack {
-                                    Image(nsImage: img)
-                                        .resizable()
-                                        .interpolation(.high)
-                                        .scaledToFit()
-                                        .frame(width: 120, height: 120, alignment: .center)
-                                    Text(image.name)
-                                }.background(Color.blue)
+                                Image(nsImage: img)
+                                    .resizable()
+                                    .interpolation(.high)
+                                    .scaledToFit()
+                                    .frame(width: 120, height: 120, alignment: .center)
+                                    .padding(10)
+                                    .background(Color.blue)
                             } else {
-                                VStack {
-                                    Image(nsImage: img)
-                                        .resizable()
-                                        .interpolation(.high)
-                                        .scaledToFit()
-                                        .frame(width: 120, height: 120, alignment: .center)
-                                    Text(image.name)
-                                }.onTapGesture {
+                                Image(nsImage: img)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 150, height: 250)
+                                    .clipped()
+                                    .clipShape(RoundedRectangle(cornerRadius: 9))
+                                    .shadow(color: Color(hex: 0x000000, opacity: 0.25), radius: 3, x: 0, y: 4)
+                                    .onTapGesture {
+                                        selectedImage = image.path
+                                        overlaySelectedImage = true
+                                    }.onLongPressGesture {
+                                        selectedImageForDeletion = image.path
+                                    }
+                            }
+                        } else {
+                            // Place holder image if displaying an image fails or loading failed
+                            // TODO: think about if to use this or just display an error
+                            Image("black_dress_sketch")
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 150, height: 250)
+                                .clipped()
+                                .clipShape(RoundedRectangle(cornerRadius: 9))
+                                .shadow(color: Color(hex: 0x000000, opacity: 0.25), radius: 3, x: 0, y: 4)
+                                .onTapGesture {
                                     selectedImage = image.path
                                     overlaySelectedImage = true
                                 }.onLongPressGesture {
                                     selectedImageForDeletion = image.path
                                 }
-                            }
-                        } else {
-                            // TODO: put a placeholder image if image displaying or loading fails
-                            Text(image.name)
                         }
                     }
+//                    .border(Color.blue)
                 }
             }
+            .padding(.top, 50)
+            .padding([.leading, .trailing], 30)
             Button {
                 showFileImporter = true
             } label: {
@@ -201,7 +216,6 @@ struct ImageSketchesView: View {
                 .background(.ultraThinMaterial)
             }
         }
-        .padding(.top, 50)
         .frame(
             maxWidth: .infinity,
             maxHeight: .infinity,
