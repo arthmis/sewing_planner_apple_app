@@ -67,7 +67,11 @@ struct ProjectName: View {
     var body: some View {
         HStack {
             if isEditing {
-                TextField("Enter project name", text: $project.data.name).onSubmit {
+                TextField("", text: $project.data.name)
+                    .textFieldStyle(.plain)
+                    .font(.custom("CooperHewitt-Medium", size: 20))
+                    .titleTextFieldStyle(when: project.data.name.isEmpty, placeholder: "Enter project name")
+                    .onSubmit {
                     // add a popup telling user that name can't be empty
 
                     let sanitizedName = project.data.name.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -82,7 +86,8 @@ struct ProjectName: View {
                 }
             } else {
                 Text(project.data.name)
-                    .font(.custom("CooperHewitt-medium", size: 20))
+                    .font(.custom("CooperHewitt-Medium", size: 20))
+                    .frame(maxWidth: .infinity, maxHeight: 40, alignment: .leading)
                     .onTapGesture {
                         if !isEditing {
                             project.tempName = project.data.name
@@ -100,4 +105,6 @@ struct ProjectName: View {
 
 #Preview {
     ProjectName(project: ProjectData(data: Project(id: 2, name: "Project Name", completed: false, createDate: Date(), updateDate: Date())))
+        .frame(width: 300, height: 300)
+        .background(Color.white)
 }
