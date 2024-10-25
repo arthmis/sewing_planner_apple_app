@@ -64,7 +64,7 @@ struct SectionView: View {
                     }
                 }
                 Spacer()
-                Button {} label: {
+                SectionViewButton {} label: {
                     Image(systemName: "ellipsis")
                 }
             }

@@ -72,6 +72,20 @@ struct AddNewSectionButtonStyle: ButtonStyle {
     }
 }
 
+struct SectionTertiaryButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        let isPressed = configuration.isPressed
+        configuration.label
+            .font(.system(size: 22))
+            .padding([.vertical, .leading], 10)
+            .foregroundStyle(isPressed ? Color(.blue) : Color(hex: 0x333333))
+            .scaleEffect(isPressed ? 0.95 : 1)
+            .brightness(isPressed ? -0.05 : 0)
+            .background(.white)
+            .animation(.easeIn(duration: 0.1), value: isPressed)
+    }
+}
+
 struct AddImageButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         let isPressed = configuration.isPressed
