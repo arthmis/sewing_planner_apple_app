@@ -19,7 +19,7 @@ struct PrimaryButtonStyle: ButtonStyle {
             .clipShape(RoundedRectangle(cornerRadius: 9))
             .scaleEffect(isPressed ? 0.95 : 1)
             .brightness(isPressed ? -0.05 : 0)
-            .shadow(color: Color(hex: 0x000000, opacity: 0.25), radius: isPressed ? 1.5 : 3, x: 0, y: 4)
+            .shadow(color: Color(hex: 0xCFCFCF), radius: isPressed ? 1.5 : 3, x: 1, y: 3)
             .animation(.easeIn(duration: 0.1), value: isPressed)
     }
 }
@@ -35,7 +35,7 @@ struct SecondaryButtonStyle: ButtonStyle {
             .clipShape(RoundedRectangle(cornerRadius: 9))
             .scaleEffect(isPressed ? 0.95 : 1)
             .brightness(isPressed ? -0.05 : 0)
-            .shadow(color: Color(hex: 0x000000, opacity: 0.25), radius: isPressed ? 1.5 : 3, x: 0, y: 4)
+            .shadow(color: Color(hex: 0xCFCFCF), radius: isPressed ? 1.5 : 3, x: 1, y: 3)
             .animation(.easeIn(duration: 0.1), value: isPressed)
     }
 }
