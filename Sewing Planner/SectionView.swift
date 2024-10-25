@@ -80,13 +80,17 @@ struct SectionView: View {
             .onDelete(perform: deleteItem)
             if isAddingItem {
                 VStack(alignment: .leading) {
-                    TextField("new item", text: $newItem).onSubmit {
+                    TextField("", text: $newItem, axis: .vertical).onSubmit {
                         guard isNewItemTextValid else { return }
 
                         data.addItem(text: newItem)
                         isAddingItem = false
                         newItem = ""
                     }
+                    .textFieldStyle(.plain)
+                    .primaryTextFieldStyle(when: newItem.isEmpty, placeholder: "type item")
+                    .frame(minWidth: 300, maxWidth: .infinity)
+                    .padding(.trailing, 50)
                     HStack(alignment: .center) {
                         Button("Add") {
                             guard isNewItemTextValid else { return }
