@@ -13,6 +13,7 @@ struct SectionView: View {
     @State var name = ""
     @State var isAddingItem = false
     @State var newItem = ""
+    @FocusState var headerFocus: Bool
 
     func deleteItem(at offsets: IndexSet) {
         for index in offsets {
@@ -35,15 +36,33 @@ struct SectionView: View {
             HStack {
                 if isRenamingSection {
                     HStack {
-                        TextField("", text: $name).onSubmit {
-                            // TODO: add a popup telling user that instruction can't be empty
-                            guard isNewNameValid else { return }
+                        TextField("", text: $name)
+                            .onSubmit {
+                                // TODO: add a popup telling user that instruction can't be empty
+                                guard isNewNameValid else { return }
 
-                            isRenamingSection = false
-                            data.updateSectionName(with: name)
-                        }
-                        .textFieldStyle(.plain)
-                        .font(.custom("SourceSans3-Medium", size: 16))
+                                isRenamingSection = false
+                                data.updateSectionName(with: name)
+                            }
+                            .focused($headerFocus)
+                            .onChange(of: headerFocus) { _, newFocus in
+                                if !newFocus {
+                                    guard isNewNameValid else {
+                                        isRenamingSection = false
+                                        return
+                                    }
+
+                                    data.section.name = name
+                                    isRenamingSection = false
+                                }
+                            }
+                            .textFieldStyle(.plain)
+                            .padding(.bottom, 5)
+                            .overlay(Rectangle()
+                                .fill(.gray)
+                                .frame(maxWidth: .infinity, maxHeight: 5),
+                                alignment: .bottom)
+                            .font(.custom("SourceSans3-Medium", size: 16))
                         Button("Cancel") {
                             name = data.section.name
 
@@ -59,12 +78,16 @@ struct SectionView: View {
                             isRenamingSection = false
                         }
                     }
+                    .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
                 } else {
-                    Text(data.section.name).onTapGesture {
+                    Text(data.section.name)
+                        .onTapGesture {
                         isRenamingSection = true
                         name = data.section.name
+                        headerFocus = true
                     }
                     .font(.custom("SourceSans3-Medium", size: 16))
+                    .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
                 }
                 Spacer()
                 SectionViewButton {} label: {
@@ -121,4 +144,3 @@ struct SectionView: View {
         }
     }
 }
-

@@ -44,50 +44,18 @@ extension View {
     }
 }
 
-public struct TitleTextFieldStyle: ViewModifier {
-    var showPlaceHolder: Bool
-    var placeholder: String
-
-    func style(content: some View) -> some View {
-        content
-//            .font(.custom("CooperHewitt-Medium", size: 20))
-            .padding([.vertical], 10)
-            .padding(.top, 6)
-            .frame(maxWidth: .infinity, maxHeight: 40, alignment: .leading)
-    }
-
-    public func body(content: Content) -> some View {
-        ZStack(alignment: .leading) {
-            style(content: content)
-            if showPlaceHolder {
-                style(content: Text(placeholder))
-            }
-        }
-    }
-}
-
-extension View {
-    func titleTextFieldStyle(
-        when shouldShow: Bool,
-        placeholder: String
-    ) -> some View {
-        modifier(TitleTextFieldStyle(showPlaceHolder: shouldShow, placeholder: placeholder)
-        )
-    }
-}
-
 struct PrimaryTextField: View {
     @State var text = ""
     var body: some View {
         VStack {
-            //            TextField("hi", text: $text, placeholder: Text("new item text"), axis: .vertical)
-            TextField("", text: $text, axis: .vertical)
+            TextField("hello", text: $text, axis: .vertical)
                 .textFieldStyle(.plain)
-//                .primaryTextFieldStyle(when: text.isEmpty, placeholder: "Text")
-                .titleTextFieldStyle(when: text.isEmpty, placeholder: "Text")
-//                .modifier(PlaceholderStyle(showPlaceHolder: text.isEmpty, placeholder: "Text"))
-                .frame(minWidth: 200, maxWidth: 200, minHeight: 200)
-                .padding()
+                .padding(.bottom, 5)
+                .overlay(Rectangle()
+                    .fill(.gray)
+                    .frame(maxWidth: .infinity, maxHeight: 5),
+                    alignment: .bottom)
+                .frame(width: 200, height: 200)
                 .background(Color.white)
         }
     }

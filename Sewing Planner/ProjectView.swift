@@ -101,6 +101,13 @@ struct ProjectView: View {
                 }
             }
         }
+        // clicking anywhere will remove focus from whatever may have focus
+        // mostly using this to remove focus from textfields when you click outside of them
+        // using a frame using all the available space to make it more effective
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onTapGesture {
+            NSApplication.shared.keyWindow?.makeFirstResponder(nil)
+        }
         .task {
             if let id = projectId {
                 print(id)
@@ -122,3 +129,4 @@ struct BackButton: View {
         }
     }
 }
+
