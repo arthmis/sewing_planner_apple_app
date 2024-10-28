@@ -35,13 +35,15 @@ struct SectionView: View {
             HStack {
                 if isRenamingSection {
                     HStack {
-                        TextField("section name", text: $name).onSubmit {
+                        TextField("", text: $name).onSubmit {
                             // TODO: add a popup telling user that instruction can't be empty
                             guard isNewNameValid else { return }
 
                             isRenamingSection = false
                             data.updateSectionName(with: name)
                         }
+                        .textFieldStyle(.plain)
+                        .font(.custom("SourceSans3-Medium", size: 16))
                         Button("Cancel") {
                             name = data.section.name
 
@@ -62,13 +64,13 @@ struct SectionView: View {
                         isRenamingSection = true
                         name = data.section.name
                     }
+                    .font(.custom("SourceSans3-Medium", size: 16))
                 }
                 Spacer()
                 SectionViewButton {} label: {
                     Image(systemName: "ellipsis")
                 }
             }
-            .font(.custom("CooperHewitt-Medium", size: 16))
             .overlay(Divider()
                 .frame(maxWidth: .infinity, maxHeight: 1)
                 .background(Color(red: 230, green: 230, blue: 230)), alignment: .bottom)
@@ -119,3 +121,4 @@ struct SectionView: View {
         }
     }
 }
+

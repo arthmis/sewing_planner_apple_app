@@ -69,8 +69,7 @@ struct ProjectName: View {
             if isEditing {
                 TextField("", text: $project.data.name)
                     .textFieldStyle(.plain)
-                    .font(.custom("CooperHewitt-Medium", size: 20))
-                    .titleTextFieldStyle(when: project.data.name.isEmpty, placeholder: "Enter project name")
+                    .font(.custom("SourceSans3-Medium", size: 20))
                     .onSubmit {
                     // add a popup telling user that name can't be empty
 
@@ -86,8 +85,7 @@ struct ProjectName: View {
                 }
             } else {
                 Text(project.data.name)
-                    .font(.custom("CooperHewitt-Medium", size: 20))
-                    .frame(maxWidth: .infinity, maxHeight: 40, alignment: .leading)
+                    .font(.custom("SourceSans3-Medium", size: 20))
                     .onTapGesture {
                         if !isEditing {
                             project.tempName = project.data.name
