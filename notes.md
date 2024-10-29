@@ -79,3 +79,7 @@
 - roboto
 - montserrat
 - josefi
+
+## Removing focus from textfield when clicking outside of it
+- https://gist.github.com/arthmis/92c46c46dd448b5a527e68c13a1bc715
+- https://www.reddit.com/r/swift/comments/14icasf/remove_automatic_focus_on_textfield_swiftui/ (original)
