@@ -92,17 +92,22 @@ struct ImageSketchesView: View {
                         }
                     }
                 }
+                Spacer()
+                SectionViewButton {} label: {
+                    Image(systemName: "ellipsis")
+                }
+                .padding(.vertical, 10)
+                .padding(.horizontal, 30)
             }
+            .frame(maxWidth: .infinity)
             ScrollView {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 150), spacing: 20)]) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 150), spacing: 30)]) {
                     ForEach($projectImages.images, id: \.self.path) { $image in
                         ImageButton(image: $image, selectedImageForDeletion: $selectedImageForDeletion, overlaySelectedImage: $overlaySelectedImage, selectedImage: $selectedImage)
                     }
                 }
                 .padding(30)
             }
-            .padding(.top, 50)
-            .padding([.leading, .trailing], 30)
             Button {
                 showFileImporter = true
             } label: {

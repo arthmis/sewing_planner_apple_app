@@ -72,14 +72,34 @@ struct ImageButton: View {
             if image.path == selectedImageForDeletion {
                 Image(nsImage: img)
                     .resizable()
-                    .interpolation(.high)
-                    .scaledToFit()
-                    .frame(width: 120, height: 120, alignment: .center)
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 150, height: 250)
+                    .clipped()
+                    .clipShape(RoundedRectangle(cornerRadius: 9))
                     .padding(10)
-                    .background(Color.blue)
-                    .onHover { hover in
-                        isHovering = hover
-                    }
+                    .shadow(color: Color(hex: 0x000000, opacity: isHovering ? 0.5 : 0.25), radius: isHovering ? 5 : 3, x: 0, y: 4)
+                    .scaleEffect(isHovering ? 1.03 : 1, anchor: .center)
+                    .animation(.easeIn(duration: 0.05), value: isPressed)
+                    .padding(5)
+                    .background(Color(hex: 0xDDDDDD, opacity: isPressed ? 1 : 0))
+                    .background(Color(hex: 0x780606))
+                    .clipShape(RoundedRectangle(cornerRadius: 9))
+                    .animation(.easeIn(duration: 0.05), value: isHovering)
+//                    .onHover { hover in
+//                        isHovering = hover
+//                    }
+//                    .onTapGesture {
+//                        selectedImage = image.path
+//                        overlaySelectedImage = true
+//                    }
+//                    .onLongPressGesture {
+//                        selectedImageForDeletion = image.path
+//                    }
+//                    .onPress {
+//                        isPressed = true
+//                    } onRelease: {
+//                        isPressed = false
+//                    }
             } else {
                 Image(nsImage: img)
                     .resizable()
@@ -106,6 +126,7 @@ struct ImageButton: View {
                     }
                     .onLongPressGesture {
                         selectedImageForDeletion = image.path
+                        isPressed = false
                     }
                     .onPress {
                         isPressed = true
@@ -141,6 +162,7 @@ struct ImageButton: View {
                 }
                 .onLongPressGesture {
                     selectedImageForDeletion = image.path
+                    isPressed = false
                 }
                 .onPress {
                     isPressed = true
