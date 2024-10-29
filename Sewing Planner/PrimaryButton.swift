@@ -95,6 +95,8 @@ struct ImageButton: View {
                     .background(Color(hex: 0xDDDDDD, opacity: isPressed ? 1 : 0))
                     .clipShape(RoundedRectangle(cornerRadius: 9))
                     .animation(.easeIn(duration: 0.05), value: isHovering)
+                    // parts of the image that were clipped still respond to the mouse events so this constrains it to the correct area
+                    .contentShape(Rectangle())
                     .onHover { hover in
                         isHovering = hover
                     }
@@ -128,6 +130,8 @@ struct ImageButton: View {
                 .background(Color(hex: 0xDDDDDD, opacity: isPressed ? 1 : 0))
                 .clipShape(RoundedRectangle(cornerRadius: 9))
                 .animation(.easeIn(duration: 0.05), value: isHovering)
+                // parts of the image that were clipped still respond to the mouse events so this constrains it to the correct area
+                .contentShape(Rectangle())
                 .onHover { hover in
                     isHovering = hover
                 }
