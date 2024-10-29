@@ -94,52 +94,12 @@ struct ImageSketchesView: View {
                 }
             }
             ScrollView {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 150), spacing: 10)]) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 150), spacing: 20)]) {
                     ForEach($projectImages.images, id: \.self.path) { $image in
-                        if let img = image.image {
-                            if image.path == selectedImageForDeletion {
-                                Image(nsImage: img)
-                                    .resizable()
-                                    .interpolation(.high)
-                                    .scaledToFit()
-                                    .frame(width: 120, height: 120, alignment: .center)
-                                    .padding(10)
-                                    .background(Color.blue)
-                            } else {
-                                Image(nsImage: img)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: 150, height: 250)
-                                    .clipped()
-                                    .clipShape(RoundedRectangle(cornerRadius: 9))
-                                    .shadow(color: Color(hex: 0x000000, opacity: 0.25), radius: 3, x: 0, y: 4)
-                                    .onTapGesture {
-                                        selectedImage = image.path
-                                        overlaySelectedImage = true
-                                    }.onLongPressGesture {
-                                        selectedImageForDeletion = image.path
-                                    }
-                            }
-                        } else {
-                            // Place holder image if displaying an image fails or loading failed
-                            // TODO: think about if to use this or just display an error
-                            Image("black_dress_sketch")
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 150, height: 250)
-                                .clipped()
-                                .clipShape(RoundedRectangle(cornerRadius: 9))
-                                .shadow(color: Color(hex: 0x000000, opacity: 0.25), radius: 3, x: 0, y: 4)
-                                .onTapGesture {
-                                    selectedImage = image.path
-                                    overlaySelectedImage = true
-                                }.onLongPressGesture {
-                                    selectedImageForDeletion = image.path
-                                }
-                        }
+                        ImageButton(image: $image, selectedImageForDeletion: $selectedImageForDeletion, overlaySelectedImage: $overlaySelectedImage, selectedImage: $selectedImage)
                     }
-//                    .border(Color.blue)
                 }
+                .padding(30)
             }
             .padding(.top, 50)
             .padding([.leading, .trailing], 30)
