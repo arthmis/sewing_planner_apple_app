@@ -7,6 +7,11 @@
 
 import SwiftUI
 
+enum FocusField {
+    case header
+    case addItem
+}
+
 struct SectionView: View {
     @ObservedObject var data: Section
     @State var isRenamingSection = false
@@ -14,6 +19,7 @@ struct SectionView: View {
     @State var isAddingItem = false
     @State var newItem = ""
     @FocusState var headerFocus: Bool
+    @FocusState var addItemFocus: Bool
     @State var isHovering = false
 
     func deleteItem(at offsets: IndexSet) {
@@ -124,6 +130,24 @@ struct SectionView: View {
                     .primaryTextFieldStyle(when: newItem.isEmpty, placeholder: "type item")
                     .frame(minWidth: 300, maxWidth: .infinity)
                     .padding(.trailing, 50)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        addItemFocus = true
+                    }
+                    .focused($addItemFocus)
+                    .onChange(of: addItemFocus) { _ , newFocus in
+                        if !newFocus {
+                            guard isNewItemTextValid else {
+                                isAddingItem = false
+                                newItem = ""
+                                return
+                            }
+
+                            data.addItem(text: newItem)
+                            isAddingItem = false
+                            newItem = ""
+                        }
+                    }
                     HStack(alignment: .center) {
                         Button("Add") {
                             guard isNewItemTextValid else { return }
@@ -145,6 +169,7 @@ struct SectionView: View {
             } else {
                 Button("Add Item") {
                     isAddingItem = true
+                    addItemFocus = true
                 }
                 .buttonStyle(SecondaryButtonStyle())
                 .accessibilityIdentifier("NewStepButton")

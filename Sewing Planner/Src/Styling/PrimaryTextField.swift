@@ -15,7 +15,7 @@ public struct PlaceholderStyle: ViewModifier {
         ZStack(alignment: .leading) {
             let padding = 10.0
             content
-                .font(.custom("CooperHewitt-regular", size: 22))
+                .font(.custom("SourceSans3-Regular", size: 16))
                 .padding([.all], padding)
                 .background(RoundedRectangle(cornerRadius: 9)
                     .fill(Color(hex: 0xF9F9F9))
@@ -29,6 +29,7 @@ public struct PlaceholderStyle: ViewModifier {
                 Text(placeholder)
                     .foregroundStyle(Color.gray)
                     .padding([.all], padding)
+                    .allowsHitTesting(false)
             }
         }
     }
