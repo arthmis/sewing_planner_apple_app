@@ -7,32 +7,28 @@
 
 import SwiftUI
 
-struct ProjectDisplay {
-    var project: Project
-    var image: ProjectImage?
-}
-
 struct ProjectsView: View {
     @Environment(\.appDatabase) private var appDatabase
-    @State var projects: [Project] = []
+    @State var projects: [ProjectMetadata] = []
     @State var projectsDisplay: [ProjectDisplay] = []
     let columns = [GridItem(.adaptive(minimum: 200, maximum: 300))]
-    
+
     var body: some View {
         NavigationStack(path: $projects) {
             VStack {
                 HStack {
                     Button("New Project") {
-                        projects.append(Project())
+                        projects.append(ProjectMetadata())
                     }
                     .accessibilityIdentifier("AddNewProjectButton")
                 }
-                
+
                 ScrollView {
                     LazyVGrid(columns: columns) {
                         ForEach(projectsDisplay, id: \.self.project.id) { project in
                             ProjectDisplayView(
-                                projectData: project, projects: $projects)
+                                projectData: project, projects: $projects
+                            )
                         }
                     }
                     .task {
@@ -40,7 +36,7 @@ struct ProjectsView: View {
                     }
                 }
             }
-            .navigationDestination(for: Project.self) { project in
+            .navigationDestination(for: ProjectMetadata.self) { project in
                 VStack {
                     ProjectView(projectId: project.id, projectsNavigation: $projects)
                 }
@@ -50,10 +46,10 @@ struct ProjectsView: View {
         .frame(minWidth: 600, minHeight: 300)
         .background(Color.white)
     }
-    
+
     func fetchProjects() {
         do {
-            self.projectsDisplay = try appDatabase.fetchProjectsAndProjectImage()
+            projectsDisplay = try appDatabase.fetchProjectsAndProjectImage()
         } catch {
             print("error: \(error)")
         }
@@ -62,8 +58,8 @@ struct ProjectsView: View {
 
 struct ProjectDisplayView: View {
     var projectData: ProjectDisplay
-    @Binding var projects: [Project]
-    
+    @Binding var projects: [ProjectMetadata]
+
     var body: some View {
         VStack {
             MaybeProjectImageView(projectImage: projectData.image)
@@ -85,9 +81,10 @@ struct ProjectDisplayView: View {
         }
     }
 }
+
 struct MaybeProjectImageView: View {
     let projectImage: ProjectImage?
-    
+
     var body: some View {
         if projectImage != nil {
             Image(nsImage: (projectImage?.image)!)
@@ -104,6 +101,7 @@ struct MaybeProjectImageView: View {
         }
     }
 }
+
 #Preview {
     ProjectsView()
 }

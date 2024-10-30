@@ -18,7 +18,7 @@ struct ProjectView: View {
     @State var doesProjectHaveName = false
     @State var showAlertIfProjectNotSaved = false
     @State var isLoading = true
-    @Binding var projectsNavigation: [Project]
+    @Binding var projectsNavigation: [ProjectMetadata]
 
     private var isProjectValid: Bool {
         !model.project.data.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -130,4 +130,3 @@ struct BackButton: View {
         }
     }
 }
-

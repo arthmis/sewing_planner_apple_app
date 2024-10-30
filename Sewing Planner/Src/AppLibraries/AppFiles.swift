@@ -5,45 +5,44 @@
 //  Created by Art on 9/20/24.
 //
 
-import Foundation
 import AppKit
+import Foundation
 
 struct AppFiles {
-    
     private func getPhotosDirectoryPath() -> URL {
         let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         let usersPhotosUrl = documentsURL.appendingPathComponent("ProjectPhotos")
-        
+
         return usersPhotosUrl
     }
-    
+
     func getProjectPhotoDirectoryPath(projectId: Int64) -> URL {
         let photosDirectory = getPhotosDirectoryPath()
-        
+
         return photosDirectory.appendingPathComponent(String(projectId))
     }
-    
+
     // TODO: handle situation where file names might be duplicates because they have the same name but comes from different file paths
     func saveProjectImages(projectId: Int64, images: [ProjectImage]) throws {
         let fileManager = FileManager.default
         let usersPhotosUrl = getPhotosDirectoryPath()
-        
+
         do {
             try fileManager.createDirectory(at: usersPhotosUrl, withIntermediateDirectories: true, attributes: nil)
         } catch {
             print("Error \(error)")
         }
-        
+
         let projectFolder = usersPhotosUrl.appendingPathComponent(String(projectId))
         do {
             try fileManager.createDirectory(at: projectFolder, withIntermediateDirectories: true, attributes: nil)
         } catch {
             print("Error \(error)")
         }
-        
+
         for file in images {
             let createFileSuccess = fileManager.createFile(atPath: file.path.path(), contents: nil)
-            
+
             if createFileSuccess {
                 let tiffRep = file.image?.tiffRepresentation
                 let bitmap = NSBitmapImageRep(data: tiffRep!)!
@@ -58,15 +57,15 @@ struct AppFiles {
             }
         }
     }
-    
+
     func getImage(fromPath path: URL) -> NSImage? {
         let fileManager = FileManager.default
         let usersPhotosUrl = getPhotosDirectoryPath()
-        
+
         if let data = fileManager.contents(atPath: path.path()) {
             return NSImage(data: data)
         }
-        
+
         return nil
     }
 }

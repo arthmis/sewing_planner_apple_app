@@ -20,7 +20,7 @@ struct AppDatabase {
 }
 
 extension AppDatabase {
-    func addProject(project: inout Project) throws -> Project {
+    func addProject(project: inout ProjectMetadata) throws -> ProjectMetadata {
         try dbWriter.write { db in
             let now = Date()
             try db.execute(sql: "INSERT INTO project (name, completed, createDate, updateDate) VALUES (?, ?, ?, ?)", arguments: [project.name, project.completed, now, now])
@@ -159,7 +159,7 @@ extension AppDatabase {
         var projectDisplayData: [ProjectDisplay] = []
 
         try dbWriter.read { db in
-            let projects: [Project] = try Project.all().order(ProjectColumns.id)
+            let projects: [ProjectMetadata] = try ProjectMetadata.all().order(ProjectColumns.id)
                 .fetchAll(db)
 
             for project in projects {
@@ -177,9 +177,9 @@ extension AppDatabase {
         return projectDisplayData
     }
 
-    func getProject(id: Int64) throws -> Project? {
+    func getProject(id: Int64) throws -> ProjectMetadata? {
         return try dbWriter.read { db in
-            try Project.all().filter(ProjectColumns.id == id)
+            try ProjectMetadata.all().filter(ProjectColumns.id == id)
                 .fetchOne(db)
         }
     }

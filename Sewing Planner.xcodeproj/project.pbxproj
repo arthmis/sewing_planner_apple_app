@@ -3,54 +3,15 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6E572DB32C3DA71C008BCF24 /* ProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DB22C3DA71C008BCF24 /* ProjectView.swift */; };
-		6E572DB82C3DA8F6008BCF24 /* ProjectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DB72C3DA8F6008BCF24 /* ProjectsView.swift */; };
 		6E572DC82C497C63008BCF24 /* AllProjectsScreenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DC72C497C63008BCF24 /* AllProjectsScreenTests.swift */; };
 		6E572DCB2C49E03F008BCF24 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 6E572DCA2C49E03F008BCF24 /* GRDB */; };
-		6E572DCD2C49F22E008BCF24 /* AppDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DCC2C49F22E008BCF24 /* AppDatabase.swift */; };
-		6E572DD12C5020D3008BCF24 /* ProjectName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DD02C5020D3008BCF24 /* ProjectName.swift */; };
 		6E572DD32C5DB2A0008BCF24 /* NewProjectViewTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DD22C5DB2A0008BCF24 /* NewProjectViewTest.swift */; };
 		6E9724542C8F7CEE0027C487 /* DatabaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9724532C8F7CEE0027C487 /* DatabaseTest.swift */; };
-		6E9724562C90EAFF0027C487 /* TimestampRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9724552C90EAFF0027C487 /* TimestampRecord.swift */; };
-		6E9724582C93A3280027C487 /* ImageSketchesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9724572C93A3280027C487 /* ImageSketchesView.swift */; };
-		6E97245A2C93A48C0027C487 /* ProjectDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9724592C93A48C0027C487 /* ProjectDetails.swift */; };
-		6E97245C2C9DB2460027C487 /* AppFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E97245B2C9DB2460027C487 /* AppFiles.swift */; };
-		6E97245E2CA1B3A00027C487 /* PrimaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E97245D2CA1B3A00027C487 /* PrimaryButton.swift */; };
-		6E9724602CA1EEDE0027C487 /* AppButtonStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E97245F2CA1EEDE0027C487 /* AppButtonStyles.swift */; };
-		6E9724622CA338F00027C487 /* PrimaryTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9724612CA338F00027C487 /* PrimaryTextField.swift */; };
-		6E9724642CB9CAA10027C487 /* ProjectDetailData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9724632CB9CAA10027C487 /* ProjectDetailData.swift */; };
-		6E9724662CB9D1670027C487 /* SectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9724652CB9D1670027C487 /* SectionView.swift */; };
-		6E9724682CB9D71D0027C487 /* ItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9724672CB9D71D0027C487 /* ItemView.swift */; };
-		6E9724FF2CC6E8170027C487 /* -CooperHewitt-FontLog.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6E9724ED2CC6E8160027C487 /* -CooperHewitt-FontLog.txt */; };
-		6E9725002CC6E8170027C487 /* -CooperHewitt-OFL-201406.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6E9724EE2CC6E8160027C487 /* -CooperHewitt-OFL-201406.txt */; };
-		6E9725012CC6E8170027C487 /* -OFL-FAQ.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6E9724EF2CC6E8160027C487 /* -OFL-FAQ.txt */; };
-		6E9725022CC6E8170027C487 /* CooperHewitt-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9724F02CC6E8160027C487 /* CooperHewitt-Bold.otf */; };
-		6E9725032CC6E8170027C487 /* CooperHewitt-BoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9724F12CC6E8160027C487 /* CooperHewitt-BoldItalic.otf */; };
-		6E9725042CC6E8170027C487 /* CooperHewitt-Book.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9724F22CC6E8160027C487 /* CooperHewitt-Book.otf */; };
-		6E9725052CC6E8170027C487 /* CooperHewitt-BookItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9724F32CC6E8160027C487 /* CooperHewitt-BookItalic.otf */; };
-		6E9725062CC6E8170027C487 /* CooperHewitt-Heavy.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9724F42CC6E8160027C487 /* CooperHewitt-Heavy.otf */; };
-		6E9725072CC6E8170027C487 /* CooperHewitt-HeavyItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9724F52CC6E8160027C487 /* CooperHewitt-HeavyItalic.otf */; };
-		6E9725082CC6E8170027C487 /* CooperHewitt-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9724F62CC6E8160027C487 /* CooperHewitt-Light.otf */; };
-		6E9725092CC6E8170027C487 /* CooperHewitt-LightItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9724F72CC6E8160027C487 /* CooperHewitt-LightItalic.otf */; };
-		6E97250A2CC6E8170027C487 /* CooperHewitt-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9724F82CC6E8160027C487 /* CooperHewitt-Medium.otf */; };
-		6E97250B2CC6E8170027C487 /* CooperHewitt-MediumItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9724F92CC6E8160027C487 /* CooperHewitt-MediumItalic.otf */; };
-		6E97250C2CC6E8170027C487 /* CooperHewitt-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9724FA2CC6E8160027C487 /* CooperHewitt-Semibold.otf */; };
-		6E97250D2CC6E8170027C487 /* CooperHewitt-SemiboldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9724FB2CC6E8160027C487 /* CooperHewitt-SemiboldItalic.otf */; };
-		6E97250E2CC6E8170027C487 /* CooperHewitt-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9724FC2CC6E8160027C487 /* CooperHewitt-Thin.otf */; };
-		6E97250F2CC6E8170027C487 /* CooperHewitt-ThinItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9724FD2CC6E8160027C487 /* CooperHewitt-ThinItalic.otf */; };
-		6E9725132CC6EF540027C487 /* SourceSans3-Italic-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9725112CC6EF540027C487 /* SourceSans3-Italic-VariableFont_wght.ttf */; };
-		6E9725142CC6EF540027C487 /* SourceSans3-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9725122CC6EF540027C487 /* SourceSans3-VariableFont_wght.ttf */; };
-		6E97251A2CC6EFA80027C487 /* SourceSans3-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9725152CC6EFA70027C487 /* SourceSans3-Medium.ttf */; };
-		6E97251B2CC6EFA80027C487 /* SourceSans3-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9725162CC6EFA70027C487 /* SourceSans3-Light.ttf */; };
-		6E97251C2CC6EFA80027C487 /* SourceSans3-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9725172CC6EFA70027C487 /* SourceSans3-Bold.ttf */; };
-		6E97251D2CC6EFA80027C487 /* SourceSans3-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9725182CC6EFA70027C487 /* SourceSans3-SemiBold.ttf */; };
-		6E97251E2CC6EFA80027C487 /* SourceSans3-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9725192CC6EFA80027C487 /* SourceSans3-Regular.ttf */; };
-		6EF0C83D2BED3CE200E7576F /* Sewing_PlannerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF0C83C2BED3CE200E7576F /* Sewing_PlannerApp.swift */; };
-		6EF0C83F2BED3CE200E7576F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF0C83E2BED3CE200E7576F /* ContentView.swift */; };
+		6E9724562C90EAFF0027C487 /* TimestampedRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9724552C90EAFF0027C487 /* TimestampedRecord.swift */; };
 		6EF0C8412BED3CE400E7576F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EF0C8402BED3CE400E7576F /* Assets.xcassets */; };
 		6EF0C8442BED3CE400E7576F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EF0C8432BED3CE400E7576F /* Preview Assets.xcassets */; };
 		6EF0C84F2BED3CE400E7576F /* Sewing_PlannerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF0C84E2BED3CE400E7576F /* Sewing_PlannerTests.swift */; };
@@ -76,51 +37,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		6E572DB22C3DA71C008BCF24 /* ProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectView.swift; sourceTree = "<group>"; };
-		6E572DB72C3DA8F6008BCF24 /* ProjectsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsView.swift; sourceTree = "<group>"; };
 		6E572DC72C497C63008BCF24 /* AllProjectsScreenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllProjectsScreenTests.swift; sourceTree = "<group>"; };
-		6E572DCC2C49F22E008BCF24 /* AppDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDatabase.swift; sourceTree = "<group>"; };
-		6E572DD02C5020D3008BCF24 /* ProjectName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectName.swift; sourceTree = "<group>"; };
 		6E572DD22C5DB2A0008BCF24 /* NewProjectViewTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewProjectViewTest.swift; sourceTree = "<group>"; };
 		6E9724532C8F7CEE0027C487 /* DatabaseTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseTest.swift; sourceTree = "<group>"; };
-		6E9724552C90EAFF0027C487 /* TimestampRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimestampRecord.swift; sourceTree = "<group>"; };
-		6E9724572C93A3280027C487 /* ImageSketchesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSketchesView.swift; sourceTree = "<group>"; };
-		6E9724592C93A48C0027C487 /* ProjectDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectDetails.swift; sourceTree = "<group>"; };
-		6E97245B2C9DB2460027C487 /* AppFiles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFiles.swift; sourceTree = "<group>"; };
-		6E97245D2CA1B3A00027C487 /* PrimaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButton.swift; sourceTree = "<group>"; };
-		6E97245F2CA1EEDE0027C487 /* AppButtonStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppButtonStyles.swift; sourceTree = "<group>"; };
-		6E9724612CA338F00027C487 /* PrimaryTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryTextField.swift; sourceTree = "<group>"; };
-		6E9724632CB9CAA10027C487 /* ProjectDetailData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectDetailData.swift; sourceTree = "<group>"; };
-		6E9724652CB9D1670027C487 /* SectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionView.swift; sourceTree = "<group>"; };
-		6E9724672CB9D71D0027C487 /* ItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemView.swift; sourceTree = "<group>"; };
-		6E9724ED2CC6E8160027C487 /* -CooperHewitt-FontLog.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "-CooperHewitt-FontLog.txt"; sourceTree = "<group>"; };
-		6E9724EE2CC6E8160027C487 /* -CooperHewitt-OFL-201406.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "-CooperHewitt-OFL-201406.txt"; sourceTree = "<group>"; };
-		6E9724EF2CC6E8160027C487 /* -OFL-FAQ.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "-OFL-FAQ.txt"; sourceTree = "<group>"; };
-		6E9724F02CC6E8160027C487 /* CooperHewitt-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CooperHewitt-Bold.otf"; sourceTree = "<group>"; };
-		6E9724F12CC6E8160027C487 /* CooperHewitt-BoldItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CooperHewitt-BoldItalic.otf"; sourceTree = "<group>"; };
-		6E9724F22CC6E8160027C487 /* CooperHewitt-Book.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CooperHewitt-Book.otf"; sourceTree = "<group>"; };
-		6E9724F32CC6E8160027C487 /* CooperHewitt-BookItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CooperHewitt-BookItalic.otf"; sourceTree = "<group>"; };
-		6E9724F42CC6E8160027C487 /* CooperHewitt-Heavy.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CooperHewitt-Heavy.otf"; sourceTree = "<group>"; };
-		6E9724F52CC6E8160027C487 /* CooperHewitt-HeavyItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CooperHewitt-HeavyItalic.otf"; sourceTree = "<group>"; };
-		6E9724F62CC6E8160027C487 /* CooperHewitt-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CooperHewitt-Light.otf"; sourceTree = "<group>"; };
-		6E9724F72CC6E8160027C487 /* CooperHewitt-LightItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CooperHewitt-LightItalic.otf"; sourceTree = "<group>"; };
-		6E9724F82CC6E8160027C487 /* CooperHewitt-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CooperHewitt-Medium.otf"; sourceTree = "<group>"; };
-		6E9724F92CC6E8160027C487 /* CooperHewitt-MediumItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CooperHewitt-MediumItalic.otf"; sourceTree = "<group>"; };
-		6E9724FA2CC6E8160027C487 /* CooperHewitt-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CooperHewitt-Semibold.otf"; sourceTree = "<group>"; };
-		6E9724FB2CC6E8160027C487 /* CooperHewitt-SemiboldItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CooperHewitt-SemiboldItalic.otf"; sourceTree = "<group>"; };
-		6E9724FC2CC6E8160027C487 /* CooperHewitt-Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CooperHewitt-Thin.otf"; sourceTree = "<group>"; };
-		6E9724FD2CC6E8160027C487 /* CooperHewitt-ThinItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CooperHewitt-ThinItalic.otf"; sourceTree = "<group>"; };
+		6E9724552C90EAFF0027C487 /* TimestampedRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimestampedRecord.swift; sourceTree = "<group>"; };
 		6E9725102CC6EA4B0027C487 /* Sewing-Planner-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Sewing-Planner-Info.plist"; sourceTree = SOURCE_ROOT; };
-		6E9725112CC6EF540027C487 /* SourceSans3-Italic-VariableFont_wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSans3-Italic-VariableFont_wght.ttf"; sourceTree = "<group>"; };
-		6E9725122CC6EF540027C487 /* SourceSans3-VariableFont_wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSans3-VariableFont_wght.ttf"; sourceTree = "<group>"; };
-		6E9725152CC6EFA70027C487 /* SourceSans3-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSans3-Medium.ttf"; sourceTree = "<group>"; };
-		6E9725162CC6EFA70027C487 /* SourceSans3-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSans3-Light.ttf"; sourceTree = "<group>"; };
-		6E9725172CC6EFA70027C487 /* SourceSans3-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSans3-Bold.ttf"; sourceTree = "<group>"; };
-		6E9725182CC6EFA70027C487 /* SourceSans3-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSans3-SemiBold.ttf"; sourceTree = "<group>"; };
-		6E9725192CC6EFA80027C487 /* SourceSans3-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSans3-Regular.ttf"; sourceTree = "<group>"; };
 		6EF0C8392BED3CE200E7576F /* Sewing Planner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Sewing Planner.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		6EF0C83C2BED3CE200E7576F /* Sewing_PlannerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sewing_PlannerApp.swift; sourceTree = "<group>"; };
-		6EF0C83E2BED3CE200E7576F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		6EF0C8402BED3CE400E7576F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6EF0C8432BED3CE400E7576F /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		6EF0C8452BED3CE400E7576F /* Sewing_Planner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Sewing_Planner.entitlements; sourceTree = "<group>"; };
@@ -130,6 +52,11 @@
 		6EF0C8582BED3CE400E7576F /* Sewing_PlannerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sewing_PlannerUITests.swift; sourceTree = "<group>"; };
 		6EF0C85A2BED3CE400E7576F /* Sewing_PlannerUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sewing_PlannerUITestsLaunchTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		6E748F932CD2CAA90076F1B4 /* Src */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Src; sourceTree = "<group>"; };
+		6E748FC92CD2D6110076F1B4 /* Fonts */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Fonts; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		6EF0C8362BED3CE200E7576F /* Frameworks */ = {
@@ -157,31 +84,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		6E9724FE2CC6E8160027C487 /* CooperHewitt-OTF-public */ = {
-			isa = PBXGroup;
-			children = (
-				6E9724ED2CC6E8160027C487 /* -CooperHewitt-FontLog.txt */,
-				6E9724EE2CC6E8160027C487 /* -CooperHewitt-OFL-201406.txt */,
-				6E9724EF2CC6E8160027C487 /* -OFL-FAQ.txt */,
-				6E9724F02CC6E8160027C487 /* CooperHewitt-Bold.otf */,
-				6E9724F12CC6E8160027C487 /* CooperHewitt-BoldItalic.otf */,
-				6E9724F22CC6E8160027C487 /* CooperHewitt-Book.otf */,
-				6E9724F32CC6E8160027C487 /* CooperHewitt-BookItalic.otf */,
-				6E9724F42CC6E8160027C487 /* CooperHewitt-Heavy.otf */,
-				6E9724F52CC6E8160027C487 /* CooperHewitt-HeavyItalic.otf */,
-				6E9724F62CC6E8160027C487 /* CooperHewitt-Light.otf */,
-				6E9724F72CC6E8160027C487 /* CooperHewitt-LightItalic.otf */,
-				6E9724F82CC6E8160027C487 /* CooperHewitt-Medium.otf */,
-				6E9724F92CC6E8160027C487 /* CooperHewitt-MediumItalic.otf */,
-				6E9724FA2CC6E8160027C487 /* CooperHewitt-Semibold.otf */,
-				6E9724FB2CC6E8160027C487 /* CooperHewitt-SemiboldItalic.otf */,
-				6E9724FC2CC6E8160027C487 /* CooperHewitt-Thin.otf */,
-				6E9724FD2CC6E8160027C487 /* CooperHewitt-ThinItalic.otf */,
-			);
-			name = "CooperHewitt-OTF-public";
-			path = "../../../Downloads/CooperHewitt-OTF-public";
-			sourceTree = "<group>";
-		};
 		6EF0C8302BED3CE200E7576F = {
 			isa = PBXGroup;
 			children = (
@@ -205,34 +107,13 @@
 		6EF0C83B2BED3CE200E7576F /* Sewing Planner */ = {
 			isa = PBXGroup;
 			children = (
+				6E748FC92CD2D6110076F1B4 /* Fonts */,
+				6E748F932CD2CAA90076F1B4 /* Src */,
 				6E9725102CC6EA4B0027C487 /* Sewing-Planner-Info.plist */,
-				6EF0C83C2BED3CE200E7576F /* Sewing_PlannerApp.swift */,
-				6E572DCC2C49F22E008BCF24 /* AppDatabase.swift */,
-				6E572DB72C3DA8F6008BCF24 /* ProjectsView.swift */,
-				6E572DB22C3DA71C008BCF24 /* ProjectView.swift */,
-				6EF0C83E2BED3CE200E7576F /* ContentView.swift */,
 				6EF0C8402BED3CE400E7576F /* Assets.xcassets */,
-				6E9725172CC6EFA70027C487 /* SourceSans3-Bold.ttf */,
-				6E9725162CC6EFA70027C487 /* SourceSans3-Light.ttf */,
-				6E9725152CC6EFA70027C487 /* SourceSans3-Medium.ttf */,
-				6E9725192CC6EFA80027C487 /* SourceSans3-Regular.ttf */,
-				6E9725182CC6EFA70027C487 /* SourceSans3-SemiBold.ttf */,
-				6E9725112CC6EF540027C487 /* SourceSans3-Italic-VariableFont_wght.ttf */,
-				6E9725122CC6EF540027C487 /* SourceSans3-VariableFont_wght.ttf */,
-				6E9724FE2CC6E8160027C487 /* CooperHewitt-OTF-public */,
 				6EF0C8452BED3CE400E7576F /* Sewing_Planner.entitlements */,
 				6EF0C8422BED3CE400E7576F /* Preview Content */,
-				6E572DD02C5020D3008BCF24 /* ProjectName.swift */,
-				6E9724552C90EAFF0027C487 /* TimestampRecord.swift */,
-				6E9724572C93A3280027C487 /* ImageSketchesView.swift */,
-				6E9724592C93A48C0027C487 /* ProjectDetails.swift */,
-				6E97245B2C9DB2460027C487 /* AppFiles.swift */,
-				6E97245D2CA1B3A00027C487 /* PrimaryButton.swift */,
-				6E97245F2CA1EEDE0027C487 /* AppButtonStyles.swift */,
-				6E9724612CA338F00027C487 /* PrimaryTextField.swift */,
-				6E9724632CB9CAA10027C487 /* ProjectDetailData.swift */,
-				6E9724652CB9D1670027C487 /* SectionView.swift */,
-				6E9724672CB9D71D0027C487 /* ItemView.swift */,
+				6E9724552C90EAFF0027C487 /* TimestampedRecord.swift */,
 			);
 			path = "Sewing Planner";
 			sourceTree = "<group>";
@@ -279,6 +160,10 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				6E748F932CD2CAA90076F1B4 /* Src */,
+				6E748FC92CD2D6110076F1B4 /* Fonts */,
 			);
 			name = "Sewing Planner";
 			packageProductDependencies = (
@@ -375,32 +260,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E9725012CC6E8170027C487 /* -OFL-FAQ.txt in Resources */,
-				6E9725092CC6E8170027C487 /* CooperHewitt-LightItalic.otf in Resources */,
-				6E9725052CC6E8170027C487 /* CooperHewitt-BookItalic.otf in Resources */,
-				6E97251B2CC6EFA80027C487 /* SourceSans3-Light.ttf in Resources */,
-				6E9725132CC6EF540027C487 /* SourceSans3-Italic-VariableFont_wght.ttf in Resources */,
-				6E97251E2CC6EFA80027C487 /* SourceSans3-Regular.ttf in Resources */,
-				6E9725062CC6E8170027C487 /* CooperHewitt-Heavy.otf in Resources */,
-				6E97250B2CC6E8170027C487 /* CooperHewitt-MediumItalic.otf in Resources */,
-				6E9725082CC6E8170027C487 /* CooperHewitt-Light.otf in Resources */,
-				6E97250F2CC6E8170027C487 /* CooperHewitt-ThinItalic.otf in Resources */,
-				6E9725042CC6E8170027C487 /* CooperHewitt-Book.otf in Resources */,
-				6E97251A2CC6EFA80027C487 /* SourceSans3-Medium.ttf in Resources */,
-				6E9725022CC6E8170027C487 /* CooperHewitt-Bold.otf in Resources */,
-				6E9725142CC6EF540027C487 /* SourceSans3-VariableFont_wght.ttf in Resources */,
-				6E9725002CC6E8170027C487 /* -CooperHewitt-OFL-201406.txt in Resources */,
-				6E97250C2CC6E8170027C487 /* CooperHewitt-Semibold.otf in Resources */,
-				6E97251D2CC6EFA80027C487 /* SourceSans3-SemiBold.ttf in Resources */,
-				6E9724FF2CC6E8170027C487 /* -CooperHewitt-FontLog.txt in Resources */,
-				6E97250D2CC6E8170027C487 /* CooperHewitt-SemiboldItalic.otf in Resources */,
-				6E9725032CC6E8170027C487 /* CooperHewitt-BoldItalic.otf in Resources */,
 				6EF0C8442BED3CE400E7576F /* Preview Assets.xcassets in Resources */,
 				6EF0C8412BED3CE400E7576F /* Assets.xcassets in Resources */,
-				6E97250E2CC6E8170027C487 /* CooperHewitt-Thin.otf in Resources */,
-				6E9725072CC6E8170027C487 /* CooperHewitt-HeavyItalic.otf in Resources */,
-				6E97250A2CC6E8170027C487 /* CooperHewitt-Medium.otf in Resources */,
-				6E97251C2CC6EFA80027C487 /* SourceSans3-Bold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -425,22 +286,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E572DCD2C49F22E008BCF24 /* AppDatabase.swift in Sources */,
-				6E572DB32C3DA71C008BCF24 /* ProjectView.swift in Sources */,
-				6E9724562C90EAFF0027C487 /* TimestampRecord.swift in Sources */,
-				6E572DB82C3DA8F6008BCF24 /* ProjectsView.swift in Sources */,
-				6E9724682CB9D71D0027C487 /* ItemView.swift in Sources */,
-				6EF0C83F2BED3CE200E7576F /* ContentView.swift in Sources */,
-				6E572DD12C5020D3008BCF24 /* ProjectName.swift in Sources */,
-				6E97245E2CA1B3A00027C487 /* PrimaryButton.swift in Sources */,
-				6E9724622CA338F00027C487 /* PrimaryTextField.swift in Sources */,
-				6E9724602CA1EEDE0027C487 /* AppButtonStyles.swift in Sources */,
-				6E9724582C93A3280027C487 /* ImageSketchesView.swift in Sources */,
-				6EF0C83D2BED3CE200E7576F /* Sewing_PlannerApp.swift in Sources */,
-				6E9724642CB9CAA10027C487 /* ProjectDetailData.swift in Sources */,
-				6E9724662CB9D1670027C487 /* SectionView.swift in Sources */,
-				6E97245C2C9DB2460027C487 /* AppFiles.swift in Sources */,
-				6E97245A2C93A48C0027C487 /* ProjectDetails.swift in Sources */,
+				6E9724562C90EAFF0027C487 /* TimestampedRecord.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

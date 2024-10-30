@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct ProjectDetails: View {
-    @ObservedObject var project: ProjectData
+    @ObservedObject var project: ProjectMetadataViewModel
     @ObservedObject var projectSections: ProjectSections
     var modelSaveProject: () throws -> Int64
-    @Binding var projectsNavigation: [Project]
+    @Binding var projectsNavigation: [ProjectMetadata]
 
     private var isProjectValid: Bool {
         !project.data.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
