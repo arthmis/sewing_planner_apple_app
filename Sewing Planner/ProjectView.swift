@@ -46,7 +46,8 @@ struct ProjectView: View {
     var body: some View {
         VStack {
             if isLoading {
-                Text("is loading...")
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 VStack {
                     HSplitView {
