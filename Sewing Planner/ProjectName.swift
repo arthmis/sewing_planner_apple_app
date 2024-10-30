@@ -5,7 +5,6 @@
 //  Created by Art on 7/23/24.
 //
 
-import AppKit
 import GRDB
 import SwiftUI
 
@@ -65,6 +64,7 @@ struct ProjectName: View {
     @ObservedObject var project: ProjectData
     @State var isEditing = false
     @FocusState var headerFocus: Bool
+    @State var isHovering = false
 
     var body: some View {
         HStack {
@@ -75,7 +75,7 @@ struct ProjectName: View {
 
                         let sanitizedName = project.bindedName.trimmingCharacters(in: .whitespacesAndNewlines)
                         guard !sanitizedName.isEmpty else { return }
-                        
+
                         project.updateName(name: sanitizedName)
                         isEditing = false
                     }
@@ -92,7 +92,7 @@ struct ProjectName: View {
                     .textFieldStyle(.plain)
                     .padding(.bottom, 5)
                     .overlay(Rectangle()
-                        .fill(.gray)
+                        .fill(Color(hex: 0x131944, opacity: 0.9))
                         .frame(maxWidth: .infinity, maxHeight: 5),
                         alignment: .bottom)
                     .font(.custom("SourceSans3-Medium", size: 20))
@@ -103,6 +103,9 @@ struct ProjectName: View {
                 }
             } else {
                 Text(project.data.name)
+                    .font(.custom("SourceSans3-Medium", size: 20))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .contentShape(Rectangle())
                     .onTapGesture {
                         if !isEditing {
                             project.bindedName = project.data.name
@@ -110,9 +113,16 @@ struct ProjectName: View {
                             headerFocus = true
                         }
                     }
-                    .font(.custom("SourceSans3-Medium", size: 20))
+                    .onHover { hover in
+                        isHovering = hover
+                    }
+                    .overlay(Rectangle()
+                        .fill(Color(hex: 0x131944, opacity: isHovering ? 1 : 0))
+                        .frame(maxWidth: .infinity, maxHeight: 2),
+                        alignment: .bottom)
             }
         }
+        .frame(maxWidth: .infinity)
         .onAppear {
             if project.data.name != "" {
                 project.bindedName = project.data.name

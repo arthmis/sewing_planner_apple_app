@@ -14,6 +14,7 @@ struct SectionView: View {
     @State var isAddingItem = false
     @State var newItem = ""
     @FocusState var headerFocus: Bool
+    @State var isHovering = false
 
     func deleteItem(at offsets: IndexSet) {
         for index in offsets {
@@ -59,7 +60,7 @@ struct SectionView: View {
                             .textFieldStyle(.plain)
                             .padding(.bottom, 5)
                             .overlay(Rectangle()
-                                .fill(.gray)
+                                .fill(Color(hex: 0x131944, opacity: 0.9))
                                 .frame(maxWidth: .infinity, maxHeight: 5),
                                 alignment: .bottom)
                             .font(.custom("SourceSans3-Medium", size: 16))
@@ -81,15 +82,22 @@ struct SectionView: View {
                     .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
                 } else {
                     Text(data.section.name)
+                        .font(.custom("SourceSans3-Medium", size: 16))
+                        .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
+                        .contentShape(Rectangle())
                         .onTapGesture {
-                        isRenamingSection = true
-                        name = data.section.name
-                        headerFocus = true
-                    }
-                    .font(.custom("SourceSans3-Medium", size: 16))
-                    .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
+                            isRenamingSection = true
+                            name = data.section.name
+                            headerFocus = true
+                        }
+                        .onHover { hover in
+                            isHovering = hover
+                        }
+                        .overlay(Rectangle()
+                            .fill(Color(hex: 0x131944, opacity: isHovering ? 1 : 0))
+                            .frame(maxWidth: .infinity, maxHeight: 3),
+                            alignment: .bottom)
                 }
-                Spacer()
                 SectionViewButton {} label: {
                     Image(systemName: "ellipsis")
                 }

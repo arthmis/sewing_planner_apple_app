@@ -83,3 +83,8 @@
 ## Removing focus from textfield when clicking outside of it
 - https://gist.github.com/arthmis/92c46c46dd448b5a527e68c13a1bc715
 - https://www.reddit.com/r/swift/comments/14icasf/remove_automatic_focus_on_textfield_swiftui/ (original)
+
+## conditional view modifiers
+- https://www.objc.io/blog/2021/08/24/conditional-view-modifiers/
+- cause bad animatinos and potentially wonky behaviors because swift treats the two returned views as entirely different views and is unable to understand that they represent the same thing
+- also causes state to be lost because the separate branch is treated as a new view
