@@ -10,6 +10,7 @@ import SwiftUI
 class ProjectMetadataViewModel: ObservableObject {
     @Published var data = ProjectMetadata()
     @Published var bindedName = ""
+    var db: AppDatabase = .db
 
     init() {}
 
@@ -17,7 +18,10 @@ class ProjectMetadataViewModel: ObservableObject {
         self.data = data
     }
 
-    func updateName(name: String) {
-        data.name = name
+    func updateName(name: String) throws {
+        try db.getWriter().write { db in
+            data.name = name
+            try data.save(db)
+        }
     }
 }

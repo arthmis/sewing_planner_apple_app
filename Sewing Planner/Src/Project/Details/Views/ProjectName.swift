@@ -24,7 +24,11 @@ struct ProjectName: View {
                         let sanitizedName = project.bindedName.trimmingCharacters(in: .whitespacesAndNewlines)
                         guard !sanitizedName.isEmpty else { return }
 
-                        project.updateName(name: sanitizedName)
+                        do {
+                            try project.updateName(name: sanitizedName)
+                        } catch {
+                            fatalError("\(error)")
+                        }
                         isEditing = false
                     }
                     .focused($headerFocus)
@@ -33,7 +37,11 @@ struct ProjectName: View {
                             let sanitizedName = project.data.name.trimmingCharacters(in: .whitespacesAndNewlines)
                             guard !sanitizedName.isEmpty else { return }
 
-                            project.updateName(name: sanitizedName)
+                            do {
+                                try project.updateName(name: sanitizedName)
+                            } catch {
+                                fatalError("\(error)")
+                            }
                             isEditing = false
                         }
                     }
