@@ -9,25 +9,28 @@ import SwiftUI
 
 struct ProjectsView: View {
     @Environment(\.appDatabase) private var appDatabase
-    @State var projects: [ProjectMetadata] = []
-    @State var projectsDisplay: [ProjectDisplay] = []
+    @StateObject var model = ProjectsViewModel()
     let columns = [GridItem(.adaptive(minimum: 200, maximum: 300))]
 
     var body: some View {
-        NavigationStack(path: $projects) {
+        NavigationStack(path: $model.projects) {
             VStack {
                 HStack {
                     Button("New Project") {
-                        projects.append(ProjectMetadata())
+                        do {
+                            try model.addProject()
+                        } catch {
+                            fatalError("\(error)")
+                        }
                     }
                     .accessibilityIdentifier("AddNewProjectButton")
                 }
 
                 ScrollView {
                     LazyVGrid(columns: columns) {
-                        ForEach(projectsDisplay, id: \.self.project.id) { project in
+                        ForEach($model.projectsDisplay, id: \.self.project.id) { $project in
                             ProjectDisplayView(
-                                projectData: project, projects: $projects
+                                projectData: project, projects: $model.projects
                             )
                         }
                     }
@@ -38,7 +41,7 @@ struct ProjectsView: View {
             }
             .navigationDestination(for: ProjectMetadata.self) { project in
                 VStack {
-                    ProjectView(projectId: project.id, projectsNavigation: $projects)
+                    ProjectView(projectId: project.id, projectsNavigation: $model.projects)
                 }
             }
         }
@@ -49,9 +52,9 @@ struct ProjectsView: View {
 
     func fetchProjects() {
         do {
-            projectsDisplay = try appDatabase.fetchProjectsAndProjectImage()
+            model.projectsDisplay = try appDatabase.fetchProjectsAndProjectImage()
         } catch {
-            print("error: \(error)")
+            fatalError("error: \(error)")
         }
     }
 }

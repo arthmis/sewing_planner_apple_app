@@ -11,6 +11,7 @@ import SwiftUI
 
 class ProjectSections: ObservableObject {
     @Published var sections: [Section] = []
+    let appDatabase: AppDatabase = .db
 
     init() {}
 
@@ -18,8 +19,13 @@ class ProjectSections: ObservableObject {
         self.sections = sections
     }
 
-    func addSection() {
-        sections.append(Section(id: UUID(), name: "Section \(sections.count + 1)"))
+    func addSection(projectId: Int64) throws {
+        try appDatabase.getWriter().write { db in
+            let section = Section(id: UUID(), name: "Section \(sections.count + 1)")
+            section.section.projectId = projectId
+            try section.section.save(db)
+            sections.append(section)
+        }
     }
 }
 

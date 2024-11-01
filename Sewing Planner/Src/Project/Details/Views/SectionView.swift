@@ -112,17 +112,25 @@ struct SectionView: View {
                 .frame(maxWidth: .infinity, maxHeight: 1)
                 .background(Color(red: 230, green: 230, blue: 230)), alignment: .bottom)
             ForEach($data.items, id: \.self) { $item in
-                ItemView(data: $item)
+                ItemView(data: $item, deleteItem: data.deleteItem)
                     .frame(maxWidth: .infinity)
-                    .padding([.top, .bottom], 5)
             }
-            .onDelete(perform: deleteItem)
+
             if isAddingItem {
                 VStack(alignment: .leading) {
                     TextField("", text: $newItem, axis: .vertical).onSubmit {
-                        guard isNewItemTextValid else { return }
+                        guard isNewItemTextValid else {
+                            // add some kind of validation error
+                            return
+                        }
 
-                        data.addItem(text: newItem)
+                        do {
+                            print(newItem)
+                            try data.addItem(text: newItem)
+                        } catch {
+                            fatalError("\(error)")
+                            // add some kind of toast if failure
+                        }
                         isAddingItem = false
                         newItem = ""
                     }
@@ -135,7 +143,7 @@ struct SectionView: View {
                         addItemFocus = true
                     }
                     .focused($addItemFocus)
-                    .onChange(of: addItemFocus) { _ , newFocus in
+                    .onChange(of: addItemFocus) { _, newFocus in
                         if !newFocus {
                             guard isNewItemTextValid else {
                                 isAddingItem = false
@@ -143,7 +151,11 @@ struct SectionView: View {
                                 return
                             }
 
-                            data.addItem(text: newItem)
+                            do {
+                                try data.addItem(text: newItem)
+                            } catch {
+                                fatalError("\(error)")
+                            }
                             isAddingItem = false
                             newItem = ""
                         }
@@ -152,7 +164,11 @@ struct SectionView: View {
                         Button("Add") {
                             guard isNewItemTextValid else { return }
 
-                            data.addItem(text: newItem)
+                            do {
+                                try data.addItem(text: newItem)
+                            } catch {
+                                fatalError("\(error)")
+                            }
                             isAddingItem = false
                             newItem = ""
                         }

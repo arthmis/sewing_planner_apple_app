@@ -55,7 +55,11 @@ struct ProjectDetails: View {
             .frame(maxHeight: .infinity)
             Spacer()
             Button {
-                projectSections.addSection()
+                do {
+                    try projectSections.addSection(projectId: project.data.id!)
+                } catch {
+                    fatalError("\(error)")
+                }
             } label: {
                 Image(systemName: "plus")
             }

@@ -110,6 +110,7 @@ extension AppDatabase {
                 table.autoIncrementedPrimaryKey("id")
                 table.column("name", .text).notNull().unique().indexed()
                 table.column("completed", .boolean).notNull().indexed()
+                table.column("isDeleted", .boolean).notNull()
                 table.column("createDate", .datetime).notNull()
                 table.column("updateDate", .datetime).notNull()
             }
@@ -118,6 +119,7 @@ extension AppDatabase {
                 table.autoIncrementedPrimaryKey("id")
                 table.belongsTo("project").notNull()
                 table.column("filePath", .text).notNull()
+                table.column("isDeleted", .boolean).notNull()
                 table.column("createDate", .datetime).notNull()
                 table.column("updateDate", .datetime).notNull()
             }
@@ -126,6 +128,7 @@ extension AppDatabase {
                 table.autoIncrementedPrimaryKey("id")
                 table.belongsTo("project").notNull()
                 table.column("name", .text).notNull().indexed()
+                table.column("isDeleted", .boolean).notNull()
                 table.column("createDate", .datetime).notNull()
                 table.column("updateDate", .datetime).notNull()
             }
@@ -135,14 +138,15 @@ extension AppDatabase {
                 table.belongsTo("section").notNull()
                 table.column("text", .text).notNull().indexed()
                 table.column("isComplete", .boolean).notNull().indexed()
+                table.column("isDeleted", .boolean).notNull()
                 table.column("createDate", .datetime).notNull()
                 table.column("updateDate", .datetime).notNull()
             }
         }
 
-        // #if DEBUG
-//        migrator.eraseDatabaseOnSchemaChange = true
-        // #endif
+        #if DEBUG
+            migrator.eraseDatabaseOnSchemaChange = true
+        #endif
 
         return migrator
     }
@@ -191,7 +195,12 @@ extension AppDatabase {
                 .fetchAll(db)
 
             for sectionRecord in sectionRecords {
-                let sectionItemRecords: [SectionItemRecord] = try SectionItemRecord.all().filter(Column("sectionId") == sectionRecord.id!).order(Column("id")).fetchAll(db)
+                let sectionItemRecords: [SectionItemRecord] = try SectionItemRecord
+                    .all()
+                    .filter(Column("sectionId") == sectionRecord.id!)
+                    .filter(Column("isDeleted") == false)
+                    .order(Column("id"))
+                    .fetchAll(db)
 
                 sections.append(Section(section: sectionRecord, items: sectionItemRecords, id: UUID()))
             }

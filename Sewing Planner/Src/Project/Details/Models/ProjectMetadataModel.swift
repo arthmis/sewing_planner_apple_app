@@ -12,6 +12,7 @@ struct ProjectMetadata: Hashable, Codable, EncodableRecord, FetchableRecord, Mut
     var id: Int64?
     var name: String
     var completed: Bool
+    var isDeleted: Bool
     var createDate: Date
     var updateDate: Date
     static let databaseTableName = "project"
@@ -26,6 +27,7 @@ struct ProjectMetadata: Hashable, Codable, EncodableRecord, FetchableRecord, Mut
         self.completed = completed
         self.createDate = createDate
         self.updateDate = updateDate
+        self.isDeleted = false
     }
 
     init() {
@@ -34,6 +36,7 @@ struct ProjectMetadata: Hashable, Codable, EncodableRecord, FetchableRecord, Mut
         let now = Date()
         createDate = now
         updateDate = now
+        isDeleted = false
     }
 }
 

@@ -12,6 +12,7 @@ class Section: ObservableObject {
     @Published var items: [SectionItemRecord] = []
     var id: UUID
     var deletedItems: [SectionItemRecord] = []
+    private let db: AppDatabase = .db
 
     init(id: UUID, name: String) {
         section = SectionRecord(name: name)
@@ -24,13 +25,29 @@ class Section: ObservableObject {
         self.id = id
     }
 
-    func addItem(text: String) {
-        items.append(SectionItemRecord(text: text))
+    func addItem(text: String) throws {
+        try db.getWriter().write { db in
+            var record = SectionItemRecord(text: text)
+            record.sectionId = section.id!
+            try record.save(db)
+            items.append(record)
+        }
     }
 
-    func deleteItem(index: Int) {
-        let deletedItem = items.remove(at: index)
-        deletedItems.append(deletedItem)
+    func deleteItem(id: Int64) throws {
+        try db.getWriter().write { db in
+            let maybeIndex = items.firstIndex { val in
+                if let valId = val.id {
+                    return valId == id
+                }
+                return false
+            }
+            if let index = maybeIndex {
+                var deletedItem = items.remove(at: index)
+                deletedItem.isDeleted = true
+                try deletedItem.update(db)
+            }
+        }
     }
 
     func updateSectionName(with name: String) {

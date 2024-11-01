@@ -11,6 +11,8 @@ struct ItemView: View {
     @Binding var data: SectionItemRecord
     @State var isEditing = false
     @State var newText = ""
+    @State var isHovering = false
+    var deleteItem: (Int64) throws -> Void
 
     private var isNewTextValid: Bool {
         newText.trimmingCharacters(in: .whitespaces).isEmpty
@@ -22,7 +24,28 @@ struct ItemView: View {
                 Toggle(data.text, isOn: $data.isComplete).toggleStyle(.checkbox)
                     .padding(.trailing, 40)
                 Spacer()
-                Image(systemName: "line.3.horizontal").foregroundStyle(Color(hex: 0x999999))
+                Button {
+                    if let id = data.id {
+                        do {
+                            try deleteItem(id)
+                        } catch {
+                            fatalError("\(error)")
+                        }
+                    }
+                } label: {
+                    Image(systemName: "trash")
+                        .foregroundStyle(Color(hex: 0x999999, opacity: isHovering ? 1 : 0))
+                        .allowsHitTesting(isHovering)
+                        .padding(.trailing, 10)
+                }
+                .buttonStyle(PlainButtonStyle())
+                Image(systemName: "line.3.horizontal")
+                    .foregroundStyle(Color(hex: 0x999999, opacity: isHovering ? 1 : 0))
+                    .allowsHitTesting(isHovering)
+            }
+            .padding([.top, .bottom], 7)
+            .onHover { hover in
+                isHovering = hover
             }
         } else {
             HStack {
@@ -49,6 +72,13 @@ struct ItemView: View {
     }
 }
 
-// #Preview {
-//    ItemView()
-// }
+#Preview {
+    @Previewable @State var val = SectionItemRecord(text: "a set of text")
+    ItemView(data: $val) { index in
+        print(index)
+    }
+    .padding(30)
+    .border(Color.black, width: 1)
+    .frame(maxWidth: 400, maxHeight: 400)
+    .background(.white)
+}

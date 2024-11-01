@@ -37,7 +37,7 @@ struct AppFiles {
         do {
             try fileManager.createDirectory(at: projectFolder, withIntermediateDirectories: true, attributes: nil)
         } catch {
-            print("Error \(error)")
+            fatalError("Error \(error)")
         }
 
         for file in images {
@@ -50,7 +50,7 @@ struct AppFiles {
                 do {
                     try data?.write(to: file.path, options: Data.WritingOptions.atomic)
                 } catch {
-                    print("Error: \(error)")
+                    fatalError("Error: \(error)")
                 }
             } else {
                 print("couldn't create file for file URL \(file.path) at file path: \(file.path.path())")

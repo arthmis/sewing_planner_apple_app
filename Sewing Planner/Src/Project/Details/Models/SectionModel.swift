@@ -12,6 +12,7 @@ struct SectionRecord: Hashable, Identifiable, Codable, EncodableRecord, Fetchabl
     var id: Int64?
     var projectId: Int64?
     var name: String = ""
+    var isDeleted = false
     var createDate: Date = .init()
     var updateDate: Date = .init()
     static let databaseTableName = "section"
@@ -26,6 +27,7 @@ struct SectionItemRecord: Hashable, Identifiable, Codable, EncodableRecord, Fetc
     var sectionId: Int64?
     var text: String = ""
     var isComplete: Bool = false
+    var isDeleted = false
     var createDate: Date = .init()
     var updateDate: Date = .init()
     static let databaseTableName = "sectionItem"
