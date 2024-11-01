@@ -59,45 +59,9 @@ struct ProjectView: View {
                 .navigationBarBackButtonHidden(true).toolbar {
                     ToolbarItem(placement: .navigation) {
                         BackButton {
-                            if isNewProjectEmpty {
-                                dismiss()
-                                return
-                            }
-
-                            showAlertIfProjectNotSaved = true
+                            dismiss()
                         }
                         .accessibilityIdentifier("ProjectViewCustomBackButton")
-                        .alert("Unsaved Changes", isPresented: $showAlertIfProjectNotSaved) {
-                            // make this into a view and pass in the project object for reactivity
-                            VStack {
-                                if !isProjectValid {
-                                    TextField("Enter a project name", text: $name).accessibilityIdentifier(
-                                        "ProjectNameTextFieldInAlertUnsavedProject")
-                                }
-                                Button(role: .destructive) {
-                                    // no need to do anything as changes haven't been saved yet
-                                    dismiss()
-                                } label: {
-                                    Text("Discard")
-                                }
-                                Button("Save") {
-                                    // have a toast in return or just display something under the textfield saying name can't be empty
-                                    guard isProjectValid else { return }
-
-                                    do {
-                                        try saveProject()
-                                    } catch {
-                                        fatalError("error: \(error)")
-                                    }
-
-                                    dismiss()
-                                }
-                                .accessibilityIdentifier("SaveButtonInAlertUnsavedProject")
-                                .keyboardShortcut( /*@START_MENU_TOKEN@*/ .defaultAction /*@END_MENU_TOKEN@*/)
-                            }
-                        } message: {
-                            Text("Do you want to save this project?")
-                        }
                     }
                 }
             }
