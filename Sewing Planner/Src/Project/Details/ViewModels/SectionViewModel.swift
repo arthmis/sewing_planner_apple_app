@@ -34,6 +34,18 @@ class Section: ObservableObject {
         }
     }
 
+    func updateItem(id: Int64) throws {
+        try db.getWriter().write { db in
+            for var record in items {
+                if let itemId = record.id {
+                    if itemId == id {
+                        try record.save(db)
+                    }
+                }
+            }
+        }
+    }
+
     func deleteItem(id: Int64) throws {
         try db.getWriter().write { db in
             let maybeIndex = items.firstIndex { val in

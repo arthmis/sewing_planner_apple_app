@@ -13,13 +13,14 @@ struct ItemView: View {
     @State var newText = ""
     @State var isHovering = false
     var deleteItem: (Int64) throws -> Void
+    var updateItem: (Int64) throws -> Void
 
     private var isNewTextValid: Bool {
-        newText.trimmingCharacters(in: .whitespaces).isEmpty
+        newText.trimmingCharacters(in: .whitespaces).isEmpty && newText != data.text
     }
 
     var body: some View {
-        if !isEditing {
+        VStack {
             HStack(alignment: .firstTextBaseline) {
                 Toggle(data.text, isOn: $data.isComplete).toggleStyle(.checkbox)
                     .padding(.trailing, 40)
@@ -44,29 +45,47 @@ struct ItemView: View {
                     .allowsHitTesting(isHovering)
             }
             .padding([.top, .bottom], 7)
+            .background(Color(hex: 0xEEEEEE, opacity: isHovering ? 1 : 0))
+            .onTapGesture {
+                isEditing = true
+            }
             .onHover { hover in
                 isHovering = hover
             }
-        } else {
-            HStack {
-                TextField("edit text", text: $newText, axis: .vertical)
-                    .primaryTextFieldStyle(when: newText.isEmpty, placeholder: "type item")
-                    .onSubmit {
-                        guard !isNewTextValid else { return }
+            if isEditing {
+                HStack {
+                    TextField("edit text", text: $newText, axis: .vertical)
+                        .textFieldStyle(.plain)
+                        .primaryTextFieldStyle(when: newText.isEmpty, placeholder: "type item")
+                        .onSubmit {
+                            guard !isNewTextValid else { return }
 
-                        data.text = newText.trimmingCharacters(in: .whitespacesAndNewlines)
+                            data.text = newText.trimmingCharacters(in: .whitespacesAndNewlines)
+                            do {
+                                try updateItem(data.id!)
+                            } catch {
+                                fatalError("\(error)")
+                            }
+                            isEditing = false
+                        }
+                    Button("Cancel") {
+                        newText = data.text
                         isEditing = false
                     }
-                Button("Cancel") {
-                    newText = data.text
-                    isEditing = false
+                    Button("Update") {
+                        // TODO: add a error message to show why it didn't work
+                        guard !isNewTextValid else { return }
+                        
+                        data.text = newText.trimmingCharacters(in: .whitespacesAndNewlines)
+                        do {
+                            try updateItem(data.id!)
+                        } catch {
+                            fatalError("\(error)")
+                        }
+                        isEditing = false
+                    }
+                    .disabled(isNewTextValid)
                 }
-                Button("Update") {
-                    // TODO: add a toast to show why it didn't work
-                    guard !isNewTextValid else { return }
-                    data.text = newText.trimmingCharacters(in: .whitespacesAndNewlines)
-                    isEditing = false
-                }.disabled(isNewTextValid)
             }
         }
     }
@@ -74,8 +93,10 @@ struct ItemView: View {
 
 #Preview {
     @Previewable @State var val = SectionItemRecord(text: "a set of text")
-    ItemView(data: $val) { index in
-        print(index)
+    ItemView(data: $val) { id in
+        print(id)
+    } updateItem: { id in
+        print(id)
     }
     .padding(30)
     .border(Color.black, width: 1)
