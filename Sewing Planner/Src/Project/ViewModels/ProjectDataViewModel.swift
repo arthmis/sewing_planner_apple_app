@@ -34,17 +34,15 @@ class ProjectDetailData: ObservableObject {
     var projectSections: ProjectSections = .init()
     var projectImages: ProjectImages = .init()
     var deletedImages: [ProjectImage] = []
-    let appDatabase: AppDatabase = .db
+    let db: AppDatabase = .db
 
     func saveProject() throws -> Int64 {
-        let projectId = try appDatabase.saveProject(model: self)
+        let projectId = try db.saveProject(model: self)
         try AppFiles().saveProjectImages(projectId: projectId, images: projectImages.images)
         return projectId
     }
 
     func getProject(with id: Int64) {
-        let db = AppDatabase.db
-
         do {
             let project = try db.getProject(id: id)
             let projectData = ProjectMetadataViewModel(data: project!)

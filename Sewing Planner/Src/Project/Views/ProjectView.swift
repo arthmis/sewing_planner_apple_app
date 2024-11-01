@@ -75,7 +75,6 @@ struct ProjectView: View {
         }
         .task {
             if let id = projectId {
-                print(id)
                 self.model.getProject(with: id)
             }
             isLoading = false
