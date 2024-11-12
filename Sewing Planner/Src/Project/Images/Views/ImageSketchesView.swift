@@ -79,28 +79,21 @@ struct ImageSketchesView: View {
                 switch result {
                 case let .success(files):
                     let images: [ProjectImage] = files.map { file in
-                        let name = file.lastPathComponent
                         let path = file
 
                         // need this to access the file content
                         let hasAccess = file.startAccessingSecurityScopedResource()
+                        // must relinquish access once it isn't needed
+                        defer { file.stopAccessingSecurityScopedResource() }
+                        
                         if !hasAccess {
-                            // must relinquish access once it isn't needed
-                            // hence needing a call at every return point
-                            file.stopAccessingSecurityScopedResource()
                             return ProjectImage(path: path)
                         }
 
-                        let data = try! Data(contentsOf: path)
-                        if let img = NSImage(data: data) {
-                            file.stopAccessingSecurityScopedResource()
-                            //                                return ProjectImage(name: name, path: path, image: img)
-                            return ProjectImage(path: path, image: img)
-                        }
-
-                        file.stopAccessingSecurityScopedResource()
-                        //                            return ProjectImage(name: name, path: path)
-                        return ProjectImage(path: path)
+                        let img = NSImage(contentsOf: path)
+                        // TODO: think about how to deal with path that couldn't become an image
+                        // I'm thinking display an error alert that lists every image that couldn't be uploaded
+                        return ProjectImage(path: path, image: img)
                     }
                     print(images)
                     projectImages.images += images

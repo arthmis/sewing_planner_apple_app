@@ -101,7 +101,54 @@ struct ImageButton: View {
 //                        isPressed = false
 //                    }
             } else {
-                Image(nsImage: img)
+                Button {
+                    print(image.path)
+                    selectedImage = image.path
+                    overlaySelectedImage = true
+                } label: {
+                    Image(nsImage: img)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 150, height: 250)
+                        .clipped()
+                        .clipShape(RoundedRectangle(cornerRadius: 9))
+                        .padding(10)
+                        .shadow(color: Color(hex: 0x000000, opacity: isHovering ? 0.5 : 0.25), radius: isHovering ? 5 : 3, x: 0, y: 4)
+                        .scaleEffect(isHovering ? 1.03 : 1, anchor: .center)
+                        .animation(.easeIn(duration: 0.05), value: isPressed)
+                        .padding(5)
+                        .background(Color(hex: 0xDDDDDD, opacity: isPressed ? 1 : 0))
+                        .clipShape(RoundedRectangle(cornerRadius: 9))
+                        .animation(.easeIn(duration: 0.05), value: isHovering)
+                        // parts of the image that were clipped still respond to the mouse events so this constrains it to the correct area
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .onHover { hover in
+                    isHovering = hover
+                }
+                .simultaneousGesture(
+                    LongPressGesture(minimumDuration: 2)
+                        .onEnded { _ in
+                            selectedImageForDeletion = image.path
+                            isPressed = false
+                        }
+                )
+                .onPress {
+                    isPressed = true
+                } onRelease: {
+                    isPressed = false
+                }
+            }
+        } else {
+            // Place holder image if displaying an image fails or loading failed
+            // TODO: think about if to use this or just display an error
+            Button {
+                print(image.path)
+                selectedImage = image.path
+                overlaySelectedImage = true
+            } label: {
+                Image("black_dress_sketch")
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 150, height: 250)
@@ -117,58 +164,23 @@ struct ImageButton: View {
                     .animation(.easeIn(duration: 0.05), value: isHovering)
                     // parts of the image that were clipped still respond to the mouse events so this constrains it to the correct area
                     .contentShape(Rectangle())
-                    .onHover { hover in
-                        isHovering = hover
-                    }
-                    .onTapGesture {
-                        selectedImage = image.path
-                        overlaySelectedImage = true
-                    }
-                    .onLongPressGesture {
+            }
+            .buttonStyle(.plain)
+            .onHover { hover in
+                isHovering = hover
+            }
+            .simultaneousGesture(
+                LongPressGesture(minimumDuration: 2)
+                    .onEnded { _ in
                         selectedImageForDeletion = image.path
                         isPressed = false
                     }
-                    .onPress {
-                        isPressed = true
-                    } onRelease: {
-                        isPressed = false
-                    }
+            )
+            .onPress {
+                isPressed = true
+            } onRelease: {
+                isPressed = false
             }
-        } else {
-            // Place holder image if displaying an image fails or loading failed
-            // TODO: think about if to use this or just display an error
-            Image("black_dress_sketch")
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 150, height: 250)
-                .clipped()
-                .clipShape(RoundedRectangle(cornerRadius: 9))
-                .padding(10)
-                .shadow(color: Color(hex: 0x000000, opacity: isHovering ? 0.5 : 0.25), radius: isHovering ? 5 : 3, x: 0, y: 4)
-                .scaleEffect(isHovering ? 1.03 : 1, anchor: .center)
-                .animation(.easeIn(duration: 0.05), value: isPressed)
-                .padding(5)
-                .background(Color(hex: 0xDDDDDD, opacity: isPressed ? 1 : 0))
-                .clipShape(RoundedRectangle(cornerRadius: 9))
-                .animation(.easeIn(duration: 0.05), value: isHovering)
-                // parts of the image that were clipped still respond to the mouse events so this constrains it to the correct area
-                .contentShape(Rectangle())
-                .onHover { hover in
-                    isHovering = hover
-                }
-                .onTapGesture {
-                    selectedImage = image.path
-                    overlaySelectedImage = true
-                }
-                .onLongPressGesture {
-                    selectedImageForDeletion = image.path
-                    isPressed = false
-                }
-                .onPress {
-                    isPressed = true
-                } onRelease: {
-                    isPressed = false
-                }
         }
     }
 }
