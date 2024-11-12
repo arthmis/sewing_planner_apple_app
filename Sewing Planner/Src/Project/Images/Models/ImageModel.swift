@@ -12,6 +12,8 @@ struct ProjectImageRecord: Identifiable, Codable, EncodableRecord, FetchableReco
     var id: Int64?
     var projectId: Int64
     var filePath: URL
+    var hash: String
+    var isDeleted: Bool
     var createDate: Date
     var updateDate: Date
     static let databaseTableName = "projectImage"

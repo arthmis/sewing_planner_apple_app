@@ -41,7 +41,7 @@ struct ProjectsView: View {
             }
             .navigationDestination(for: ProjectMetadata.self) { project in
                 VStack {
-                    ProjectView(projectId: project.id, projectsNavigation: $model.projects)
+                    ProjectView(projectsNavigation: $model.projects)
                 }
             }
         }

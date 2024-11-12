@@ -9,27 +9,13 @@ import AppKit
 import GRDB
 import SwiftUI
 
-struct ImageSketchesView: View {
-    let projectId: Int64?
+struct ImagesView: View {
     @State var showFileImporter = false
     @ObservedObject var projectImages: ProjectImages
     @State var selectedImageForDeletion: URL?
     @State var overlaySelectedImage = false
     @State var selectedImage: URL?
 
-    func deduplicateSelectedImages(images: [ProjectImage]) -> [ProjectImage] {
-        var result: [ProjectImage] = []
-        var uniqueData: Set<ProjectImage> = Set()
-
-        for image in images {
-            if !uniqueData.contains(image) {
-                result.append(image)
-                uniqueData.insert(image)
-            }
-        }
-
-        return result
-    }
 
     var body: some View {
         VStack(alignment: .center) {
@@ -95,11 +81,9 @@ struct ImageSketchesView: View {
                         // I'm thinking display an error alert that lists every image that couldn't be uploaded
                         return ProjectImage(path: path, image: img)
                     }
-                    print(images)
-                    projectImages.images += images
-                    projectImages.images = deduplicateSelectedImages(images: projectImages.images)
+                    try! projectImages.addImages(images)
                 case let .failure(error):
-                    // Process error here
+                    // Process error here, display a toast
                     print(error)
                 }
             }

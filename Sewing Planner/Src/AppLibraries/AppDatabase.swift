@@ -35,70 +35,6 @@ extension AppDatabase {
         return dbWriter
     }
 
-    func saveProject(model: ProjectDetailData) throws -> Int64 {
-        var projectId: Int64 = 0
-
-        try dbWriter.write { db in
-            let now = try db.transactionDate
-
-            // save project
-            if let id = model.project.data.id {
-                try model.project.data.save(db)
-            } else {
-                model.project.data.createDate = now
-                model.project.data.updateDate = now
-                try model.project.data.save(db)
-            }
-            projectId = model.project.data.id!
-
-            // save sections and items belonging to those sections
-            for section in model.projectSections.sections {
-                if section.section.id != nil {
-                    print("has id \(section.section)")
-                    try section.section.save(db)
-                } else {
-                    section.section.createDate = now
-                    section.section.updateDate = now
-                    section.section.projectId = projectId
-                    print("no id \(section.section)")
-                    try section.section.save(db)
-                }
-                let sectionId = section.section.id!
-
-                for var sectionItem in section.items {
-                    if let sectionItemId = sectionItem.id {
-                        try sectionItem.save(db)
-                    } else {
-                        sectionItem.createDate = now
-                        sectionItem.updateDate = now
-                        sectionItem.sectionId = sectionId
-                        try sectionItem.save(db)
-                    }
-                }
-            }
-
-            // save project images
-            for i in 0 ..< model.projectImages.images.count {
-                if var record = model.projectImages.images[i].record {
-                    if let _projectImageId = record.id {
-                        try record.save(db)
-                    }
-                } else {
-                    let projectPhotosFolder = AppFiles().getProjectPhotoDirectoryPath(projectId: projectId)
-                    print("project folder for images: \(projectPhotosFolder)")
-                    let originalFileName = model.projectImages.images[i].path.deletingPathExtension().lastPathComponent
-                    let newFilePath = projectPhotosFolder.appendingPathComponent(originalFileName).appendingPathExtension(for: .png)
-
-                    var record = ProjectImageRecord(projectId: projectId, filePath: newFilePath, createDate: now, updateDate: now)
-                    try record.save(db)
-                    model.projectImages.images[i].record = record
-                    model.projectImages.images[i].path = newFilePath
-                }
-            }
-        }
-
-        return projectId
-    }
 }
 
 extension AppDatabase {
@@ -119,6 +55,7 @@ extension AppDatabase {
                 table.autoIncrementedPrimaryKey("id")
                 table.belongsTo("project").notNull()
                 table.column("filePath", .text).notNull()
+                table.column("hash", .text).notNull()
                 table.column("isDeleted", .boolean).notNull()
                 table.column("createDate", .datetime).notNull()
                 table.column("updateDate", .datetime).notNull()
@@ -224,7 +161,7 @@ extension AppDatabase {
                 projectImages.append(projectImage)
             }
 
-            return ProjectImages(images: projectImages)
+            return ProjectImages(projectId: projectId, images: projectImages)
         }
     }
 }

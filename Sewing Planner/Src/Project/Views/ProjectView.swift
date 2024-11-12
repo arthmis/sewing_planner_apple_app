@@ -13,7 +13,6 @@ struct ProjectView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject var model = ProjectDetailData()
     @State var name = ""
-    var projectId: Int64?
     @State var showAddTextboxPopup = false
     @State var doesProjectHaveName = false
     @State var showAlertIfProjectNotSaved = false
@@ -28,21 +27,6 @@ struct ProjectView: View {
         model.project.data.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
-    func saveProject() throws {
-        guard isProjectValid else {
-            showAlertIfProjectNotSaved = true
-            return
-        }
-
-        do {
-            let projectId = try model.saveProject()
-        } catch {
-            fatalError(
-                "error adding steps and materials for project id: \(model.project.data.id)\n\n\(error)")
-        }
-        projectsNavigation.removeLast()
-    }
-
     var body: some View {
         VStack {
             if isLoading {
@@ -51,9 +35,9 @@ struct ProjectView: View {
             } else {
                 VStack {
                     HSplitView {
-                        ProjectDetails(project: model.project, projectSections: model.projectSections, modelSaveProject: model.saveProject, projectsNavigation: $projectsNavigation)
+                        ProjectDetails(project: model.project, projectSections: model.projectSections, projectsNavigation: $projectsNavigation)
                             .frame(minWidth: 500, maxWidth: 600)
-                        ImageSketchesView(projectId: projectId, projectImages: model.projectImages)
+                        ImagesView(projectImages: model.projectImages)
                     }.frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
                 .navigationBarBackButtonHidden(true).toolbar {
@@ -74,7 +58,7 @@ struct ProjectView: View {
             NSApplication.shared.keyWindow?.makeFirstResponder(nil)
         }
         .task {
-            if let id = projectId {
+            if let id = projectsNavigation.last?.id! {
                 self.model.getProject(with: id)
             }
             isLoading = false

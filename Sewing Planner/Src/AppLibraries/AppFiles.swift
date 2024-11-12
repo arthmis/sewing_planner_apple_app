@@ -22,6 +22,39 @@ struct AppFiles {
         return photosDirectory.appendingPathComponent(String(projectId))
     }
 
+    func saveProjectImage(projectId: Int64, image: ProjectImage) throws {
+        let fileManager = FileManager.default
+        let usersPhotosUrl = getPhotosDirectoryPath()
+
+        do {
+            try fileManager.createDirectory(at: usersPhotosUrl, withIntermediateDirectories: true, attributes: nil)
+        } catch {
+            print("Error \(error)")
+        }
+
+        let projectFolder = usersPhotosUrl.appendingPathComponent(String(projectId))
+        do {
+            try fileManager.createDirectory(at: projectFolder, withIntermediateDirectories: true, attributes: nil)
+        } catch {
+            fatalError("Error \(error)")
+        }
+
+        let createFileSuccess = fileManager.createFile(atPath: image.path.path(), contents: nil)
+
+        if createFileSuccess {
+            let tiffRep = image.image?.tiffRepresentation
+            let bitmap = NSBitmapImageRep(data: tiffRep!)!
+            let data = bitmap.representation(using: .png, properties: [:])
+            do {
+                try data?.write(to: image.path, options: Data.WritingOptions.atomic)
+            } catch {
+                fatalError("Error: \(error)")
+            }
+        } else {
+            print("couldn't create file for file URL \(image.path) at file path: \(image.path.path())")
+        }
+    }
+
     // TODO: handle situation where file names might be duplicates because they have the same name but comes from different file paths
     func saveProjectImages(projectId: Int64, images: [ProjectImage]) throws {
         let fileManager = FileManager.default
