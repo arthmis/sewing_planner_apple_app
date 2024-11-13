@@ -16,6 +16,15 @@ struct AppDatabase {
     init(_ dbWriter: any DatabaseWriter) throws {
         self.dbWriter = dbWriter
         try migrator.migrate(dbWriter)
+
+        #if DEBUG
+            try self.dbWriter.read { db in
+                let rows = try ProjectMetadata.all().fetchAll(db)
+                if rows.isEmpty {
+                    AppFiles().deleteImagesFolder()
+                }
+            }
+        #endif
     }
 }
 
@@ -34,7 +43,6 @@ extension AppDatabase {
     func getWriter() -> any DatabaseWriter {
         return dbWriter
     }
-
 }
 
 extension AppDatabase {
@@ -104,8 +112,9 @@ extension AppDatabase {
                 .fetchAll(db)
 
             for project in projects {
-                let imageIdColumn = Column("projectId")
-                if let record = try ProjectImageRecord.all().filter(imageIdColumn == project.id!).order(Column("id")).fetchOne(db) {
+                let projectIdColumn = Column("projectId")
+                // can unwrap project.id because an image can't be stored without having a project id
+                if let record = try ProjectImageRecord.all().filter(projectIdColumn == project.id!).order(Column("id")).fetchOne(db) {
                     let image = AppFiles().getImage(fromPath: record.filePath)
                     let projectImage = ProjectImage(record: record, path: record.filePath, image: image)
                     projectDisplayData.append(ProjectDisplay(project: project, image: projectImage))
@@ -151,8 +160,8 @@ extension AppDatabase {
 
     func getImages(projectId: Int64) throws -> ProjectImages {
         return try dbWriter.read { db in
-            let imageIdColumn = Column("projectId")
-            let records: [ProjectImageRecord] = try ProjectImageRecord.all().filter(imageIdColumn == projectId).order(Column("id")).fetchAll(db)
+            let projectIdColumn = Column("projectId")
+            let records: [ProjectImageRecord] = try ProjectImageRecord.all().filter(projectIdColumn == projectId).order(Column("id")).fetchAll(db)
 
             var projectImages: [ProjectImage] = []
             for record in records {

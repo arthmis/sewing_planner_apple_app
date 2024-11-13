@@ -39,7 +39,7 @@ struct ProjectsView: View {
                     }
                 }
             }
-            .navigationDestination(for: ProjectMetadata.self) { project in
+            .navigationDestination(for: ProjectMetadata.self) { _ in
                 VStack {
                     ProjectView(projectsNavigation: $model.projects)
                 }
@@ -89,12 +89,14 @@ struct MaybeProjectImageView: View {
     let projectImage: ProjectImage?
 
     var body: some View {
-        if projectImage != nil {
-            Image(nsImage: (projectImage?.image)!)
-                .resizable()
-                .interpolation(.high)
-                .scaledToFit()
-                .frame(width: 120, height: 120, alignment: .center)
+        if let imageData = projectImage {
+            if let image = imageData.image {
+                Image(nsImage: image)
+                    .resizable()
+                    .interpolation(.high)
+                    .scaledToFit()
+                    .frame(width: 120, height: 120, alignment: .center)
+            }
         } else {
             Image("black_dress_sketch")
                 .resizable()

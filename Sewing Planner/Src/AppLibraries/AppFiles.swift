@@ -16,13 +16,23 @@ struct AppFiles {
         return usersPhotosUrl
     }
 
+    // only used when the schema is changed during development
+    // ensures the images don't conflict with new images
+    func deleteImagesFolder() {
+        let directory = getPhotosDirectoryPath()
+        let fileManager = FileManager.default
+        if fileManager.fileExists(atPath: directory.path()) {
+            try! fileManager.removeItem(at: directory)
+        }
+    }
+
     func getProjectPhotoDirectoryPath(projectId: Int64) -> URL {
         let photosDirectory = getPhotosDirectoryPath()
 
         return photosDirectory.appendingPathComponent(String(projectId))
     }
 
-    func saveProjectImage(projectId: Int64, image: ProjectImage) throws {
+    func saveProjectImage(projectId: Int64, image: ProjectImage) throws -> URL {
         let fileManager = FileManager.default
         let usersPhotosUrl = getPhotosDirectoryPath()
 
@@ -32,27 +42,37 @@ struct AppFiles {
             print("Error \(error)")
         }
 
-        let projectFolder = usersPhotosUrl.appendingPathComponent(String(projectId))
+        let imagesFolderForProject = getProjectPhotoDirectoryPath(projectId: projectId)
         do {
-            try fileManager.createDirectory(at: projectFolder, withIntermediateDirectories: true, attributes: nil)
+            try fileManager.createDirectory(at: imagesFolderForProject, withIntermediateDirectories: true, attributes: nil)
         } catch {
             fatalError("Error \(error)")
         }
 
-        let createFileSuccess = fileManager.createFile(atPath: image.path.path(), contents: nil)
+        // get image's new file path
+        let originalFileName = image.path.deletingPathExtension().lastPathComponent
+        let newFilePath = imagesFolderForProject.appendingPathComponent(originalFileName).appendingPathExtension(for: .png)
+        print("project folder for images: \(imagesFolderForProject)")
+        print("new path for image: \(newFilePath)")
+
+        let createFileSuccess = fileManager.createFile(atPath: newFilePath.path(), contents: nil)
 
         if createFileSuccess {
-            let tiffRep = image.image?.tiffRepresentation
-            let bitmap = NSBitmapImageRep(data: tiffRep!)!
-            let data = bitmap.representation(using: .png, properties: [:])
-            do {
-                try data?.write(to: image.path, options: Data.WritingOptions.atomic)
-            } catch {
-                fatalError("Error: \(error)")
+            if let imageData = image.image {
+                let tiffRep = imageData.tiffRepresentation
+                let bitmap = NSBitmapImageRep(data: tiffRep!)!
+                let data = bitmap.representation(using: .png, properties: [:])
+                do {
+                    try data!.write(to: newFilePath, options: Data.WritingOptions.atomic)
+                } catch {
+                    fatalError("Error: \(error)")
+                }
             }
         } else {
             print("couldn't create file for file URL \(image.path) at file path: \(image.path.path())")
         }
+
+        return newFilePath
     }
 
     // TODO: handle situation where file names might be duplicates because they have the same name but comes from different file paths
@@ -93,7 +113,6 @@ struct AppFiles {
 
     func getImage(fromPath path: URL) -> NSImage? {
         let fileManager = FileManager.default
-        let usersPhotosUrl = getPhotosDirectoryPath()
 
         if let data = fileManager.contents(atPath: path.path()) {
             return NSImage(data: data)

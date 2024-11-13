@@ -27,6 +27,9 @@ class ProjectDetailData: ObservableObject {
             print(sections.sections.count)
             let images = try db.getImages(projectId: id)
             print(images.images.count)
+            for image in images.images {
+                print(image.record!)
+            }
             projectImages = images
 
         } catch {
@@ -78,14 +81,15 @@ class ProjectImages: ObservableObject {
 
     func saveImages() throws {
         try appDatabase.getWriter().write { db in
-            for image in images {
+            for var image in images {
                 do {
                     if var record = image.record {
+                        let newFilePath = try AppFiles().saveProjectImage(projectId: projectId, image: image)
+                        record.filePath = newFilePath
                         try record.save(db)
-                        try AppFiles().saveProjectImage(projectId: projectId, image: image)
+                        image.path = newFilePath
                     }
-                }
-                catch {
+                } catch {
                     fatalError("error saving record or saving image to filesystem: \(error)")
                 }
             }
@@ -109,7 +113,7 @@ class ProjectImages: ObservableObject {
             // hash file
             if let hash = image.getHash() {
                 if !uniqueData.contains(hash) {
-                    var record = ProjectImageRecord(projectId: projectId, filePath: image.path, hash: hash, isDeleted: false, createDate: now, updateDate: now)
+                    let record = ProjectImageRecord(projectId: projectId, filePath: image.path, hash: hash, isDeleted: false, createDate: now, updateDate: now)
                     image.record = record
                     result.append(image)
                     uniqueData.insert(hash)
