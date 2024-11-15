@@ -52,7 +52,7 @@ extension AppDatabase {
         migrator.registerMigration("projects") { db in
             try db.create(table: "project", options: [.ifNotExists]) { table in
                 table.autoIncrementedPrimaryKey("id")
-                table.column("name", .text).notNull().unique().indexed()
+                table.column("name", .text).notNull().indexed()
                 table.column("completed", .boolean).notNull().indexed()
                 table.column("isDeleted", .boolean).notNull()
                 table.column("createDate", .datetime).notNull()
@@ -107,6 +107,7 @@ extension AppDatabase {
     func fetchProjectsAndProjectImage() throws -> [ProjectDisplay] {
         var projectDisplayData: [ProjectDisplay] = []
 
+        // get projects
         try dbWriter.read { db in
             let projects: [ProjectMetadata] = try ProjectMetadata.all().order(ProjectColumns.id)
                 .fetchAll(db)
@@ -123,7 +124,7 @@ extension AppDatabase {
                 }
             }
         }
-
+        
         return projectDisplayData
     }
 

@@ -11,6 +11,15 @@ struct ProjectsView: View {
     @Environment(\.appDatabase) private var appDatabase
     @StateObject var model = ProjectsViewModel()
     let columns = [GridItem(.adaptive(minimum: 200, maximum: 300))]
+    
+    func fetchProjects() {
+        do {
+            print("fetching projects")
+            model.projectsDisplay = try appDatabase.fetchProjectsAndProjectImage()
+        } catch {
+            fatalError("error: \(error)")
+        }
+    }
 
     var body: some View {
         NavigationStack(path: $model.projects) {
@@ -41,21 +50,13 @@ struct ProjectsView: View {
             }
             .navigationDestination(for: ProjectMetadata.self) { _ in
                 VStack {
-                    ProjectView(projectsNavigation: $model.projects)
+                    ProjectView(projectsNavigation: $model.projects, fetchProjects: fetchProjects)
                 }
             }
         }
         .navigationTitle("Projects")
         .frame(minWidth: 600, minHeight: 300)
         .background(Color.white)
-    }
-
-    func fetchProjects() {
-        do {
-            model.projectsDisplay = try appDatabase.fetchProjectsAndProjectImage()
-        } catch {
-            fatalError("error: \(error)")
-        }
     }
 }
 

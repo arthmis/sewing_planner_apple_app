@@ -12,12 +12,13 @@ struct ProjectView: View {
     // used for dismissing a view(basically the back button)
     @Environment(\.dismiss) private var dismiss
     @StateObject var model = ProjectDetailData()
+    @Binding var projectsNavigation: [ProjectMetadata]
+    let fetchProjects: () -> ()
     @State var name = ""
     @State var showAddTextboxPopup = false
     @State var doesProjectHaveName = false
     @State var showAlertIfProjectNotSaved = false
     @State var isLoading = true
-    @Binding var projectsNavigation: [ProjectMetadata]
 
     private var isProjectValid: Bool {
         !model.project.data.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -44,6 +45,7 @@ struct ProjectView: View {
                     ToolbarItem(placement: .navigation) {
                         BackButton {
                             dismiss()
+                            fetchProjects()
                         }
                         .accessibilityIdentifier("ProjectViewCustomBackButton")
                     }
