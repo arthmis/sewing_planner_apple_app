@@ -9,13 +9,23 @@ import AppKit
 import GRDB
 import SwiftUI
 
+struct ErrorToast {
+    var show: Bool
+    let message: String
+
+    init(show: Bool = true, message: String = "Something went wrong. Please try again") {
+        self.show = show
+        self.message = message
+    }
+}
+
 struct ImagesView: View {
     @State var showFileImporter = false
     @ObservedObject var projectImages: ProjectImages
     @State var selectedImageForDeletion: URL?
     @State var overlaySelectedImage = false
     @State var selectedImage: URL?
-
+    @State var errorToast = ErrorToast()
 
     var body: some View {
         VStack(alignment: .center) {
@@ -71,7 +81,7 @@ struct ImagesView: View {
                         let hasAccess = file.startAccessingSecurityScopedResource()
                         // must relinquish access once it isn't needed
                         defer { file.stopAccessingSecurityScopedResource() }
-                        
+
                         if !hasAccess {
                             return ProjectImage(path: path)
                         }
@@ -83,11 +93,13 @@ struct ImagesView: View {
                     }
                     try! projectImages.addImages(images)
                 case let .failure(error):
-                    // Process error here, display a toast
+                    errorToast = ErrorToast(show: true, message: "Error importing images. Please try again later")
+                    // log error
                     print(error)
                 }
             }
-        }.overlay(alignment: .center) {
+        }
+        .overlay(alignment: .center) {
             if overlaySelectedImage {
                 VStack {
                     HStack(alignment: .firstTextBaseline) {
@@ -108,12 +120,18 @@ struct ImagesView: View {
                     } else {
                         // TODO: display a toast saying something went wrong and say try again
                         //                    overlaySelectedImage = false
-                        Text("Something went wrong. Image could not be displayed")
+                        Text("Something went wrong. Image could not be selected. Please try again later")
                     }
                 }
                 .padding(20)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                 .background(.ultraThinMaterial)
+            }
+        }
+        .overlay(alignment: .bottomTrailing) {
+            if errorToast.show {
+                Toast(showToast: $errorToast.show, message: errorToast.message)
+                    .padding([.trailing], 30)
             }
         }
         .frame(
@@ -124,6 +142,7 @@ struct ImagesView: View {
     }
 }
 
+// TODO: support photospicker as well
 // var body: some View {
 //    VStack(alignment: .center) {
 //        PhotosPicker("Select image", selection: $pickerItem, matching: .images)
@@ -136,6 +155,14 @@ struct ImagesView: View {
 //    }
 // }
 
-// #Preview {
-//    ImageSketchesView()
-// }
+#Preview {
+    VStack {
+        ImagesView(projectImages: ProjectImages(projectId: 2))
+    }
+    .frame(
+        maxWidth: .infinity,
+        maxHeight: .infinity,
+        alignment: .topLeading
+    )
+    .background(.white)
+}
