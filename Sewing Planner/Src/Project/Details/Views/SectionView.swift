@@ -32,8 +32,16 @@ struct SectionView: View {
         !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
-    private var isNewItemTextValid: Bool {
-        !newItem.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    func updateName() {
+        // TODO: add a popup telling user that instruction can't be empty
+        guard isNewNameValid else { return }
+
+        isRenamingSection = false
+        do {
+            try data.updateSectionName(with: name)
+        } catch {
+            fatalError("\(error)")
+        }
     }
 
     var body: some View {
@@ -44,11 +52,7 @@ struct SectionView: View {
                     HStack {
                         TextField("", text: $name)
                             .onSubmit {
-                                // TODO: add a popup telling user that instruction can't be empty
-                                guard isNewNameValid else { return }
-
-                                isRenamingSection = false
-                                data.updateSectionName(with: name)
+                                updateName()
                             }
                             .focused($headerFocus)
                             .onChange(of: headerFocus) { _, newFocus in
@@ -75,13 +79,7 @@ struct SectionView: View {
                             isRenamingSection = false
                         }
                         Button("Set") {
-                            // add a popup telling user that instruction can't be empty
-                            guard isNewNameValid else { return }
-
-                            // think about what to do here for validation or something
-                            data.section.name = name
-
-                            isRenamingSection = false
+                            updateName()
                         }
                     }
                     .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)

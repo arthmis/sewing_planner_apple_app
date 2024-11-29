@@ -75,7 +75,10 @@ class Section: ObservableObject {
         }
     }
 
-    func updateSectionName(with name: String) {
+    func updateSectionName(with name: String) throws {
         section.name = name
+        try db.getWriter().write { db in
+            try section.save(db)
+        }
     }
 }
