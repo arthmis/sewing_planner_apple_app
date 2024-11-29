@@ -43,4 +43,13 @@ struct SectionItemRecord: Hashable, Identifiable, Codable, EncodableRecord, Fetc
         createDate = now
         updateDate = now
     }
+    
+    init(id: Int64, text: String) {
+        self.id = id
+        self.text = text
+        isComplete = false
+        let now = Date()
+        createDate = now
+        updateDate = now
+    }
 }

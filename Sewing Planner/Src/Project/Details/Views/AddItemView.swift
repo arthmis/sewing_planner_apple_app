@@ -77,10 +77,12 @@ struct AddItemView: View {
                     Button("Add") {
                         add()
                     }
+                    .disabled(!isNewItemTextValid)
                     .buttonStyle(PrimaryButtonStyle())
                     Button("Cancel") {
                         isAddingItem = false
                         newItem = ""
+                        showErrorText = false
                     }
                     .buttonStyle(SecondaryButtonStyle())
                     .padding([.leading], 10)
