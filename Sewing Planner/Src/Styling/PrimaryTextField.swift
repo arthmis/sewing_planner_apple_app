@@ -63,5 +63,9 @@ struct PrimaryTextField: View {
 }
 
 #Preview {
-    PrimaryTextField()
+//    PrimaryTextField()
+    @Previewable @State var text = ""
+    TextField("", text: $text)
+        .textFieldStyle(.plain)
+        .primaryTextFieldStyle(when: text.isEmpty, placeholder: "hi there")
 }

@@ -49,10 +49,12 @@ struct ItemView: View {
             .background(Color(hex: 0xEEEEEE, opacity: isHovering ? 1 : 0))
             .onTapGesture {
                 isEditing = true
+                newText = data.text
             }
             .onHover { hover in
                 isHovering = hover
             }
+            if isEditing {
             UpdateItemView(data: $data, isEditing: $isEditing, newText: $newText, updateText: updateText, resetToPreviousText: resetToPreviousText)
                     }
                     .disabled(isNewTextValid)
