@@ -20,6 +20,7 @@ struct SectionView: View {
     @State var newItem = ""
     @FocusState var headerFocus: Bool
     @State var isHovering = false
+    @State var offset: CGSize = .zero
 
     func deleteItem(at offsets: IndexSet) {
         for index in offsets {
@@ -32,6 +33,19 @@ struct SectionView: View {
         !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
+//    var drag: some Gesture {
+//        DragGesture()
+//            .onChanged { gesture in
+//                offset = gesture.translation
+//                self.isDragging = true
+//            }
+//            .onEnded { _ in
+//                offset.width = 0
+//                offset.height = 0
+//                self.isDragging = false
+//            }
+//    }
+    
     func updateName() {
         // TODO: add a popup telling user that instruction can't be empty
         guard isNewNameValid else { return }

@@ -14,6 +14,8 @@ struct ItemView: View {
     @State var isHovering = false
     var deleteItem: (Int64) throws -> Void
     var updateText: (Int64, String) throws -> Void
+    @State var offset: CGSize = .zero
+    @State private var isDragging = false
 
     func resetToPreviousText() {
         newText = data.text
@@ -41,9 +43,24 @@ struct ItemView: View {
                         .padding(.trailing, 10)
                 }
                 .buttonStyle(PlainButtonStyle())
-                Image(systemName: "line.3.horizontal")
-                    .foregroundStyle(Color(hex: 0x999999, opacity: isHovering ? 1 : 0))
-                    .allowsHitTesting(isHovering)
+                if #available(macOS 15.0, *) {
+                    Image(systemName: "line.3.horizontal")
+                        .foregroundStyle(Color(hex: 0x999999, opacity: isHovering ? 1 : 0))
+                        .allowsHitTesting(isHovering)
+                        .pointerStyle(PointerStyle.grabIdle)
+                } else {
+                    Image(systemName: "line.3.horizontal")
+                        .foregroundStyle(Color(hex: 0x999999, opacity: isHovering ? 1 : 0))
+                        .allowsHitTesting(isHovering)
+                        .onContinuousHover { phase in
+                            switch phase {
+                            case .active:
+                                NSCursor.openHand.push()
+                            case .ended:
+                                NSCursor.openHand.pop()
+                            }
+                        }
+                }
             }
             .padding([.top, .bottom], 7)
             .background(Color(hex: 0xEEEEEE, opacity: isHovering ? 1 : 0))
@@ -55,11 +72,23 @@ struct ItemView: View {
                 isHovering = hover
             }
             if isEditing {
-            UpdateItemView(data: $data, isEditing: $isEditing, newText: $newText, updateText: updateText, resetToPreviousText: resetToPreviousText)
-                    }
-                    .disabled(isNewTextValid)
-                }
+                UpdateItemView(data: $data, isEditing: $isEditing, newText: $newText, updateText: updateText, resetToPreviousText: resetToPreviousText)
             }
+//            .offset(offset)
+//            //                    .gesture(drag)
+//            .gesture(
+//                DragGesture()
+//                    .onChanged { gesture in
+//                        offset = gesture.translation
+//                        self.isDragging = true
+//                    }
+//                    .onEnded { _ in
+//                        offset.width = 0
+//                        offset.height = 0
+//                        self.isDragging = false
+//                    }
+//            )
+//            .contentShape(Rectangle())
         }
     }
 }
