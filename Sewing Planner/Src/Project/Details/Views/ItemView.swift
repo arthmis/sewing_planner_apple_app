@@ -13,10 +13,11 @@ struct ItemView: View {
     @State var newText = ""
     @State var isHovering = false
     var deleteItem: (Int64) throws -> Void
-    var updateItem: (Int64) throws -> Void
+    var updateText: (Int64, String) throws -> Void
 
-    private var isNewTextValid: Bool {
-        newText.trimmingCharacters(in: .whitespaces).isEmpty && newText != data.text
+    func resetToPreviousText() {
+        newText = data.text
+        isEditing = false
     }
 
     var body: some View {
@@ -52,37 +53,7 @@ struct ItemView: View {
             .onHover { hover in
                 isHovering = hover
             }
-            if isEditing {
-                HStack {
-                    TextField("edit text", text: $newText, axis: .vertical)
-                        .textFieldStyle(.plain)
-                        .primaryTextFieldStyle(when: newText.isEmpty, placeholder: "type item")
-                        .onSubmit {
-                            guard !isNewTextValid else { return }
-
-                            data.text = newText.trimmingCharacters(in: .whitespacesAndNewlines)
-                            do {
-                                try updateItem(data.id!)
-                            } catch {
-                                fatalError("\(error)")
-                            }
-                            isEditing = false
-                        }
-                    Button("Cancel") {
-                        newText = data.text
-                        isEditing = false
-                    }
-                    Button("Update") {
-                        // TODO: add a error message to show why it didn't work
-                        guard !isNewTextValid else { return }
-                        
-                        data.text = newText.trimmingCharacters(in: .whitespacesAndNewlines)
-                        do {
-                            try updateItem(data.id!)
-                        } catch {
-                            fatalError("\(error)")
-                        }
-                        isEditing = false
+            UpdateItemView(data: $data, isEditing: $isEditing, newText: $newText, updateText: updateText, resetToPreviousText: resetToPreviousText)
                     }
                     .disabled(isNewTextValid)
                 }
@@ -91,15 +62,15 @@ struct ItemView: View {
     }
 }
 
-#Preview {
-    @Previewable @State var val = SectionItemRecord(text: "a set of text")
-    ItemView(data: $val) { id in
-        print(id)
-    } updateItem: { id in
-        print(id)
-    }
-    .padding(30)
-    .border(Color.black, width: 1)
-    .frame(maxWidth: 400, maxHeight: 400)
-    .background(.white)
-}
+// #Preview {
+//    @Previewable @State var val = SectionItemRecord(text: "a set of text")
+//    ItemView(data: $val) { id in
+//        print(id)
+//    } updateItem: { id in
+//        print(id)
+//    }
+//    .padding(30)
+//    .border(Color.black, width: 1)
+//    .frame(maxWidth: 400, maxHeight: 400)
+//    .background(.white)
+// }

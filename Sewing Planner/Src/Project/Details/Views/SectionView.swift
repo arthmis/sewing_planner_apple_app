@@ -111,7 +111,7 @@ struct SectionView: View {
                 .frame(maxWidth: .infinity, maxHeight: 1)
                 .background(Color(red: 230, green: 230, blue: 230)), alignment: .bottom)
             ForEach($data.items, id: \.self) { $item in
-                ItemView(data: $item, deleteItem: data.deleteItem, updateItem: data.updateItem)
+                ItemView(data: $item, deleteItem: data.deleteItem, updateText: data.updateText)
                     .frame(maxWidth: .infinity)
             }
             AddItemView(isAddingItem: $isAddingItem, newItem: $newItem, addItem: data.addItem)
