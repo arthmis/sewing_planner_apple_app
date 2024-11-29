@@ -10,31 +10,37 @@ import SwiftUI
 struct AddItemView: View {
     @Binding var isAddingItem: Bool
     @Binding var newItem: String
-    let addItem: (_ text: String) throws -> ()
+    let addItem: (_ text: String) throws -> Void
+    @State var showErrorText = false
+    let errorText = "Item text can't be empty."
     @FocusState var addItemFocus: Bool
 
     private var isNewItemTextValid: Bool {
         !newItem.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
     
+    func add() {
+        guard isNewItemTextValid else {
+            showErrorText = true
+            return
+        }
+
+        do {
+            try addItem(newItem)
+        } catch {
+            // add some kind of toast if failure
+            fatalError("\(error)")
+        }
+        showErrorText = false
+        isAddingItem = false
+        newItem = ""
+    }
+
     var body: some View {
         if isAddingItem {
             VStack(alignment: .leading) {
                 TextField("", text: $newItem, axis: .vertical).onSubmit {
-                    guard isNewItemTextValid else {
-                        // add some kind of validation error
-                        return
-                    }
-
-                    do {
-                        print(newItem)
-                        try addItem(newItem)
-                    } catch {
-                        fatalError("\(error)")
-                        // add some kind of toast if failure
-                    }
-                    isAddingItem = false
-                    newItem = ""
+                    add()
                 }
                 .textFieldStyle(.plain)
                 .primaryTextFieldStyle(when: newItem.isEmpty, placeholder: "type item")
@@ -62,17 +68,14 @@ struct AddItemView: View {
                         newItem = ""
                     }
                 }
+                if showErrorText {
+                    Text(errorText)
+                        .padding(.leading, 10)
+                        .foregroundStyle(Color.red)
+                }
                 HStack(alignment: .center) {
                     Button("Add") {
-                        guard isNewItemTextValid else { return }
-
-                        do {
-                            try addItem(newItem)
-                        } catch {
-                            fatalError("\(error)")
-                        }
-                        isAddingItem = false
-                        newItem = ""
+                        add()
                     }
                     .buttonStyle(PrimaryButtonStyle())
                     Button("Cancel") {
@@ -95,6 +98,10 @@ struct AddItemView: View {
     }
 }
 
-//#Preview {
-//    AddItemView()
-//}
+#Preview {
+    @Previewable @State var isAddingItem = true
+    @Previewable @State var newItem = ""
+
+    AddItemView(isAddingItem: $isAddingItem, newItem: $newItem, addItem: { val throws in print(val) })
+        .frame(height: 300)
+}
