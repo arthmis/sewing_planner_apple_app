@@ -19,7 +19,6 @@ struct SectionView: View {
     @State var isAddingItem = false
     @State var newItem = ""
     @FocusState var headerFocus: Bool
-    @FocusState var addItemFocus: Bool
     @State var isHovering = false
 
     func deleteItem(at offsets: IndexSet) {
@@ -115,81 +114,8 @@ struct SectionView: View {
                 ItemView(data: $item, deleteItem: data.deleteItem, updateItem: data.updateItem)
                     .frame(maxWidth: .infinity)
             }
+            AddItemView(isAddingItem: $isAddingItem, newItem: $newItem, addItem: data.addItem)
 
-            if isAddingItem {
-                VStack(alignment: .leading) {
-                    TextField("", text: $newItem, axis: .vertical).onSubmit {
-                        guard isNewItemTextValid else {
-                            // add some kind of validation error
-                            return
-                        }
-
-                        do {
-                            print(newItem)
-                            try data.addItem(text: newItem)
-                        } catch {
-                            fatalError("\(error)")
-                            // add some kind of toast if failure
-                        }
-                        isAddingItem = false
-                        newItem = ""
-                    }
-                    .textFieldStyle(.plain)
-                    .primaryTextFieldStyle(when: newItem.isEmpty, placeholder: "type item")
-                    .frame(minWidth: 300, maxWidth: .infinity)
-                    .padding(.trailing, 50)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        addItemFocus = true
-                    }
-                    .focused($addItemFocus)
-                    .onChange(of: addItemFocus) { _, newFocus in
-                        if !newFocus {
-                            guard isNewItemTextValid else {
-                                isAddingItem = false
-                                newItem = ""
-                                return
-                            }
-
-                            do {
-                                try data.addItem(text: newItem)
-                            } catch {
-                                fatalError("\(error)")
-                            }
-                            isAddingItem = false
-                            newItem = ""
-                        }
-                    }
-                    HStack(alignment: .center) {
-                        Button("Add") {
-                            guard isNewItemTextValid else { return }
-
-                            do {
-                                try data.addItem(text: newItem)
-                            } catch {
-                                fatalError("\(error)")
-                            }
-                            isAddingItem = false
-                            newItem = ""
-                        }
-                        .buttonStyle(PrimaryButtonStyle())
-                        Button("Cancel") {
-                            isAddingItem = false
-                            newItem = ""
-                        }
-                        .buttonStyle(SecondaryButtonStyle())
-                        .padding([.leading], 10)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                }
-            } else {
-                Button("Add Item") {
-                    isAddingItem = true
-                    addItemFocus = true
-                }
-                .buttonStyle(SecondaryButtonStyle())
-                .accessibilityIdentifier("NewStepButton")
-            }
         }
     }
 }

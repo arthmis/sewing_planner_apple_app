@@ -13,7 +13,7 @@ struct ErrorToast {
     var show: Bool
     let message: String
 
-    init(show: Bool = true, message: String = "Something went wrong. Please try again") {
+    init(show: Bool = false, message: String = "Something went wrong. Please try again") {
         self.show = show
         self.message = message
     }

@@ -17,7 +17,6 @@ struct ProjectView: View {
     @State var name = ""
     @State var showAddTextboxPopup = false
     @State var doesProjectHaveName = false
-    @State var showAlertIfProjectNotSaved = false
     @State var isLoading = true
 
     private var isProjectValid: Bool {
