@@ -12,7 +12,7 @@ import SwiftUI
 struct Sewing_PlannerApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView().environment(\.appDatabase, .db)
+            ContentView().environment(\.appDatabase, .db())
         }
         .windowResizability(.contentSize)
         .defaultPosition(.center)
@@ -20,7 +20,7 @@ struct Sewing_PlannerApp: App {
 }
 
 private struct AppDatabaseKey: EnvironmentKey {
-    static var defaultValue: AppDatabase { .db }
+    static var defaultValue: AppDatabase { .db() }
 }
 
 extension EnvironmentValues {

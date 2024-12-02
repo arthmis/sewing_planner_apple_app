@@ -12,7 +12,7 @@ class Section: ObservableObject {
     @Published var items: [SectionItemRecord] = []
     var id: UUID
     var deletedItems: [SectionItemRecord] = []
-    private let db: AppDatabase = .db
+    private let db: AppDatabase = .db()
 
     init(id: UUID, name: String) {
         section = SectionRecord(name: name)

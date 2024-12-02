@@ -14,7 +14,7 @@ class ProjectDetailData: ObservableObject {
     var projectSections: ProjectSections = .init()
     var projectImages: ProjectImages = .init(projectId: 0)
     var deletedImages: [ProjectImage] = []
-    let db: AppDatabase = .db
+    let db: AppDatabase = .db()
 
     func getProject(with id: Int64) {
         do {
@@ -40,7 +40,7 @@ class ProjectDetailData: ObservableObject {
 
 class ProjectSections: ObservableObject {
     @Published var sections: [Section] = []
-    let appDatabase: AppDatabase = .db
+    let appDatabase: AppDatabase = .db()
 
     init() {}
 
@@ -62,7 +62,7 @@ class ProjectImages: ObservableObject {
     let projectId: Int64
     @Published var images: [ProjectImage] = []
     @Published var deletedImages: [ProjectImage] = []
-    let appDatabase: AppDatabase = .db
+    let appDatabase: AppDatabase = .db()
 
     init(projectId: Int64) {
         self.projectId = projectId

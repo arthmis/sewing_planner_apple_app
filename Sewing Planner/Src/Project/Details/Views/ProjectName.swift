@@ -76,6 +76,7 @@ struct ProjectName: View {
                         .fill(Color(hex: 0x131944, opacity: isHovering ? 1 : 0))
                         .frame(maxWidth: .infinity, maxHeight: 2),
                         alignment: .bottom)
+                    .accessibilityIdentifier("ProjectName")
             }
         }
         .frame(maxWidth: .infinity)

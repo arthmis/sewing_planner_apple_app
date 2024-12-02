@@ -15,7 +15,7 @@ struct ProjectDisplay {
 class ProjectsViewModel: ObservableObject {
     @Published var projects: [ProjectMetadata] = []
     @Published var projectsDisplay: [ProjectDisplay] = []
-    let db: AppDatabase = .db
+    let db: AppDatabase = .db()
 
     func addProject() throws {
         try db.getWriter().write { db in

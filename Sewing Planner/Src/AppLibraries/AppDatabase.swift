@@ -124,7 +124,7 @@ extension AppDatabase {
                 }
             }
         }
-        
+
         return projectDisplayData
     }
 
@@ -184,7 +184,19 @@ extension AppDatabase {
 }
 
 extension AppDatabase {
-    static let db = makeDb(name: "db")
+    static let db = {
+        let argument = CommandLine.arguments.first(where: { val in val == "--test" })
+
+        print("arguments \(argument)")
+        if let testArgument = argument {
+            if testArgument == "--test" {
+                let dbQueue = try! DatabaseQueue(named: "test_db")
+                return try! AppDatabase(dbQueue)
+            }
+        }
+
+        return makeDb(name: "db")
+    }
 
     static func makeDb(name: String) -> AppDatabase {
         do {

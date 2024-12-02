@@ -71,6 +71,7 @@ struct ImagesView: View {
             .frame(maxWidth: .infinity, alignment: .trailing)
             .padding(10)
             .padding(.trailing, 10)
+            .accessibilityIdentifier("AddNewImageButton")
             .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.jpeg, .png, .webP, .heic, .heif], allowsMultipleSelection: true) { result in
                 switch result {
                 case let .success(files):

@@ -44,6 +44,7 @@ struct ProjectDetails: View {
                 Image(systemName: "plus")
             }
             .buttonStyle(AddNewSectionButtonStyle())
+            .accessibilityIdentifier("AddNewSectionButton")
             .frame(maxWidth: .infinity, alignment: .trailing)
         }
         .padding([.leading, .trailing], 50)
