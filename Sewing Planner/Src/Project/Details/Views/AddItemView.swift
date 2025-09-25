@@ -87,7 +87,7 @@ struct AddItemView: View {
                     .buttonStyle(SecondaryButtonStyle())
                     .padding([.leading], 10)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
             }
         } else {
             Button("Add Item") {

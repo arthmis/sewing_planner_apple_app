@@ -5,9 +5,10 @@
 //  Created by Art on 9/12/24.
 //
 
-import AppKit
+//import AppKit
 import GRDB
 import SwiftUI
+import PhotosUI
 
 struct ErrorToast {
     var show: Bool
@@ -25,10 +26,24 @@ struct ImagesView: View {
     @State var selectedImageForDeletion: URL?
     @State var overlaySelectedImage = false
     @State var selectedImage: URL?
+    @State private var pickerItem: PhotosPickerItem?
+    @State private var photosAppSelectedImage: Image?
     @State var errorToast = ErrorToast()
 
     var body: some View {
         VStack(alignment: .center) {
+            VStack {
+                PhotosPicker("Select a picture", selection: $pickerItem, matching: .images)
+            }
+            .onChange(of: pickerItem) {
+                Task {
+
+                    photosAppSelectedImage = try await pickerItem?.loadTransferable(type: Image.self)
+                    let image = ProjectImage(image: photosAppSelectedImage)
+                    
+                    try! projectImages.addImages([image])
+                }
+            }
             HStack {
                 if let imagePath = selectedImageForDeletion {
                     HStack(alignment: .center) {
@@ -72,33 +87,33 @@ struct ImagesView: View {
             .padding(10)
             .padding(.trailing, 10)
             .accessibilityIdentifier("AddNewImageButton")
-            .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.jpeg, .png, .webP, .heic, .heif], allowsMultipleSelection: true) { result in
-                switch result {
-                case let .success(files):
-                    let images: [ProjectImage] = files.map { file in
-                        let path = file
-
-                        // need this to access the file content
-                        let hasAccess = file.startAccessingSecurityScopedResource()
-                        // must relinquish access once it isn't needed
-                        defer { file.stopAccessingSecurityScopedResource() }
-
-                        if !hasAccess {
-                            return ProjectImage(path: path)
-                        }
-
-                        let img = NSImage(contentsOf: path)
-                        // TODO: think about how to deal with path that couldn't become an image
-                        // I'm thinking display an error alert that lists every image that couldn't be uploaded
-                        return ProjectImage(path: path, image: img)
-                    }
-                    try! projectImages.addImages(images)
-                case let .failure(error):
-                    errorToast = ErrorToast(show: true, message: "Error importing images. Please try again later")
-                    // log error
-                    print(error)
-                }
-            }
+//            .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.jpeg, .png, .webP, .heic, .heif], allowsMultipleSelection: true) { result in
+//                switch result {
+//                case let .success(files):
+//                    let images: [ProjectImage] = files.map { file in
+//                        let path = file
+//
+//                        // need this to access the file content
+//                        let hasAccess = file.startAccessingSecurityScopedResource()
+//                        // must relinquish access once it isn't needed
+//                        defer { file.stopAccessingSecurityScopedResource() }
+//
+//                        if !hasAccess {
+//                            return ProjectImage(path: path)
+//                        }
+//
+//                        let img = NSImage(contentsOf: path)
+//                        // TODO: think about how to deal with path that couldn't become an image
+//                        // I'm thinking display an error alert that lists every image that couldn't be uploaded
+//                        return ProjectImage(path: path, image: img)
+//                    }
+//                    try! projectImages.addImages(images)
+//                case let .failure(error):
+//                    errorToast = ErrorToast(show: true, message: "Error importing images. Please try again later")
+//                    // log error
+//                    print(error)
+//                }
+//            }
         }
         .overlay(alignment: .center) {
             if overlaySelectedImage {
@@ -114,10 +129,11 @@ struct ImagesView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     if let imgPath = selectedImage {
                         // TODO: figure out what to do if image doesn't exist, some default image
-                        Image(nsImage: projectImages.images.first(where: { $0.path == imgPath })?.image ?? NSImage(size: NSZeroSize))
-                            .resizable()
-                            .interpolation(.high)
-                            .scaledToFit()
+                        Image(systemName: "xmark.circle")
+//                        Image(nsImage: projectImages.images.first(where: { $0.path == imgPath })?.image ?? NSImage(size: NSZeroSize))
+//                            .resizable()
+//                            .interpolation(.high)
+//                            .scaledToFit()
                     } else {
                         // TODO: display a toast saying something went wrong and say try again
                         //                    overlaySelectedImage = false

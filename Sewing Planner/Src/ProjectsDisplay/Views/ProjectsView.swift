@@ -55,7 +55,7 @@ struct ProjectsView: View {
             }
         }
         .navigationTitle("Projects")
-        .frame(minWidth: 600, minHeight: 300)
+        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
         .background(Color.white)
     }
 }
@@ -68,6 +68,7 @@ struct ProjectDisplayView: View {
         VStack {
             MaybeProjectImageView(projectImage: projectData.image)
             Text(projectData.project.name)
+                .accessibilityIdentifier("ProjectName")
         }
         .padding(10)
         .frame(minWidth: 50, minHeight: 50)
@@ -92,7 +93,8 @@ struct MaybeProjectImageView: View {
     var body: some View {
         if let imageData = projectImage {
             if let image = imageData.image {
-                Image(nsImage: image)
+//                Image(image)
+                image
                     .resizable()
                     .interpolation(.high)
                     .scaledToFit()

@@ -15,16 +15,16 @@ struct AppDatabase {
 
     init(_ dbWriter: any DatabaseWriter) throws {
         self.dbWriter = dbWriter
-        try migrator.migrate(dbWriter)
+        try migrator.migrate(self.dbWriter)
 
-        #if DEBUG
-            try self.dbWriter.read { db in
-                let rows = try ProjectMetadata.all().fetchAll(db)
-                if rows.isEmpty {
-                    AppFiles().deleteImagesFolder()
-                }
-            }
-        #endif
+//        #if DEBUG
+//            try self.dbWriter.read { db in
+//                let rows = try ProjectMetadata.all().fetchAll(db)
+//                if rows.isEmpty {
+////                    AppFiles().deleteImagesFolder()
+//                }
+//            }
+//        #endif
     }
 }
 
@@ -107,6 +107,7 @@ extension AppDatabase {
     func fetchProjectsAndProjectImage() throws -> [ProjectDisplay] {
         var projectDisplayData: [ProjectDisplay] = []
 
+        print(self.dbWriter.configuration)
         // get projects
         try dbWriter.read { db in
             let projects: [ProjectMetadata] = try ProjectMetadata.all().order(ProjectColumns.id)
@@ -185,15 +186,15 @@ extension AppDatabase {
 
 extension AppDatabase {
     static let db = {
-        let argument = CommandLine.arguments.first(where: { val in val == "--test" })
+//        let argument = CommandLine.arguments.first(where: { val in val == "--test" })
 
-        print("arguments \(argument)")
-        if let testArgument = argument {
-            if testArgument == "--test" {
-                let dbQueue = try! DatabaseQueue(named: "test_db")
-                return try! AppDatabase(dbQueue)
-            }
-        }
+//        print("arguments \(argument)")
+//        if let testArgument = argument {
+//            if testArgument == "--test" {
+//                let dbQueue = try! DatabaseQueue(named: "test_db")
+//                return try! AppDatabase(dbQueue)
+//            }
+//        }
 
         return makeDb(name: "db")
     }
@@ -210,8 +211,8 @@ extension AppDatabase {
 
             // open or create database
             let databaseUrl = directoryUrl.appendingPathComponent(name).appendingPathExtension("sqlite")
-            NSLog("Database stored at \(databaseUrl.path)")
             let dbQueue = try DatabaseQueue(path: databaseUrl.path)
+            NSLog("Database stored at \(databaseUrl.path)")
 
             // create AppDatabase
             let appDatabase = try AppDatabase(dbQueue)
@@ -222,20 +223,20 @@ extension AppDatabase {
         }
     }
 
-    static func deleteDb(name: String) {
-        do {
-            // get db directory
-            let fileManager = FileManager.default
-            let appSupportUrl = try fileManager.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-            let directoryUrl = appSupportUrl.appendingPathComponent("Database", isDirectory: true)
-
-            // get db file name
-            let databaseUrl = directoryUrl.appendingPathComponent(name).appendingPathExtension("sqlite")
-            NSLog("Database stored at \(databaseUrl.path)")
-
-            try! fileManager.removeItem(atPath: databaseUrl.path)
-        } catch {
-            fatalError("Some error happened: \(error)")
-        }
-    }
+//    static func deleteDb(name: String) {
+//        do {
+//            // get db directory
+//            let fileManager = FileManager.default
+//            let appSupportUrl = try fileManager.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+//            let directoryUrl = appSupportUrl.appendingPathComponent("Database", isDirectory: true)
+//
+//            // get db file name
+//            let databaseUrl = directoryUrl.appendingPathComponent(name).appendingPathExtension("sqlite")
+//            NSLog("Database stored at \(databaseUrl.path)")
+//
+//            try! fileManager.removeItem(atPath: databaseUrl.path)
+//        } catch {
+//            fatalError("Some error happened: \(error)")
+//        }
+//    }
 }

@@ -37,9 +37,26 @@ final class AllProjectsScreenTests: XCTestCase {
 
         let addSectionButton = app.buttons["AddNewSectionButton"]
         XCTAssertTrue(addSectionButton.exists)
-        
+
         let addImageButton = app.buttons["AddNewImageButton"]
         XCTAssertTrue(addImageButton.exists)
+        
+        app.toolbars.children(matching: .button)["ProjectViewCustomBackButton"].children(matching: .button)["ProjectViewCustomBackButton"].tap()
+        
+        let projectNames = app.scrollViews.otherElements.staticTexts["ProjectName"]
+//        print(projectNames.debugDescription)
+        print(projectNames.label)
+        //        print(projectNames.count)
+        XCTAssertTrue(projectNames.value.debugDescription == "Project Name")
+        
+//        let swiftuiModifiedcontentSewingPlannerContentviewSwiftuiEnvironmentkeywritingmodifierSewingPlannerAppdatabase1Appwindow1Window = XCUIApplication()/*@START_MENU_TOKEN@*/.windows["SwiftUI.ModifiedContent<Sewing_Planner.ContentView, SwiftUI._EnvironmentKeyWritingModifier<Sewing_Planner.AppDatabase>>-1-AppWindow-1"]/*[[".windows[\"Projects\"]",".windows[\"SwiftUI.ModifiedContent<Sewing_Planner.ContentView, SwiftUI._EnvironmentKeyWritingModifier<Sewing_Planner.AppDatabase>>-1-AppWindow-1\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/
+//        swiftuiModifiedcontentSewingPlannerContentviewSwiftuiEnvironmentkeywritingmodifierSewingPlannerAppdatabase1Appwindow1Window/*@START_MENU_TOKEN@*/.buttons["AddNewProjectButton"]/*[[".groups",".buttons[\"New Project\"]",".buttons[\"AddNewProjectButton\"]"],[[[-1,2],[-1,1],[-1,0,1]],[[-1,2],[-1,1]]],[0]]@END_MENU_TOKEN@*/.click()
+//        swiftuiModifiedcontentSewingPlannerContentviewSwiftuiEnvironmentkeywritingmodifierSewingPlannerAppdatabase1Appwindow1Window.toolbars/*@START_MENU_TOKEN@*/.children(matching: .button)["ProjectViewCustomBackButton"].children(matching: .button)["ProjectViewCustomBackButton"]/*[[".children(matching: .button)[\"Back\"]",".children(matching: .button)[\"ProjectViewCustomBackButton\"]"],[[[-1,1,1],[-1,0,1]],[[-1,1],[-1,0]]],[0,0]]@END_MENU_TOKEN@*/.click()
+//        swiftuiModifiedcontentSewingPlannerContentviewSwiftuiEnvironmentkeywritingmodifierSewingPlannerAppdatabase1Appwindow1Window/*@START_MENU_TOKEN@*/.scrollViews.otherElements.staticTexts["ProjectName"]/*[[".groups.scrollViews.otherElements",".staticTexts[\"Project Name\"]",".staticTexts[\"ProjectName\"]",".scrollViews.otherElements"],[[[-1,3,1],[-1,0,1]],[[-1,2],[-1,1]]],[0,0]]@END_MENU_TOKEN@*/.click()
+        
+        
+//        let firstProjectName = app.textViews["ProjectName"].children(matching: .staticText)["Project Name"]
+//        XCTAssertTrue(firstProjectName.exists)
     }
 
     func testLaunchPerformance() throws {

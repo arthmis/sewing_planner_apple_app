@@ -1,0 +1,42 @@
+{
+  "configurations" : [
+    {
+      "id" : "FB90B2CB-CD57-4FC3-AEF9-0D846663E5F8",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "--test"
+      }
+    ],
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Sewing Planner.xcodeproj",
+      "identifier" : "6EF0C8382BED3CE200E7576F",
+      "name" : "Sewing Planner"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:Sewing Planner.xcodeproj",
+        "identifier" : "6EF0C8492BED3CE400E7576F",
+        "name" : "Sewing PlannerTests"
+      }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:Sewing Planner.xcodeproj",
+        "identifier" : "6EF0C8532BED3CE400E7576F",
+        "name" : "Sewing PlannerUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

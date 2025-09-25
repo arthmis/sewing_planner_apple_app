@@ -14,8 +14,8 @@ struct Sewing_PlannerApp: App {
         WindowGroup {
             ContentView().environment(\.appDatabase, .db())
         }
-        .windowResizability(.contentSize)
-        .defaultPosition(.center)
+//        .windowResizability(.)
+//        .defaultPosition(.center)
     }
 }
 

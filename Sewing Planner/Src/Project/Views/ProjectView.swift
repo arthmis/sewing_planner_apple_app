@@ -34,11 +34,9 @@ struct ProjectView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 VStack {
-                    HSplitView {
                         ProjectDetails(project: model.project, projectSections: model.projectSections, projectsNavigation: $projectsNavigation)
-                            .frame(minWidth: 500, maxWidth: 600)
-                        ImagesView(projectImages: model.projectImages)
-                    }.frame(maxWidth: .infinity, maxHeight: .infinity)
+//                            .frame(minWidth: 500, maxWidth: 600)
+//                        ImagesView(projectImages: model.projectImages)
                 }
                 .navigationBarBackButtonHidden(true).toolbar {
                     ToolbarItem(placement: .navigation) {
@@ -55,9 +53,9 @@ struct ProjectView: View {
         // mostly using this to remove focus from textfields when you click outside of them
         // using a frame using all the available space to make it more effective
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onTapGesture {
-            NSApplication.shared.keyWindow?.makeFirstResponder(nil)
-        }
+//        .onTapGesture {
+//            NSApplication.shared.keyWindow?.makeFirstResponder(nil)
+//        }
         .task {
             if let id = projectsNavigation.last?.id! {
                 self.model.getProject(with: id)

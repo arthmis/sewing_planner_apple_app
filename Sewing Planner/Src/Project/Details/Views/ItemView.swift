@@ -25,7 +25,7 @@ struct ItemView: View {
     var body: some View {
         VStack {
             HStack(alignment: .firstTextBaseline) {
-                Toggle(data.text, isOn: $data.isComplete).toggleStyle(.checkbox)
+                Toggle(data.text, isOn: $data.isComplete).toggleStyle(.button)
                     .padding(.trailing, 40)
                 Spacer()
                 Button {
@@ -47,19 +47,19 @@ struct ItemView: View {
                     Image(systemName: "line.3.horizontal")
                         .foregroundStyle(Color(hex: 0x999999, opacity: isHovering ? 1 : 0))
                         .allowsHitTesting(isHovering)
-                        .pointerStyle(PointerStyle.grabIdle)
+//                        .pointerStyle(PointerStyle.grabIdle)
                 } else {
                     Image(systemName: "line.3.horizontal")
                         .foregroundStyle(Color(hex: 0x999999, opacity: isHovering ? 1 : 0))
-                        .allowsHitTesting(isHovering)
-                        .onContinuousHover { phase in
-                            switch phase {
-                            case .active:
-                                NSCursor.openHand.push()
-                            case .ended:
-                                NSCursor.openHand.pop()
-                            }
-                        }
+//                        .allowsHitTesting(isHovering)
+//                        .onContinuousHover { phase in
+//                            switch phase {
+//                            case .active:
+//                                NSCursor.openHand.push()
+//                            case .ended:
+//                                NSCursor.openHand.pop()
+//                            }
+//                        }
                 }
             }
             .padding([.top, .bottom], 7)

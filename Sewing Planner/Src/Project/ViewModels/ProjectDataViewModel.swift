@@ -75,52 +75,52 @@ class ProjectImages: ObservableObject {
 
     func addImages(_ newImages: [ProjectImage]) throws {
         images += newImages
-        deduplicateImages()
-        try saveImages()
+//        deduplicateImages()
+//        try saveImages()
     }
 
-    func saveImages() throws {
-        try appDatabase.getWriter().write { db in
-            for var image in images {
-                do {
-                    if var record = image.record {
-                        let newFilePath = try AppFiles().saveProjectImage(projectId: projectId, image: image)
-                        record.filePath = newFilePath
-                        try record.save(db)
-                        image.path = newFilePath
-                    }
-                } catch {
-                    fatalError("error saving record or saving image to filesystem: \(error)")
-                }
-            }
-        }
-    }
+//    func saveImages() throws {
+//        try appDatabase.getWriter().write { db in
+//            for var image in images {
+//                do {
+//                    if var record = image.record {
+//                        let newFilePath = try AppFiles().saveProjectImage(projectId: projectId, image: image)
+//                        record.filePath = newFilePath
+//                        try record.save(db)
+//                        image.path = newFilePath
+//                    }
+//                } catch {
+//                    fatalError("error saving record or saving image to filesystem: \(error)")
+//                }
+//            }
+//        }
+//    }
 
     /// uses hash function to check file uniqueness before adding it
-    private func deduplicateImages() {
-        var result: [ProjectImage] = []
-        var uniqueData: Set<String> = Set()
-
-        let now = Date()
-
-        for var image in images {
-            if let record = image.record {
-                uniqueData.insert(record.hash)
-                result.append(image)
-                continue
-            }
-
-            // hash file
-            if let hash = image.getHash() {
-                if !uniqueData.contains(hash) {
-                    let record = ProjectImageRecord(projectId: projectId, filePath: image.path, hash: hash, isDeleted: false, createDate: now, updateDate: now)
-                    image.record = record
-                    result.append(image)
-                    uniqueData.insert(hash)
-                }
-            }
-        }
-
-        images = result
-    }
+//    private func deduplicateImages() {
+//        var result: [ProjectImage] = []
+//        var uniqueData: Set<String> = Set()
+//
+//        let now = Date()
+//
+//        for var image in images {
+//            if let record = image.record {
+//                uniqueData.insert(record.hash)
+//                result.append(image)
+//                continue
+//            }
+//
+//            // hash file
+//            if let hash = image.getHash() {
+//                if !uniqueData.contains(hash) {
+//                    let record = ProjectImageRecord(projectId: projectId, filePath: image.path, hash: hash, isDeleted: false, createDate: now, updateDate: now)
+//                    image.record = record
+//                    result.append(image)
+//                    uniqueData.insert(hash)
+//                }
+//            }
+//        }
+//
+//        images = result
+//    }
 }

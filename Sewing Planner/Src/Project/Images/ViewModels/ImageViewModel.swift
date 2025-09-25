@@ -11,33 +11,38 @@ import SwiftUI
 // TODO: make this a class since storing data like an image is too expensive to be copying
 struct ProjectImage {
     var record: ProjectImageRecord?
-    var path: URL
-    var image: NSImage?
+    var path: URL?
+    var image: Image?
     var name: String {
-        path.deletingPathExtension().lastPathComponent
+        "path name"
+        //        path.deletingPathExtension().lastPathComponent
     }
 
-    init(path: URL, image: NSImage? = nil) {
+    init(image: Image? = nil) {
+        self.image = image
+    }
+    
+    init(path: URL, image: Image? = nil) {
         self.path = path
         self.image = image
     }
 
-    init(record: ProjectImageRecord, path: URL, image: NSImage? = nil) {
+    init(record: ProjectImageRecord, path: URL, image: Image? = nil) {
         self.record = record
         self.image = image
         self.path = path
     }
 
-    func getHash() -> String? {
-        if let imageData = image {
-            if let data = imageData.tiffRepresentation {
-                let digest = SHA256.hash(data: data)
-                return digest.description
-            }
-        }
-
-        return nil
-    }
+//    func getHash() -> String? {
+//        if let imageData = image {
+//            if let data = imageData.tiffRepresentation {
+//                let digest = SHA256.hash(data: data)
+//                return digest.description
+//            }
+//        }
+//
+//        return nil
+//    }
 }
 
 extension ProjectImage: Hashable {

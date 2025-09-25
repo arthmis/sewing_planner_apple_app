@@ -70,7 +70,8 @@ struct ImageButton: View {
     var body: some View {
         if let img = image.image {
             if image.path == selectedImageForDeletion {
-                Image(nsImage: img)
+//                Image(img)
+                img
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 150, height: 250)
@@ -102,11 +103,11 @@ struct ImageButton: View {
 //                    }
             } else {
                 Button {
-                    print(image.path)
                     selectedImage = image.path
                     overlaySelectedImage = true
                 } label: {
-                    Image(nsImage: img)
+//                    Image(nsImage: img)
+                    img
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 150, height: 250)
