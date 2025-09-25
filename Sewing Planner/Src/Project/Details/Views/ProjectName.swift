@@ -51,7 +51,7 @@ struct ProjectName: View {
                         .fill(Color(hex: 0x131944, opacity: 0.9))
                         .frame(maxWidth: .infinity, maxHeight: 5),
                         alignment: .bottom)
-                    .font(.custom("SourceSans3-Medium", size: 20))
+                    .font(.custom("SourceSans3-Medium", size: 14))
                     .accessibilityIdentifier("ProjectNameTextfield")
                 Button("Cancel") {
                     project.data.name = project.bindedName
@@ -59,7 +59,7 @@ struct ProjectName: View {
                 }
             } else {
                 Text(project.data.name)
-                    .font(.custom("SourceSans3-Medium", size: 20))
+                    .font(.custom("SourceSans3-Medium", size: 14))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .contentShape(Rectangle())
                     .onTapGesture {

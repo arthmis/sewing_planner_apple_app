@@ -44,7 +44,7 @@ struct AddItemView: View {
                 }
                 .textFieldStyle(.plain)
                 .primaryTextFieldStyle(when: newItem.isEmpty, placeholder: "type item")
-                .frame(minWidth: 300, maxWidth: .infinity)
+                .frame(maxWidth: .infinity)
                 .padding(.trailing, 50)
                 .contentShape(Rectangle())
                 .onTapGesture {
@@ -70,7 +70,7 @@ struct AddItemView: View {
                 }
                 if showErrorText {
                     Text(errorText)
-                        .padding(.leading, 10)
+                        .padding(.leading, 8)
                         .foregroundStyle(Color.red)
                 }
                 HStack(alignment: .center) {
@@ -85,7 +85,7 @@ struct AddItemView: View {
                         showErrorText = false
                     }
                     .buttonStyle(SecondaryButtonStyle())
-                    .padding([.leading], 10)
+                    .padding([.leading], 8)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
             }

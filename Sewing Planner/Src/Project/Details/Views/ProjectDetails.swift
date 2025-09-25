@@ -28,27 +28,36 @@ struct ProjectDetails: View {
                 VStack(alignment: .leading) {
                     ForEach(projectSections.sections, id: \.id) { section in
                         SectionView(data: section)
-                            .padding(.bottom, 20)
+//                            .padding(.bottom, 20)
                     }
                 }
             }
             .frame(maxHeight: .infinity)
-            Spacer()
-            Button {
-                do {
-                    try projectSections.addSection(projectId: project.data.id!)
-                } catch {
-                    fatalError("\(error)")
-                }
-            } label: {
-                Image(systemName: "plus")
-            }
-            .buttonStyle(AddNewSectionButtonStyle())
-            .accessibilityIdentifier("AddNewSectionButton")
-            .frame(maxWidth: .infinity, alignment: .trailing)
+//            Spacer()
         }
-        .padding([.leading, .trailing], 50)
-        .padding([.top, .bottom], 20)
+        .padding([.leading, .trailing], 8)
+//        .padding([.top, .bottom], 20)
+        .toolbar {
+            ToolbarItemGroup(placement: .bottomBar) {
+                Button {
+                    do {
+                        try projectSections.addSection(projectId: project.data.id!)
+                    } catch {
+                        fatalError("\(error)")
+                    }
+                } label: {
+                    Image(systemName: "plus")
+                }
+//                .buttonStyle(AddNewSectionButtonStyle())
+                .accessibilityIdentifier("AddNewSectionButton")
+//                .frame(maxWidth: .infinity, alignment: .trailing)
+                Button { } label: {
+                    Image(systemName: "photo.artframe")
+                }
+            }
+//            ToolbarItem(placement: .bottomBar) {
+//            }
+        }
     }
 }
 

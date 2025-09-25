@@ -26,7 +26,6 @@ struct ItemView: View {
         VStack {
             HStack(alignment: .firstTextBaseline) {
                 Toggle(data.text, isOn: $data.isComplete).toggleStyle(.button)
-                    .padding(.trailing, 40)
                 Spacer()
                 Button {
                     if let id = data.id {
@@ -38,32 +37,12 @@ struct ItemView: View {
                     }
                 } label: {
                     Image(systemName: "trash")
-                        .foregroundStyle(Color(hex: 0x999999, opacity: isHovering ? 1 : 0))
-                        .allowsHitTesting(isHovering)
-                        .padding(.trailing, 10)
+                        .padding(.trailing, 8)
                 }
                 .buttonStyle(PlainButtonStyle())
-                if #available(macOS 15.0, *) {
-                    Image(systemName: "line.3.horizontal")
-                        .foregroundStyle(Color(hex: 0x999999, opacity: isHovering ? 1 : 0))
-                        .allowsHitTesting(isHovering)
-//                        .pointerStyle(PointerStyle.grabIdle)
-                } else {
-                    Image(systemName: "line.3.horizontal")
-                        .foregroundStyle(Color(hex: 0x999999, opacity: isHovering ? 1 : 0))
-//                        .allowsHitTesting(isHovering)
-//                        .onContinuousHover { phase in
-//                            switch phase {
-//                            case .active:
-//                                NSCursor.openHand.push()
-//                            case .ended:
-//                                NSCursor.openHand.pop()
-//                            }
-//                        }
-                }
+                Image(systemName: "line.3.horizontal")
             }
-            .padding([.top, .bottom], 7)
-            .background(Color(hex: 0xEEEEEE, opacity: isHovering ? 1 : 0))
+            .padding([.top, .bottom], 8)
             .onTapGesture {
                 isEditing = true
                 newText = data.text
@@ -74,21 +53,6 @@ struct ItemView: View {
             if isEditing {
                 UpdateItemView(data: $data, isEditing: $isEditing, newText: $newText, updateText: updateText, resetToPreviousText: resetToPreviousText)
             }
-//            .offset(offset)
-//            //                    .gesture(drag)
-//            .gesture(
-//                DragGesture()
-//                    .onChanged { gesture in
-//                        offset = gesture.translation
-//                        self.isDragging = true
-//                    }
-//                    .onEnded { _ in
-//                        offset.width = 0
-//                        offset.height = 0
-//                        self.isDragging = false
-//                    }
-//            )
-//            .contentShape(Rectangle())
         }
     }
 }
