@@ -69,14 +69,13 @@ struct SectionView: View {
                             }
                             .textFieldStyle(.plain)
                             .padding(.bottom, 5)
-                            .overlay(Rectangle()
-                                .fill(Color(hex: 0x131944, opacity: 0.9))
-                                .frame(maxWidth: .infinity, maxHeight: 5),
-                                alignment: .bottom)
+//                            .overlay(Rectangle()
+//                                .fill(Color(hex: 0x131944, opacity: 0.9))
+//                                .frame(maxWidth: .infinity, maxHeight: 5),
+//                                alignment: .bottom)
                             .font(.custom("SourceSans3-Medium", size: 16))
                         Button("Cancel") {
                             name = data.section.name
-
                             isRenamingSection = false
                         }
                         Button("Set") {
@@ -94,13 +93,13 @@ struct SectionView: View {
                             name = data.section.name
                             headerFocus = true
                         }
-                        .overlay(Rectangle()
-                            .frame(maxWidth: .infinity, maxHeight: 3),
-                            alignment: .bottom)
+//                        .overlay(Rectangle()
+//                            .frame(maxWidth: .infinity, maxHeight: 3),
+//                            alignment: .bottom)
                 }
-                SectionViewButton {} label: {
-                    Image(systemName: "ellipsis")
-                }
+//                SectionViewButton {} label: {
+//                    Image(systemName: "ellipsis")
+//                }
             }
             .overlay(Divider()
                 .frame(maxWidth: .infinity, maxHeight: 1)

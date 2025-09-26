@@ -55,13 +55,14 @@ struct ItemView: View {
 
 struct CheckboxStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
-        Button {
-            configuration.isOn.toggle()
-        } label: {
-            HStack(alignment: .firstTextBaseline) {
-                Image(systemName: configuration.isOn ? "checkmark.square" : "square")
-                configuration.label
+        
+        HStack(alignment: .firstTextBaseline) {
+            Button {
+                configuration.isOn.toggle()
+            } label: {
+                    Image(systemName: configuration.isOn ? "checkmark.square" : "square")
             }
+            configuration.label
         }
     }
 }
