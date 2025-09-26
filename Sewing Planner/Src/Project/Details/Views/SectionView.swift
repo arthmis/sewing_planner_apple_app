@@ -19,8 +19,8 @@ struct SectionView: View {
     @State var isAddingItem = false
     @State var newItem = ""
     @FocusState var headerFocus: Bool
-    @State var isHovering = false
     @State var offset: CGSize = .zero
+    @State private var draggedItem: SectionItemRecord?
 
     func deleteItem(at offsets: IndexSet) {
         for index in offsets {
@@ -94,11 +94,7 @@ struct SectionView: View {
                             name = data.section.name
                             headerFocus = true
                         }
-                        .onHover { hover in
-                            isHovering = hover
-                        }
                         .overlay(Rectangle()
-                            .fill(Color(hex: 0x131944, opacity: isHovering ? 1 : 0))
                             .frame(maxWidth: .infinity, maxHeight: 3),
                             alignment: .bottom)
                 }
@@ -109,12 +105,47 @@ struct SectionView: View {
             .overlay(Divider()
                 .frame(maxWidth: .infinity, maxHeight: 1)
                 .background(Color(red: 230, green: 230, blue: 230)), alignment: .bottom)
-            ForEach($data.items, id: \.self) { $item in
+            ForEach($data.items, id: \.self.id) { $item in
                 ItemView(data: $item, deleteItem: data.deleteItem, updateText: data.updateText)
-                    .frame(maxWidth: .infinity)
+                    .contentShape(Rectangle())
+                    .onDrag {
+                        draggedItem = item
+                        return NSItemProvider(object: "\(item.hashValue)" as NSString)
+                    }
+                    .onDrop(of: [.text], delegate: DropSectionItemViewDelegate(item: item, data: $data.items, draggedItem: $draggedItem))
             }
+            .frame(maxWidth: .infinity)
             AddItemView(isAddingItem: $isAddingItem, newItem: $newItem, addItem: data.addItem)
 
         }
+    }
+}
+
+struct DropSectionItemViewDelegate: DropDelegate {
+    let item: SectionItemRecord
+    @Binding var data: [SectionItemRecord]
+    @Binding var draggedItem: SectionItemRecord?
+    func dropEntered(info: DropInfo) {
+        guard item  != draggedItem,
+              let current = draggedItem,
+              let from = data.firstIndex(of: current),
+              let to = data.firstIndex(of: item)
+        else {
+            return
+        }
+        if data[to] != current {
+            withAnimation {
+                data.move(fromOffsets: IndexSet(integer: from), toOffset: (to > from) ? to + 1 : to)
+            }
+        }
+    }
+    
+    func dropUpdated(info: DropInfo) -> DropProposal? {
+        DropProposal(operation: .move)
+    }
+    
+    func performDrop(info: DropInfo) -> Bool {
+        draggedItem = nil
+        return true
     }
 }

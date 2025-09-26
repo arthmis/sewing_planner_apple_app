@@ -11,7 +11,6 @@ struct ItemView: View {
     @Binding var data: SectionItemRecord
     @State var isEditing = false
     @State var newText = ""
-    @State var isHovering = false
     var deleteItem: (Int64) throws -> Void
     var updateText: (Int64, String) throws -> Void
     @State var offset: CGSize = .zero
@@ -46,9 +45,6 @@ struct ItemView: View {
             .onTapGesture {
                 isEditing = true
                 newText = data.text
-            }
-            .onHover { hover in
-                isHovering = hover
             }
             if isEditing {
                 UpdateItemView(data: $data, isEditing: $isEditing, newText: $newText, updateText: updateText, resetToPreviousText: resetToPreviousText)
