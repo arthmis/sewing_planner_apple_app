@@ -27,7 +27,7 @@ class Section: ObservableObject {
 
     func addItem(text: String) throws {
         try db.getWriter().write { db in
-            var record = SectionItemRecord(text: text)
+            var record = SectionItemRecord(text: text.trimmingCharacters(in: .whitespacesAndNewlines))
             record.sectionId = section.id!
             try record.save(db)
             items.append(record)

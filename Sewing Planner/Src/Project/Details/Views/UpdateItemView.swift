@@ -17,7 +17,7 @@ struct UpdateItemView: View {
     let resetToPreviousText: () -> Void
 
     private var isNewTextValid: Bool {
-        newText.trimmingCharacters(in: .whitespaces).isEmpty && newText != data.text
+        newText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && newText != data.text
     }
 
     func update() {
@@ -26,9 +26,10 @@ struct UpdateItemView: View {
             return
         }
 
+        let validText = newText.trimmingCharacters(in: .whitespacesAndNewlines)
         do {
-            try updateText(data.id!, newText)
-            data.text = newText
+            try updateText(data.id!, validText)
+            data.text = validText
         } catch {
             fatalError("\(error)")
         }

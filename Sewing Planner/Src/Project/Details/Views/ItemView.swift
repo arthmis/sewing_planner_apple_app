@@ -13,8 +13,6 @@ struct ItemView: View {
     @State var newText = ""
     var deleteItem: (Int64) throws -> Void
     var updateText: (Int64, String) throws -> Void
-    @State var offset: CGSize = .zero
-    @State private var isDragging = false
 
     func resetToPreviousText() {
         newText = data.text
@@ -60,7 +58,7 @@ struct CheckboxStyle: ToggleStyle {
         Button {
             configuration.isOn.toggle()
         } label: {
-            HStack {
+            HStack(alignment: .firstTextBaseline) {
                 Image(systemName: configuration.isOn ? "checkmark.square" : "square")
                 configuration.label
             }
