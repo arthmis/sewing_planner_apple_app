@@ -66,7 +66,7 @@ struct UpdateItemView: View {
 }
 
 #Preview {
-    @Previewable @State var record = SectionItemRecord(id: 1, text: "something")
+    @Previewable @State var record = SectionItemRecord(id: 1, text: "something", order: 0)
     @Previewable @State var isEditing = true
     @Previewable @State var newText = ""
     UpdateItemView(data: $record, isEditing: $isEditing, newText: $newText, updateText: { id, text throws in print(id ?? 1, text) }, resetToPreviousText: { () in print("resetting") })

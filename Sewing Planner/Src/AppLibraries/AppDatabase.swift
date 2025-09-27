@@ -84,6 +84,7 @@ extension AppDatabase {
                 table.column("text", .text).notNull().indexed()
                 table.column("isComplete", .boolean).notNull().indexed()
                 table.column("isDeleted", .boolean).notNull()
+                table.column("order", .integer).notNull()
                 table.column("createDate", .datetime).notNull()
                 table.column("updateDate", .datetime).notNull()
             }
@@ -141,7 +142,6 @@ extension AppDatabase {
             var sections: [Section] = []
             let sectionRecords: [SectionRecord] = try SectionRecord
                 .all()
-                .order(Column("id"))
                 .filter(Column("projectId") == projectId)
                 .fetchAll(db)
 
@@ -150,7 +150,7 @@ extension AppDatabase {
                     .all()
                     .filter(Column("sectionId") == sectionRecord.id!)
                     .filter(Column("isDeleted") == false)
-                    .order(Column("id"))
+                    .order(Column("order"))
                     .fetchAll(db)
 
                 sections.append(Section(section: sectionRecord, items: sectionItemRecords, id: UUID()))

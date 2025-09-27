@@ -28,6 +28,7 @@ struct SectionItemRecord: Hashable, Identifiable, Codable, EncodableRecord, Fetc
     var text: String = ""
     var isComplete: Bool = false
     var isDeleted = false
+    var order: Int64
     var createDate: Date = .init()
     var updateDate: Date = .init()
     static let databaseTableName = "sectionItem"
@@ -36,20 +37,22 @@ struct SectionItemRecord: Hashable, Identifiable, Codable, EncodableRecord, Fetc
         id = inserted.rowID
     }
 
-    init(text: String) {
+    init(text: String, order: Int64) {
         self.text = text
         isComplete = false
         let now = Date()
         createDate = now
         updateDate = now
+        self.order = order
     }
     
-    init(id: Int64, text: String) {
+    init(id: Int64, text: String, order: Int64) {
         self.id = id
         self.text = text
         isComplete = false
         let now = Date()
         createDate = now
         updateDate = now
+        self.order = order
     }
 }

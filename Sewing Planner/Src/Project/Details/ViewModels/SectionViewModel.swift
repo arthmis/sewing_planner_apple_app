@@ -29,8 +29,11 @@ class Section {
 
     func addItem(text: String) throws {
         try db.getWriter().write { db in
-            var record = SectionItemRecord(text: text.trimmingCharacters(in: .whitespacesAndNewlines))
+            let order = Int64(items.count)
+            print("order", order)
+            var record = SectionItemRecord(text: text.trimmingCharacters(in: .whitespacesAndNewlines), order: order)
             record.sectionId = section.id!
+            print("record order", record.order)
             try record.save(db)
             items.append(record)
         }
@@ -48,6 +51,15 @@ class Section {
         }
     }
     
+    func saveOrder() throws {
+        try db.getWriter().write { db in
+            for case (let i, var record) in items.enumerated() {
+                record.order = Int64(i)
+                try! record.save(db)
+            }
+        }
+    }
+
     func updateText(id: Int64, newText: String) throws {
         try db.getWriter().write { db in
             for var record in items {

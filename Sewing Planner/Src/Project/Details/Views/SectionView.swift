@@ -126,7 +126,7 @@ struct SectionView: View {
                             draggedItem = item
                             return NSItemProvider(object: "\(item.hashValue)" as NSString)
                         }
-                        .onDrop(of: [.text], delegate: DropSectionItemViewDelegate(item: item, data: $data.items, draggedItem: $draggedItem))
+                        .onDrop(of: [.text], delegate: DropSectionItemViewDelegate(item: item, data: $data.items, draggedItem: $draggedItem, saveNewOrder: data.saveOrder))
                 }
             }
             .frame(maxWidth: .infinity)
@@ -182,14 +182,16 @@ struct SelectedSectionItemView: View {
 }
 
 struct DropSectionItemViewDelegate: DropDelegate {
-    let item: SectionItemRecord
+    var item: SectionItemRecord
     @Binding var data: [SectionItemRecord]
     @Binding var draggedItem: SectionItemRecord?
+    var saveNewOrder: () throws -> Void
+    
     func dropEntered(info: DropInfo) {
         guard item  != draggedItem,
               let current = draggedItem,
               let from = data.firstIndex(of: current),
-              let to = data.firstIndex(of: item)
+            let to = data.firstIndex(of: item)
         else {
             return
         }
@@ -205,6 +207,7 @@ struct DropSectionItemViewDelegate: DropDelegate {
     }
     
     func performDrop(info: DropInfo) -> Bool {
+        try! saveNewOrder()
         draggedItem = nil
         return true
     }
