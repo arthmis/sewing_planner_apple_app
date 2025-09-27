@@ -13,6 +13,7 @@ class Section {
     var items: [SectionItemRecord] = []
     var id: UUID
     var deletedItems: [SectionItemRecord] = []
+    var selectedItems: Set<Int64> = []
     private let db: AppDatabase = .db()
 
     init(id: UUID, name: String) {
