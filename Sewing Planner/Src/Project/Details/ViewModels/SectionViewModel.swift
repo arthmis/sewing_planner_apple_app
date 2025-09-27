@@ -76,6 +76,15 @@ class Section {
             }
         }
     }
+    
+    func updateCompletedState(id: Int64) throws {
+        try db.getWriter().write { db in
+            if var record = items.first(where: {$0.id! == id}) {
+                record.isComplete.toggle()
+                try record.save(db)
+            }
+        }
+    }
 
     func updateSectionName(with name: String) throws {
         section.name = name

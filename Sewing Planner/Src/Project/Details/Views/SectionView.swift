@@ -114,13 +114,13 @@ struct SectionView: View {
                 .background(Color(red: 230, green: 230, blue: 230)), alignment: .bottom)
             ForEach($data.items, id: \.self.id) { $item in
                 if !isEditingSection {
-                    ItemView(data: $item, deleteItem: data.deleteItem, updateText: data.updateText)
+                    ItemView(data: $item, deleteItem: data.deleteItem, updateText: data.updateText, updateCompletedState: data.updateCompletedState)
                         .contentShape(Rectangle())
                         .onLongPressGesture {
                             isEditingSection = true
                         }
                 } else {
-                    SelectedSectionItemView(data: $item, selected: $data.selectedItems, deleteItem: data.deleteItem, updateText: data.updateText)
+                    SelectedSectionItemView(data: $item, selected: $data.selectedItems, deleteItem: data.deleteItem, updateText: data.updateText, updateCompletedState: data.updateCompletedState)
                         .contentShape(Rectangle())
                         .onDrag {
                             draggedItem = item
@@ -143,14 +143,16 @@ struct SelectedSectionItemView: View {
     @Binding var selected: Set<Int64>
     var deleteItem: (Int64) throws -> Void
     var updateText: (Int64, String) throws -> Void
-    
+    var updateCompletedState: (Int64) throws -> Void
+
     var isSelected: Bool {
         selected.contains(data.id!)
     }
     
     var body: some View {
             HStack(alignment: .firstTextBaseline) {
-                Toggle(data.text, isOn: $data.isComplete).toggleStyle(CheckboxStyle())
+                Toggle(data.text, isOn: $data.isComplete)
+                    .toggleStyle(CheckboxStyle(id: data.id, updateCompletedState: updateCompletedState))
                 Spacer()
 //                Button {
 //                    if let id = data.id {

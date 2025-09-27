@@ -13,6 +13,7 @@ struct ItemView: View {
     @State var newText = ""
     var deleteItem: (Int64) throws -> Void
     var updateText: (Int64, String) throws -> Void
+    var updateCompletedState: (Int64) throws -> Void
 
     func resetToPreviousText() {
         newText = data.text
@@ -21,12 +22,11 @@ struct ItemView: View {
 
     @ViewBuilder
     var body: some View {
-//        VStack {
         if isEditing {
             UpdateItemView(data: $data, isEditing: $isEditing, newText: $newText, updateText: updateText, resetToPreviousText: resetToPreviousText)
         } else {
             HStack(alignment: .firstTextBaseline) {
-                Toggle(data.text, isOn: $data.isComplete).toggleStyle(CheckboxStyle())
+                Toggle(data.text, isOn: $data.isComplete).toggleStyle(CheckboxStyle(id: data.id, updateCompletedState: updateCompletedState))
                 Spacer()
 //                Button {
 //                    if let id = data.id {
@@ -51,15 +51,18 @@ struct ItemView: View {
                 }
         }
             }
-//        }
     }
 }
 
 struct CheckboxStyle: ToggleStyle {
+    var id: Int64?
+    var updateCompletedState: (Int64) throws -> Void
+
     func makeBody(configuration: Configuration) -> some View {
         
         HStack(alignment: .firstTextBaseline) {
             Button {
+                try! updateCompletedState(id!)
                 configuration.isOn.toggle()
             } label: {
                     Image(systemName: configuration.isOn ? "checkmark.square" : "square")
