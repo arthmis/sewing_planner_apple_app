@@ -113,23 +113,21 @@ struct SectionView: View {
                 .frame(maxWidth: .infinity, maxHeight: 1)
                 .background(Color(red: 230, green: 230, blue: 230)), alignment: .bottom)
             ForEach($data.items, id: \.self.id) { $item in
-                
-                ItemViewWrapper(data: $item, deleteItem: data.deleteItem, updateText: data.updateText, isEditingSection: $isEditingSection, selected: $data.selectedItems)
-//                if isEditingSection {
-//                    ItemView(data: $item, deleteItem: data.deleteItem, updateText: data.updateText)
-//                        .contentShape(Rectangle())
-                                .contentShape(Rectangle())
-                                .onLongPressGesture {
-                                    isEditingSection = true
-                                }
-    //                    .onDrag {
-    //                        draggedItem = item
-    //                        return NSItemProvider(object: "\(item.hashValue)" as NSString)
-    //                    }
-    //                    .onDrop(of: [.text], delegate: DropSectionItemViewDelegate(item: item, data: $data.items, draggedItem: $draggedItem))
-//                } else {
-//                    EditItemView(data: $item, deleteItem: data.deleteItem, updateText: data.updateText)
-//                }
+                if !isEditingSection {
+                    ItemView(data: $item, deleteItem: data.deleteItem, updateText: data.updateText)
+                        .contentShape(Rectangle())
+                        .onLongPressGesture {
+                            isEditingSection = true
+                        }
+                } else {
+                    SelectedSectionItemView(data: $item, selected: $data.selectedItems, deleteItem: data.deleteItem, updateText: data.updateText)
+                        .contentShape(Rectangle())
+                        .onDrag {
+                            draggedItem = item
+                            return NSItemProvider(object: "\(item.hashValue)" as NSString)
+                        }
+                        .onDrop(of: [.text], delegate: DropSectionItemViewDelegate(item: item, data: $data.items, draggedItem: $draggedItem))
+                }
             }
             .frame(maxWidth: .infinity)
             AddItemView(isAddingItem: $isAddingItem, newItem: $newItem, addItem: data.addItem)
@@ -138,35 +136,7 @@ struct SectionView: View {
     }
 }
 
-struct ItemViewWrapper: View {
-    @Binding var data: SectionItemRecord
-    @State var isEditing = false
-    @State var newText = ""
-    var deleteItem: (Int64) throws -> Void
-    var updateText: (Int64, String) throws -> Void
-    @Binding var isEditingSection: Bool
-    @Binding var selected: Set<Int64>
-
-//    @ViewBuilder
-    var body: some View {
-        if !isEditingSection {
-            ItemView(data: $data, deleteItem: deleteItem, updateText: updateText)
-//                .contentShape(Rectangle())
-//                .onLongPressGesture {
-//                    isEditingSection = true
-//                }
-//                    .onDrag {
-//                        draggedItem = item
-//                        return NSItemProvider(object: "\(item.hashValue)" as NSString)
-//                    }
-//                    .onDrop(of: [.text], delegate: DropSectionItemViewDelegate(item: item, data: $data.items, draggedItem: $draggedItem))
-        } else {
-            EditItemView(data: $data, selected: $selected, deleteItem: deleteItem, updateText: updateText)
-        }
-    }
-}
-
-struct EditItemView: View {
+struct SelectedSectionItemView: View {
     @Binding var data: SectionItemRecord
     @State var isEditing = false
     @State var newText = ""
@@ -179,16 +149,6 @@ struct EditItemView: View {
     }
     
     var body: some View {
-//        Toggle(isOn: $selected) {
-//            ItemView(data: $data, deleteItem: deleteItem, updateText: updateText)
-//                .background(isSelected ? Color.blue : Color.white)
-//                .onTapGesture {
-//                    if !isSelected {
-//                        selected.insert(data.id!)
-//                    } else {
-//                        selected.remove(data.id!)
-//                    }
-//                }
             HStack(alignment: .firstTextBaseline) {
                 Toggle(data.text, isOn: $data.isComplete).toggleStyle(CheckboxStyle())
                 Spacer()
@@ -209,11 +169,6 @@ struct EditItemView: View {
             }
             .contentShape(Rectangle())
             .background(isSelected ? Color.blue : Color.white)
-//                    .onDrag {
-//                        draggedItem = item
-//                        return NSItemProvider(object: "\(item.hashValue)" as NSString)
-//                    }
-//                    .onDrop(of: [.text], delegate: DropSectionItemViewDelegate(item: item, data: $data.items, draggedItem: $draggedItem))
             .onTapGesture {
                 if !isSelected {
                     selected.insert(data.id!)
@@ -221,14 +176,6 @@ struct EditItemView: View {
                     selected.remove(data.id!)
                 }
             }
-//            .onTapGesture {
-//                if !isEditing {
-//                    isEditing = true
-//                    newText = data.text
-//                }
-//        }
-//        .toggleStyle(CheckboxStyle())
-//            .contentShape(Rectangle())
     }
 }
 
