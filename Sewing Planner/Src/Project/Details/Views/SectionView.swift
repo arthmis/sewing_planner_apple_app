@@ -13,14 +13,14 @@ enum FocusField {
 }
 
 struct SectionView: View {
-    @ObservedObject var data: Section
+    @Binding var data: Section
     @State var isRenamingSection = false
     @State var name = ""
     @State var isAddingItem = false
     @State var newItem = ""
     @FocusState var headerFocus: Bool
-    @State var offset: CGSize = .zero
     @State private var draggedItem: SectionItemRecord?
+    @State var isEditingSection = false
 
     func deleteItem(at offsets: IndexSet) {
         for index in offsets {
@@ -105,18 +105,43 @@ struct SectionView: View {
                 .frame(maxWidth: .infinity, maxHeight: 1)
                 .background(Color(red: 230, green: 230, blue: 230)), alignment: .bottom)
             ForEach($data.items, id: \.self.id) { $item in
-                ItemView(data: $item, deleteItem: data.deleteItem, updateText: data.updateText)
-                    .contentShape(Rectangle())
-                    .onDrag {
-                        draggedItem = item
-                        return NSItemProvider(object: "\(item.hashValue)" as NSString)
-                    }
-                    .onDrop(of: [.text], delegate: DropSectionItemViewDelegate(item: item, data: $data.items, draggedItem: $draggedItem))
+//                if isEditingSection {
+                    ItemView(data: $item, deleteItem: data.deleteItem, updateText: data.updateText)
+                        .contentShape(Rectangle())
+                        .onLongPressGesture {
+                            isEditingSection = true
+                        }
+    //                    .onDrag {
+    //                        draggedItem = item
+    //                        return NSItemProvider(object: "\(item.hashValue)" as NSString)
+    //                    }
+    //                    .onDrop(of: [.text], delegate: DropSectionItemViewDelegate(item: item, data: $data.items, draggedItem: $draggedItem))
+//                } else {
+//                    EditItemView(data: $item, deleteItem: data.deleteItem, updateText: data.updateText)
+//                }
             }
             .frame(maxWidth: .infinity)
             AddItemView(isAddingItem: $isAddingItem, newItem: $newItem, addItem: data.addItem)
 
         }
+    }
+}
+
+struct EditItemView {
+    @Binding var data: SectionItemRecord
+    @State var isEditing = false
+    @State var newText = ""
+    var deleteItem: (Int64) throws -> Void
+    var updateText: (Int64, String) throws -> Void
+    
+    var body: some View {
+        ItemView(data: $data, deleteItem: deleteItem, updateText: updateText)
+            .contentShape(Rectangle())
+//                    .onDrag {
+//                        draggedItem = item
+//                        return NSItemProvider(object: "\(item.hashValue)" as NSString)
+//                    }
+//                    .onDrop(of: [.text], delegate: DropSectionItemViewDelegate(item: item, data: $data.items, draggedItem: $draggedItem))
     }
 }
 

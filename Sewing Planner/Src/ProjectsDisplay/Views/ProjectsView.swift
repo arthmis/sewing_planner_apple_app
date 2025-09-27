@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ProjectsView: View {
     @Environment(\.appDatabase) private var appDatabase
-    @StateObject var model = ProjectsViewModel()
+    @State var model = ProjectsViewModel()
     let columns = [GridItem(.adaptive(minimum: 200, maximum: 300))]
     
     func fetchProjects() {

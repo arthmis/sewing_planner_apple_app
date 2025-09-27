@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct ProjectDetails: View {
-    @ObservedObject var project: ProjectMetadataViewModel
-    @ObservedObject var projectSections: ProjectSections
+    @Binding var project: ProjectMetadataViewModel
+    @Binding var projectSections: ProjectSections
     @Binding var projectsNavigation: [ProjectMetadata]
 
     private var isProjectValid: Bool {
@@ -19,15 +19,15 @@ struct ProjectDetails: View {
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                ProjectName(project: project)
+                ProjectName(project: $project)
                 Spacer()
             }
             .frame(maxWidth: .infinity)
             .padding(.bottom, 25)
             ScrollView {
                 VStack(alignment: .leading) {
-                    ForEach(projectSections.sections, id: \.id) { section in
-                        SectionView(data: section)
+                    ForEach($projectSections.sections, id: \.id) { $section in
+                        SectionView(data: $section)
                             .padding(.bottom, 16)
                     }
                 }

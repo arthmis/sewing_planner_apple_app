@@ -9,7 +9,7 @@ import GRDB
 import SwiftUI
 
 struct ProjectName: View {
-    @ObservedObject var project: ProjectMetadataViewModel
+    @Binding var project: ProjectMetadataViewModel
     @State var isEditing = false
     @FocusState var headerFocus: Bool
     @State var isHovering = false
@@ -88,8 +88,8 @@ struct ProjectName: View {
     }
 }
 
-#Preview {
-    ProjectName(project: ProjectMetadataViewModel(data: ProjectMetadata(id: 2, name: "Project Name", completed: false, createDate: Date(), updateDate: Date())))
-        .frame(width: 300, height: 300)
-        .background(Color.white)
-}
+//#Preview {
+//    ProjectName(project: ProjectMetadataViewModel(data: ProjectMetadata(id: 2, name: "Project Name", completed: false, createDate: Date(), updateDate: Date())))
+//        .frame(width: 300, height: 300)
+//        .background(Color.white)
+//}

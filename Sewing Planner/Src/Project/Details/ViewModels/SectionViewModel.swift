@@ -7,9 +7,10 @@
 
 import SwiftUI
 
-class Section: ObservableObject {
-    @Published var section: SectionRecord = .init()
-    @Published var items: [SectionItemRecord] = []
+@Observable
+class Section {
+    var section: SectionRecord = .init()
+    var items: [SectionItemRecord] = []
     var id: UUID
     var deletedItems: [SectionItemRecord] = []
     private let db: AppDatabase = .db()

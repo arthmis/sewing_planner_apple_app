@@ -11,7 +11,7 @@ import SwiftUI
 struct ProjectView: View {
     // used for dismissing a view(basically the back button)
     @Environment(\.dismiss) private var dismiss
-    @StateObject var model = ProjectDetailData()
+    @State var model = ProjectDetailData()
     @Binding var projectsNavigation: [ProjectMetadata]
     let fetchProjects: () -> ()
     @State var name = ""
@@ -34,7 +34,7 @@ struct ProjectView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 VStack {
-                        ProjectDetails(project: model.project, projectSections: model.projectSections, projectsNavigation: $projectsNavigation)
+                        ProjectDetails(project: $model.project, projectSections: $model.projectSections, projectsNavigation: $projectsNavigation)
 //                            .frame(minWidth: 500, maxWidth: 600)
 //                        ImagesView(projectImages: model.projectImages)
                 }

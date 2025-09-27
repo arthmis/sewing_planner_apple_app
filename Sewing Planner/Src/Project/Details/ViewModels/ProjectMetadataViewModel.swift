@@ -7,9 +7,10 @@
 
 import SwiftUI
 
-class ProjectMetadataViewModel: ObservableObject {
-    @Published var data = ProjectMetadata()
-    @Published var bindedName = ""
+@Observable
+class ProjectMetadataViewModel {
+    var data = ProjectMetadata()
+    var bindedName = ""
     var db: AppDatabase = .db()
 
     init() {}

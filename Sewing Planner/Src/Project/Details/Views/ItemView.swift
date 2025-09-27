@@ -19,8 +19,12 @@ struct ItemView: View {
         isEditing = false
     }
 
+    @ViewBuilder
     var body: some View {
-        VStack {
+//        VStack {
+        if isEditing {
+            UpdateItemView(data: $data, isEditing: $isEditing, newText: $newText, updateText: updateText, resetToPreviousText: resetToPreviousText)
+        } else {
             HStack(alignment: .firstTextBaseline) {
                 Toggle(data.text, isOn: $data.isComplete).toggleStyle(CheckboxStyle())
                 Spacer()
@@ -45,11 +49,9 @@ struct ItemView: View {
                     isEditing = true
                     newText = data.text
                 }
-            }
-            if isEditing {
-                UpdateItemView(data: $data, isEditing: $isEditing, newText: $newText, updateText: updateText, resetToPreviousText: resetToPreviousText)
-            }
         }
+            }
+//        }
     }
 }
 

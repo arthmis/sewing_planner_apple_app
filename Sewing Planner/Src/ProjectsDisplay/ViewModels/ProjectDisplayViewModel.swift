@@ -12,9 +12,10 @@ struct ProjectDisplay {
     var image: ProjectImage?
 }
 
-class ProjectsViewModel: ObservableObject {
-    @Published var projects: [ProjectMetadata] = []
-    @Published var projectsDisplay: [ProjectDisplay] = []
+@Observable
+class ProjectsViewModel {
+    var projects: [ProjectMetadata] = []
+    var projectsDisplay: [ProjectDisplay] = []
     let db: AppDatabase = .db()
 
     func addProject() throws {
