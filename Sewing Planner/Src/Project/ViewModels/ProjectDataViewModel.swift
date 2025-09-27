@@ -39,8 +39,9 @@ class ProjectDetailData{
     }
 }
 
-class ProjectSections: ObservableObject {
-    @Published var sections: [Section] = []
+@Observable
+class ProjectSections {
+    var sections: [Section] = []
     let appDatabase: AppDatabase = .db()
 
     init() {}
