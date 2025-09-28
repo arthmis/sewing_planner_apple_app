@@ -60,8 +60,8 @@ struct AddNewSectionButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         let isPressed = configuration.isPressed
         configuration.label
-            .font(.custom("CooperHewitt-Regular", size: 22))
-            .padding(10)
+            .font(.custom("CooperHewitt-Regular", size: 16))
+            .padding(4)
             .background(Color(hex: 0x131944, opacity: 1.0))
             .foregroundColor(.white)
             .clipShape(Circle())

@@ -8,12 +8,18 @@
 import GRDB
 import SwiftUI
 
+enum CurrentView {
+    case details
+    case images
+}
+
 struct ProjectView: View {
     // used for dismissing a view(basically the back button)
     @Environment(\.dismiss) private var dismiss
     @State var model = ProjectDetailData()
     @Binding var projectsNavigation: [ProjectMetadata]
     let fetchProjects: () -> Void
+    @State var currentView = CurrentView.details
     @State var name = ""
     @State var showAddTextboxPopup = false
     @State var doesProjectHaveName = false
@@ -34,8 +40,14 @@ struct ProjectView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 VStack {
-                    ProjectDetails(project: $model.project, projectSections: $model.projectSections, projectsNavigation: $projectsNavigation)
-                    ImagesView(projectImages: $model.projectImages)
+                    TabView(selection: $currentView) {
+                        Tab("Details", systemImage: "tray.and.arrow.down.fill", value: .details) {
+                            ProjectDetails(project: $model.project, projectSections: $model.projectSections, projectsNavigation: $projectsNavigation)
+                        }
+                        Tab("Images", systemImage: "photo.artframe", value: .images) {
+                            ImagesView(projectImages: $model.projectImages)
+                        }
+                    }
                 }
                 .navigationBarBackButtonHidden(true).toolbar {
                     ToolbarItem(placement: .navigation) {
@@ -45,13 +57,26 @@ struct ProjectView: View {
                         }
                         .accessibilityIdentifier("ProjectViewCustomBackButton")
                     }
+                    ToolbarItem(placement: .primaryAction) {
+                        Button {
+                            do {
+                                try model.projectSections.addSection(projectId: model.project.data.id!)
+                            } catch {
+                                fatalError("\(error)")
+                            }
+                        } label: {
+                            Image(systemName: "plus")
+                        }
+                        .buttonStyle(AddNewSectionButtonStyle())
+                        .accessibilityIdentifier("AddNewSectionButton")
+                    }
                 }
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         // clicking anywhere will remove focus from whatever may have focus
         // mostly using this to remove focus from textfields when you click outside of them
         // using a frame using all the available space to make it more effective
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
 //        .onTapGesture {
 //            NSApplication.shared.keyWindow?.makeFirstResponder(nil)
 //        }

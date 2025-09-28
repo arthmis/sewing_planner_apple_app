@@ -36,25 +36,6 @@ struct ProjectDetails: View {
         }
         .padding([.leading, .trailing], 8)
         .toolbar {
-            ToolbarItemGroup(placement: .bottomBar) {
-                Button {
-                    do {
-                        try projectSections.addSection(projectId: project.data.id!)
-                    } catch {
-                        fatalError("\(error)")
-                    }
-                } label: {
-                    Image(systemName: "plus")
-                }
-//                .buttonStyle(AddNewSectionButtonStyle())
-                .accessibilityIdentifier("AddNewSectionButton")
-//                .frame(maxWidth: .infinity, alignment: .trailing)
-                Button {} label: {
-                    Image(systemName: "photo.artframe")
-                }
-            }
-//            ToolbarItem(placement: .bottomBar) {
-//            }
         }
     }
 }
