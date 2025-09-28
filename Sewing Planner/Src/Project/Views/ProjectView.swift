@@ -69,10 +69,7 @@ struct BackButton: View {
     let buttonAction: () -> Void
     var body: some View {
         Button(action: buttonAction) {
-            HStack(alignment: VerticalAlignment.center) {
-                Image(systemName: "arrowshape.backward.fill")
-                Text("Back")
-            }
+            Image(systemName: "chevron.left")
         }
     }
 }
