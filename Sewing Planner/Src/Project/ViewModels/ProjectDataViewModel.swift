@@ -60,10 +60,11 @@ class ProjectSections {
     }
 }
 
-class ProjectImages: ObservableObject {
+@Observable
+class ProjectImages {
     let projectId: Int64
-    @Published var images: [ProjectImage] = []
-    @Published var deletedImages: [ProjectImage] = []
+    var images: [ProjectImage] = []
+    var deletedImages: [ProjectImage] = []
     let appDatabase: AppDatabase = .db()
 
     init(projectId: Int64) {
@@ -75,54 +76,30 @@ class ProjectImages: ObservableObject {
         self.images = images
     }
 
-    func addImages(_ newImages: [ProjectImage]) throws {
-        images += newImages
-//        deduplicateImages()
-//        try saveImages()
+    func importImages(_ newImages: [ProjectImageInput]) throws {
+        try saveImages(images: newImages)
     }
 
-//    func saveImages() throws {
-//        try appDatabase.getWriter().write { db in
-//            for var image in images {
-//                do {
-//                    if var record = image.record {
-//                        let newFilePath = try AppFiles().saveProjectImage(projectId: projectId, image: image)
-//                        record.filePath = newFilePath
-//                        try record.save(db)
-//                        image.path = newFilePath
-//                    }
-//                } catch {
-//                    fatalError("error saving record or saving image to filesystem: \(error)")
-//                }
-//            }
-//        }
-//    }
+    func addImage(_ image: ProjectImage) {
+        images.append(image)
+    }
 
-    /// uses hash function to check file uniqueness before adding it
-//    private func deduplicateImages() {
-//        var result: [ProjectImage] = []
-//        var uniqueData: Set<String> = Set()
-//
-//        let now = Date()
-//
-//        for var image in images {
-//            if let record = image.record {
-//                uniqueData.insert(record.hash)
-//                result.append(image)
-//                continue
-//            }
-//
-//            // hash file
-//            if let hash = image.getHash() {
-//                if !uniqueData.contains(hash) {
-//                    let record = ProjectImageRecord(projectId: projectId, filePath: image.path, hash: hash, isDeleted: false, createDate: now, updateDate: now)
-//                    image.record = record
-//                    result.append(image)
-//                    uniqueData.insert(hash)
-//                }
-//            }
-//        }
-//
-//        images = result
-//    }
+    func saveImages(images: [ProjectImageInput]) throws {
+        try appDatabase.getWriter().write { db in
+            for image in images {
+                do {
+                    if image.record == nil {
+                        let newFilePath = try AppFiles().saveProjectImage(projectId: projectId, image: image)
+                        let now = Date.now
+                        var record = ProjectImageRecord(id: nil, projectId: projectId, filePath: newFilePath, isDeleted: false, createDate: now, updateDate: now)
+                        try record.save(db)
+                        let projectImage = ProjectImage(record: record, path: newFilePath, image: image.image)
+                        addImage(projectImage)
+                    }
+                } catch {
+                    fatalError("error saving record or saving image to filesystem: \(error)")
+                }
+            }
+        }
+    }
 }

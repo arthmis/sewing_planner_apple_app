@@ -63,7 +63,6 @@ extension AppDatabase {
                 table.autoIncrementedPrimaryKey("id")
                 table.belongsTo("project").notNull()
                 table.column("filePath", .text).notNull()
-                table.column("hash", .text).notNull()
                 table.column("isDeleted", .boolean).notNull()
                 table.column("createDate", .datetime).notNull()
                 table.column("updateDate", .datetime).notNull()

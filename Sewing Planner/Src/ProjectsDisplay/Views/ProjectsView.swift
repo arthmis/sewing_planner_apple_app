@@ -94,7 +94,7 @@ struct MaybeProjectImageView: View {
         if let imageData = projectImage {
             if let image = imageData.image {
 //                Image(image)
-                image
+                Image(uiImage: image)
                     .resizable()
                     .interpolation(.high)
                     .scaledToFit()

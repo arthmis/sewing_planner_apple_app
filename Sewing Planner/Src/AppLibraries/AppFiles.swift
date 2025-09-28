@@ -27,54 +27,53 @@ struct AppFiles {
 //        }
 //    }
 
-//    func getProjectPhotoDirectoryPath(projectId: Int64) -> URL {
-//        let photosDirectory = getPhotosDirectoryPath()
-//
-//        return photosDirectory.appendingPathComponent(String(projectId))
-//    }
+    func getProjectPhotoDirectoryPath(projectId: Int64) -> URL {
+        let photosDirectory = getPhotosDirectoryPath()
 
-//    func saveProjectImage(projectId: Int64, image: ProjectImage) throws -> URL {
-//        let fileManager = FileManager.default
-//        let usersPhotosUrl = getPhotosDirectoryPath()
-//
-//        do {
-//            try fileManager.createDirectory(at: usersPhotosUrl, withIntermediateDirectories: true, attributes: nil)
-//        } catch {
-//            print("Error \(error)")
-//        }
-//
-//        let imagesFolderForProject = getProjectPhotoDirectoryPath(projectId: projectId)
-//        do {
-//            try fileManager.createDirectory(at: imagesFolderForProject, withIntermediateDirectories: true, attributes: nil)
-//        } catch {
-//            fatalError("Error \(error)")
-//        }
-//
-//        // get image's new file path
-//        let originalFileName = image.path.deletingPathExtension().lastPathComponent
-//        let newFilePath = imagesFolderForProject.appendingPathComponent(originalFileName).appendingPathExtension(for: .png)
-//        print("project folder for images: \(imagesFolderForProject)")
-//        print("new path for image: \(newFilePath)")
-//
-//        let createFileSuccess = fileManager.createFile(atPath: newFilePath.path(), contents: nil)
-//
-//        if createFileSuccess {
-//            if let imageData = image.image {
+        return photosDirectory.appendingPathComponent(String(projectId))
+    }
+
+    func saveProjectImage(projectId: Int64, image: ProjectImageInput) throws -> URL {
+        let fileManager = FileManager.default
+        let usersPhotosUrl = getPhotosDirectoryPath()
+
+        do {
+            try fileManager.createDirectory(at: usersPhotosUrl, withIntermediateDirectories: true, attributes: nil)
+        } catch {
+            print("Error \(error)")
+        }
+
+        let imagesFolderForProject = getProjectPhotoDirectoryPath(projectId: projectId)
+        do {
+            try fileManager.createDirectory(at: imagesFolderForProject, withIntermediateDirectories: true, attributes: nil)
+        } catch {
+            fatalError("Error \(error)")
+        }
+
+        // get image's new file path
+        let fileIdentifier = image.identifier!
+        let newFilePath = imagesFolderForProject.appendingPathComponent(fileIdentifier).appendingPathExtension(for: .png)
+        print("project folder for images: \(imagesFolderForProject)")
+        print("new path for image: \(newFilePath)")
+
+        let createFileSuccess = fileManager.createFile(atPath: newFilePath.path(), contents: nil)
+
+        if createFileSuccess {
 //                let tiffRep = imageData.tiffRepresentation
 //                let bitmap = NSBitmapImageRep(data: tiffRep!)!
 //                let data = bitmap.representation(using: .png, properties: [:])
-//                do {
-//                    try data!.write(to: newFilePath, options: Data.WritingOptions.atomic)
-//                } catch {
-//                    fatalError("Error: \(error)")
-//                }
-//            }
-//        } else {
-//            print("couldn't create file for file URL \(image.path) at file path: \(image.path.path())")
-//        }
-//
-//        return newFilePath
-//    }
+            let data = image.image.pngData()
+            do {
+                try data!.write(to: newFilePath, options: Data.WritingOptions.atomic)
+            } catch {
+                fatalError("Error: \(error)")
+            }
+        } else {
+            print("couldn't create file for file URL \(image.identifier) at file path: \(newFilePath)")
+        }
+
+        return newFilePath
+    }
 
 //    // TODO: handle situation where file names might be duplicates because they have the same name but comes from different file paths
 //    func saveProjectImages(projectId: Int64, images: [ProjectImage]) throws {
@@ -112,7 +111,7 @@ struct AppFiles {
 //        }
 //    }
 
-    func getImage(fromPath path: URL) -> Image? {
+    func getImage(fromPath path: URL) -> UIImage? {
 //        let fileManager = FileManager.default
 //
 //        if let data = fileManager.contents(atPath: path.path()) {

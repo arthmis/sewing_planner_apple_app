@@ -69,6 +69,9 @@ struct ProjectView: View {
                         }
                         .buttonStyle(AddNewSectionButtonStyle())
                         .accessibilityIdentifier("AddNewSectionButton")
+                        // handle getting images into the app through the photos app
+                        // later handle providing a link to an image and downloading it that way, saving into photos app
+                        // add support for notes on each of the section items
                     }
                 }
             }
