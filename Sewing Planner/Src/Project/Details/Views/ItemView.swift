@@ -34,8 +34,8 @@ struct ItemView: View {
                     isEditing = true
                     newText = data.text
                 }
-        }
             }
+        }
     }
 }
 
@@ -44,13 +44,12 @@ struct CheckboxStyle: ToggleStyle {
     var updateCompletedState: (Int64) throws -> Void
 
     func makeBody(configuration: Configuration) -> some View {
-        
         HStack(alignment: .firstTextBaseline) {
             Button {
                 try! updateCompletedState(id!)
                 configuration.isOn.toggle()
             } label: {
-                    Image(systemName: configuration.isOn ? "checkmark.square" : "square")
+                Image(systemName: configuration.isOn ? "checkmark.square" : "square")
             }
             configuration.label
         }

@@ -27,7 +27,7 @@ struct ProjectMetadata: Hashable, Codable, EncodableRecord, FetchableRecord, Mut
         self.completed = completed
         self.createDate = createDate
         self.updateDate = updateDate
-        self.isDeleted = false
+        isDeleted = false
     }
 
     init() {

@@ -50,7 +50,7 @@ class Section {
             }
         }
     }
-    
+
     func saveOrder() throws {
         try db.getWriter().write { db in
             for case (let i, var record) in items.enumerated() {
@@ -72,7 +72,7 @@ class Section {
             }
         }
     }
-    
+
     func deleteSelection() throws {
         try db.getWriter().write { db in
             for id in selectedItems {
@@ -93,7 +93,7 @@ class Section {
 
     func updateCompletedState(id: Int64) throws {
         try db.getWriter().write { db in
-            if var record = items.first(where: {$0.id! == id}) {
+            if var record = items.first(where: { $0.id! == id }) {
                 record.isComplete.toggle()
                 try record.save(db)
             }

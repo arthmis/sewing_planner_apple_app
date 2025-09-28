@@ -21,7 +21,7 @@ struct AppDatabase {
 //            try self.dbWriter.read { db in
 //                let rows = try ProjectMetadata.all().fetchAll(db)
 //                if rows.isEmpty {
-////                    AppFiles().deleteImagesFolder()
+        ////                    AppFiles().deleteImagesFolder()
 //                }
 //            }
 //        #endif
@@ -108,7 +108,7 @@ extension AppDatabase {
     func fetchProjectsAndProjectImage() throws -> [ProjectDisplay] {
         var projectDisplayData: [ProjectDisplay] = []
 
-        print(self.dbWriter.configuration)
+        print(dbWriter.configuration)
         // get projects
         try dbWriter.read { db in
             let projects: [ProjectMetadata] = try ProjectMetadata.all().order(ProjectColumns.id)
@@ -196,7 +196,7 @@ extension AppDatabase {
 //            }
 //        }
 
-        return makeDb(name: "db")
+        makeDb(name: "db")
     }
 
     static func makeDb(name: String) -> AppDatabase {

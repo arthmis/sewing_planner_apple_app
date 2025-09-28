@@ -10,7 +10,7 @@ import GRDB
 import SwiftUI
 
 @Observable
-class ProjectDetailData{
+class ProjectDetailData {
     var project = ProjectMetadataViewModel()
     var projectSections: ProjectSections = .init()
     var projectImages: ProjectImages = .init(projectId: 0)

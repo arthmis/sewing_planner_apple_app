@@ -5,10 +5,10 @@
 //  Created by Art on 9/12/24.
 //
 
-//import AppKit
+// import AppKit
 import GRDB
-import SwiftUI
 import PhotosUI
+import SwiftUI
 
 struct ErrorToast {
     var show: Bool
@@ -37,10 +37,9 @@ struct ImagesView: View {
             }
             .onChange(of: pickerItem) {
                 Task {
-
                     photosAppSelectedImage = try await pickerItem?.loadTransferable(type: Image.self)
                     let image = ProjectImage(image: photosAppSelectedImage)
-                    
+
                     try! projectImages.addImages([image])
                 }
             }
@@ -172,7 +171,7 @@ struct ImagesView: View {
 //    }
 // }
 
-//#Preview {
+// #Preview {
 //    VStack {
 //        ImagesView(projectImages: ProjectImages(projectId: 2))
 //    }
@@ -182,4 +181,4 @@ struct ImagesView: View {
 //        alignment: .topLeading
 //    )
 //    .background(.white)
-//}
+// }

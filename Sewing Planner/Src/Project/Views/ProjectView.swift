@@ -13,7 +13,7 @@ struct ProjectView: View {
     @Environment(\.dismiss) private var dismiss
     @State var model = ProjectDetailData()
     @Binding var projectsNavigation: [ProjectMetadata]
-    let fetchProjects: () -> ()
+    let fetchProjects: () -> Void
     @State var name = ""
     @State var showAddTextboxPopup = false
     @State var doesProjectHaveName = false
@@ -34,8 +34,8 @@ struct ProjectView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 VStack {
-                        ProjectDetails(project: $model.project, projectSections: $model.projectSections, projectsNavigation: $projectsNavigation)
-                        ImagesView(projectImages: $model.projectImages)
+                    ProjectDetails(project: $model.project, projectSections: $model.projectSections, projectsNavigation: $projectsNavigation)
+                    ImagesView(projectImages: $model.projectImages)
                 }
                 .navigationBarBackButtonHidden(true).toolbar {
                     ToolbarItem(placement: .navigation) {

@@ -45,7 +45,7 @@ struct SectionItemRecord: Hashable, Identifiable, Codable, EncodableRecord, Fetc
         updateDate = now
         self.order = order
     }
-    
+
     init(id: Int64, text: String, order: Int64) {
         self.id = id
         self.text = text

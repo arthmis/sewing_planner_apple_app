@@ -88,8 +88,8 @@ struct ProjectName: View {
     }
 }
 
-//#Preview {
+// #Preview {
 //    ProjectName(project: ProjectMetadataViewModel(data: ProjectMetadata(id: 2, name: "Project Name", completed: false, createDate: Date(), updateDate: Date())))
 //        .frame(width: 300, height: 300)
 //        .background(Color.white)
-//}
+// }

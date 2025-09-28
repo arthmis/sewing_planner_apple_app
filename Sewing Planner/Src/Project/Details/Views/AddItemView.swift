@@ -18,7 +18,7 @@ struct AddItemView: View {
     private var isNewItemTextValid: Bool {
         !newItem.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
-    
+
     func add() {
         guard isNewItemTextValid else {
             showErrorText = true

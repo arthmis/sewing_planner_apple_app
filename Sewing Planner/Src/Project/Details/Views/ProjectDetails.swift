@@ -49,7 +49,7 @@ struct ProjectDetails: View {
 //                .buttonStyle(AddNewSectionButtonStyle())
                 .accessibilityIdentifier("AddNewSectionButton")
 //                .frame(maxWidth: .infinity, alignment: .trailing)
-                Button { } label: {
+                Button {} label: {
                     Image(systemName: "photo.artframe")
                 }
             }

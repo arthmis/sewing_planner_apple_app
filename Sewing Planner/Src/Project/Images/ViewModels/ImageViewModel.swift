@@ -21,7 +21,7 @@ struct ProjectImage {
     init(image: Image? = nil) {
         self.image = image
     }
-    
+
     init(path: URL, image: Image? = nil) {
         self.path = path
         self.image = image

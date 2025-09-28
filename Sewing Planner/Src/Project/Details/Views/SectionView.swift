@@ -98,17 +98,16 @@ struct SectionView: View {
 //                            alignment: .bottom)
                     if isEditingSection {
                         HStack {
-                            
-                        Button("cancel") {
-                            isEditingSection = false
+                            Button("cancel") {
+                                isEditingSection = false
+                            }
+                            Button {
+                                try! data.deleteSelection()
+                            } label: {
+                                Image(systemName: "trash")
+                                    .padding(.horizontal, 8)
+                            }
                         }
-                                Button {
-                                    try! data.deleteSelection()
-                                } label: {
-                                    Image(systemName: "trash")
-                                        .padding(.horizontal, 8)
-                                }
-                    }
                     }
                 }
 //                SectionViewButton {} label: {
@@ -137,7 +136,6 @@ struct SectionView: View {
             }
             .frame(maxWidth: .infinity)
             AddItemView(isAddingItem: $isAddingItem, newItem: $newItem, addItem: data.addItem)
-
         }
     }
 }
@@ -153,22 +151,22 @@ struct SelectedSectionItemView: View {
     var isSelected: Bool {
         selected.contains(data.id!)
     }
-    
+
     var body: some View {
-            HStack(alignment: .firstTextBaseline) {
-                Toggle(data.text, isOn: $data.isComplete)
-                    .toggleStyle(CheckboxStyle(id: data.id, updateCompletedState: updateCompletedState))
-                Spacer()
+        HStack(alignment: .firstTextBaseline) {
+            Toggle(data.text, isOn: $data.isComplete)
+                .toggleStyle(CheckboxStyle(id: data.id, updateCompletedState: updateCompletedState))
+            Spacer()
+        }
+        .contentShape(Rectangle())
+        .background(isSelected ? Color.blue : Color.white)
+        .onTapGesture {
+            if !isSelected {
+                selected.insert(data.id!)
+            } else {
+                selected.remove(data.id!)
             }
-            .contentShape(Rectangle())
-            .background(isSelected ? Color.blue : Color.white)
-            .onTapGesture {
-                if !isSelected {
-                    selected.insert(data.id!)
-                } else {
-                    selected.remove(data.id!)
-                }
-            }
+        }
     }
 }
 
@@ -177,12 +175,12 @@ struct DropSectionItemViewDelegate: DropDelegate {
     @Binding var data: [SectionItemRecord]
     @Binding var draggedItem: SectionItemRecord?
     var saveNewOrder: () throws -> Void
-    
+
     func dropEntered(info: DropInfo) {
-        guard item  != draggedItem,
+        guard item != draggedItem,
               let current = draggedItem,
               let from = data.firstIndex(of: current),
-            let to = data.firstIndex(of: item)
+              let to = data.firstIndex(of: item)
         else {
             return
         }
@@ -192,11 +190,11 @@ struct DropSectionItemViewDelegate: DropDelegate {
             }
         }
     }
-    
+
     func dropUpdated(info: DropInfo) -> DropProposal? {
         DropProposal(operation: .move)
     }
-    
+
     func performDrop(info: DropInfo) -> Bool {
         try! saveNewOrder()
         draggedItem = nil

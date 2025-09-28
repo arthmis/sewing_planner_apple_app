@@ -11,7 +11,7 @@ struct ProjectsView: View {
     @Environment(\.appDatabase) private var appDatabase
     @State var model = ProjectsViewModel()
     let columns = [GridItem(.adaptive(minimum: 200, maximum: 300))]
-    
+
     func fetchProjects() {
         do {
             print("fetching projects")
