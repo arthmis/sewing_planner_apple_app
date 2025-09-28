@@ -22,7 +22,7 @@ struct ErrorToast {
 
 struct ImagesView: View {
     @State var showFileImporter = false
-    @ObservedObject var projectImages: ProjectImages
+    @Binding var projectImages: ProjectImages
     @State var selectedImageForDeletion: URL?
     @State var overlaySelectedImage = false
     @State var selectedImage: URL?
@@ -172,14 +172,14 @@ struct ImagesView: View {
 //    }
 // }
 
-#Preview {
-    VStack {
-        ImagesView(projectImages: ProjectImages(projectId: 2))
-    }
-    .frame(
-        maxWidth: .infinity,
-        maxHeight: .infinity,
-        alignment: .topLeading
-    )
-    .background(.white)
-}
+//#Preview {
+//    VStack {
+//        ImagesView(projectImages: ProjectImages(projectId: 2))
+//    }
+//    .frame(
+//        maxWidth: .infinity,
+//        maxHeight: .infinity,
+//        alignment: .topLeading
+//    )
+//    .background(.white)
+//}

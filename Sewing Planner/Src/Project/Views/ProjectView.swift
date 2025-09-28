@@ -35,8 +35,7 @@ struct ProjectView: View {
             } else {
                 VStack {
                         ProjectDetails(project: $model.project, projectSections: $model.projectSections, projectsNavigation: $projectsNavigation)
-//                            .frame(minWidth: 500, maxWidth: 600)
-//                        ImagesView(projectImages: model.projectImages)
+                        ImagesView(projectImages: $model.projectImages)
                 }
                 .navigationBarBackButtonHidden(true).toolbar {
                     ToolbarItem(placement: .navigation) {
