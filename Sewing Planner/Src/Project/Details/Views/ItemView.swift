@@ -11,7 +11,6 @@ struct ItemView: View {
     @Binding var data: SectionItemRecord
     @State var isEditing = false
     @State var newText = ""
-    var deleteItem: (Int64) throws -> Void
     var updateText: (Int64, String) throws -> Void
     var updateCompletedState: (Int64) throws -> Void
 
@@ -20,7 +19,6 @@ struct ItemView: View {
         isEditing = false
     }
 
-    @ViewBuilder
     var body: some View {
         if isEditing {
             UpdateItemView(data: $data, isEditing: $isEditing, newText: $newText, updateText: updateText, resetToPreviousText: resetToPreviousText)
@@ -28,19 +26,6 @@ struct ItemView: View {
             HStack(alignment: .firstTextBaseline) {
                 Toggle(data.text, isOn: $data.isComplete).toggleStyle(CheckboxStyle(id: data.id, updateCompletedState: updateCompletedState))
                 Spacer()
-//                Button {
-//                    if let id = data.id {
-//                        do {
-//                            try deleteItem(id)
-//                        } catch {
-//                            fatalError("\(error)")
-//                        }
-//                    }
-//                } label: {
-//                    Image(systemName: "trash")
-//                        .padding(.horizontal, 8)
-//                }
-//                .buttonStyle(PlainButtonStyle())
 //                Image(systemName: "line.3.horizontal")
             }
             .contentShape(Rectangle())

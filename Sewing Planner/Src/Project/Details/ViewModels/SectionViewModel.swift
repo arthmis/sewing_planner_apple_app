@@ -73,22 +73,24 @@ class Section {
         }
     }
     
-    func deleteItem(id: Int64) throws {
+    func deleteSelection() throws {
         try db.getWriter().write { db in
-            let maybeIndex = items.firstIndex { val in
-                if let valId = val.id {
-                    return valId == id
+            for id in selectedItems {
+                let maybeIndex = items.firstIndex { val in
+                    if let valId = val.id {
+                        return valId == id
+                    }
+                    return false
                 }
-                return false
-            }
-            if let index = maybeIndex {
-                var deletedItem = items.remove(at: index)
-                deletedItem.isDeleted = true
-                try deletedItem.update(db)
+                if let index = maybeIndex {
+                    var deletedItem = items.remove(at: index)
+                    deletedItem.isDeleted = true
+                    try deletedItem.update(db)
+                }
             }
         }
     }
-    
+
     func updateCompletedState(id: Int64) throws {
         try db.getWriter().write { db in
             if var record = items.first(where: {$0.id! == id}) {

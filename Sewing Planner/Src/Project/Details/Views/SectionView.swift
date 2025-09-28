@@ -48,14 +48,6 @@ struct SectionView: View {
     var body: some View {
         VStack(alignment: .leading) {
             // TODO: this if else can become a view called SectionName
-            if isEditingSection {
-                HStack {
-                    Text("editing")
-                    Button("cancel") {
-                        isEditingSection = false
-                    }
-                }
-            }
             HStack {
                 if isRenamingSection {
                     HStack {
@@ -104,6 +96,20 @@ struct SectionView: View {
 //                        .overlay(Rectangle()
 //                            .frame(maxWidth: .infinity, maxHeight: 3),
 //                            alignment: .bottom)
+                    if isEditingSection {
+                        HStack {
+                            
+                        Button("cancel") {
+                            isEditingSection = false
+                        }
+                                Button {
+                                    try! data.deleteSelection()
+                                } label: {
+                                    Image(systemName: "trash")
+                                        .padding(.horizontal, 8)
+                                }
+                    }
+                    }
                 }
 //                SectionViewButton {} label: {
 //                    Image(systemName: "ellipsis")
@@ -114,13 +120,13 @@ struct SectionView: View {
                 .background(Color(red: 230, green: 230, blue: 230)), alignment: .bottom)
             ForEach($data.items, id: \.self.id) { $item in
                 if !isEditingSection {
-                    ItemView(data: $item, deleteItem: data.deleteItem, updateText: data.updateText, updateCompletedState: data.updateCompletedState)
+                    ItemView(data: $item, updateText: data.updateText, updateCompletedState: data.updateCompletedState)
                         .contentShape(Rectangle())
                         .onLongPressGesture {
                             isEditingSection = true
                         }
                 } else {
-                    SelectedSectionItemView(data: $item, selected: $data.selectedItems, deleteItem: data.deleteItem, updateText: data.updateText, updateCompletedState: data.updateCompletedState)
+                    SelectedSectionItemView(data: $item, selected: $data.selectedItems, updateText: data.updateText, updateCompletedState: data.updateCompletedState)
                         .contentShape(Rectangle())
                         .onDrag {
                             draggedItem = item
@@ -141,7 +147,6 @@ struct SelectedSectionItemView: View {
     @State var isEditing = false
     @State var newText = ""
     @Binding var selected: Set<Int64>
-    var deleteItem: (Int64) throws -> Void
     var updateText: (Int64, String) throws -> Void
     var updateCompletedState: (Int64) throws -> Void
 
@@ -154,20 +159,6 @@ struct SelectedSectionItemView: View {
                 Toggle(data.text, isOn: $data.isComplete)
                     .toggleStyle(CheckboxStyle(id: data.id, updateCompletedState: updateCompletedState))
                 Spacer()
-//                Button {
-//                    if let id = data.id {
-//                        do {
-//                            try deleteItem(id)
-//                        } catch {
-//                            fatalError("\(error)")
-//                        }
-//                    }
-//                } label: {
-//                    Image(systemName: "trash")
-//                        .padding(.horizontal, 8)
-//                }
-//                .buttonStyle(PlainButtonStyle())
-//                Image(systemName: "line.3.horizontal")
             }
             .contentShape(Rectangle())
             .background(isSelected ? Color.blue : Color.white)
