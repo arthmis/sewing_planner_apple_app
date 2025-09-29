@@ -21,7 +21,6 @@ struct ErrorToast {
 }
 
 struct ImagesView: View {
-    @State var showFileImporter = false
     @Binding var projectImages: ProjectImages
     @State var selectedImageForDeletion: URL?
     @State var overlaySelectedImage = false
@@ -32,26 +31,6 @@ struct ImagesView: View {
 
     var body: some View {
         VStack(alignment: .center) {
-            VStack {
-                PhotosPicker("Select a picture", selection: $pickerItem, matching: .images, photoLibrary: .shared())
-            }
-            .onChange(of: pickerItem) {
-                Task {
-                    let result = try await pickerItem?.loadTransferable(type: Data.self)
-
-                    switch result {
-                    case let .some(files):
-                        let img = UIImage(data: files)!
-                        // TODO: think about how to deal with path that couldn't become an image
-                        // I'm thinking display an error alert that lists every image that couldn't be uploaded
-                        let projectImage = ProjectImageInput(image: img)
-                        try! projectImages.importImages([projectImage])
-                    case .none:
-                        errorToast = ErrorToast(show: true, message: "Error importing images. Please try again later")
-                        // log error
-                    }
-                }
-            }
             HStack {
                 if let imagePath = selectedImageForDeletion {
                     HStack(alignment: .center) {
@@ -85,16 +64,6 @@ struct ImagesView: View {
                 }
                 .padding(30)
             }
-            Button {
-                showFileImporter = true
-            } label: {
-                Image(systemName: "photo.badge.plus")
-            }
-            .buttonStyle(AddImageButtonStyle())
-            .frame(maxWidth: .infinity, alignment: .trailing)
-            .padding(10)
-            .padding(.trailing, 10)
-            .accessibilityIdentifier("AddNewImageButton")
         }
         .overlay(alignment: .center) {
             if overlaySelectedImage {

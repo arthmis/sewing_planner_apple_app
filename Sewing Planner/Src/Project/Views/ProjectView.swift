@@ -6,6 +6,7 @@
 //
 
 import GRDB
+import PhotosUI
 import SwiftUI
 
 enum CurrentView {
@@ -24,6 +25,9 @@ struct ProjectView: View {
     @State var showAddTextboxPopup = false
     @State var doesProjectHaveName = false
     @State var isLoading = true
+    @State private var pickerItem: PhotosPickerItem?
+    @State private var photosAppSelectedImage: Data?
+    @State private var showPhotoPicker = false
 
     private var isProjectValid: Bool {
         !model.project.data.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -39,39 +43,63 @@ struct ProjectView: View {
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
-                VStack {
-                    TabView(selection: $currentView) {
-                        Tab("Details", systemImage: "tray.and.arrow.down.fill", value: .details) {
-                            ProjectDetails(project: $model.project, projectSections: $model.projectSections, projectsNavigation: $projectsNavigation)
-                        }
-                        Tab("Images", systemImage: "photo.artframe", value: .images) {
-                            ImagesView(projectImages: $model.projectImages)
-                        }
+                TabView(selection: $currentView) {
+                    Tab("Details", systemImage: "tray.and.arrow.down.fill", value: .details) {
+                        ProjectDetails(project: $model.project, projectSections: $model.projectSections, projectsNavigation: $projectsNavigation)
+                    }
+                    Tab("Images", systemImage: "photo.artframe", value: .images) {
+                        ImagesView(projectImages: $model.projectImages)
                     }
                 }
-                .navigationBarBackButtonHidden(true).toolbar {
+                .navigationBarBackButtonHidden(true)
+                .toolbar {
                     ToolbarItem(placement: .navigation) {
                         BackButton {
                             dismiss()
                             fetchProjects()
                         }
-                        .accessibilityIdentifier("ProjectViewCustomBackButton")
                     }
+                }.toolbar {
                     ToolbarItem(placement: .primaryAction) {
-                        Button {
-                            do {
-                                try model.projectSections.addSection(projectId: model.project.data.id!)
-                            } catch {
-                                fatalError("\(error)")
+                        if currentView == CurrentView.details {
+                            Button {
+                                do {
+                                    try model.projectSections.addSection(projectId: model.project.data.id!)
+                                } catch {
+                                    fatalError("\(error)")
+                                }
+                            } label: {
+                                Image(systemName: "plus")
                             }
-                        } label: {
-                            Image(systemName: "plus")
+                            .buttonStyle(AddNewSectionButtonStyle())
+                            .accessibilityIdentifier("AddNewSectionButton")
+                        } else if currentView == CurrentView.images {
+                            Button { showPhotoPicker = true } label: {
+                                Image(systemName: "photo.badge.plus")
+                            }
+                            .buttonStyle(AddImageButtonStyle())
+                            .photosPicker(isPresented: $showPhotoPicker, selection: $pickerItem)
+                            .onChange(of: pickerItem) {
+                                Task {
+                                    let result = try await pickerItem?.loadTransferable(type: Data.self)
+
+                                    switch result {
+                                    case let .some(files):
+                                        let img = UIImage(data: files)!
+                                        // TODO: think about how to deal with path that couldn't become an image
+                                        // I'm thinking display an error alert that lists every image that couldn't be uploaded
+                                        let projectImage = ProjectImageInput(image: img)
+                                        try! model.projectImages.importImages([projectImage])
+                                    case .none:
+                                        print("couldn't load image")
+                                        //                                        errorToast = ErrorToast(show: true, message: "Error importing images. Please try again later")
+                                        // log error
+                                    }
+                                }
+                            }
                         }
-                        .buttonStyle(AddNewSectionButtonStyle())
-                        .accessibilityIdentifier("AddNewSectionButton")
-                        // handle getting images into the app through the photos app
-                        // later handle providing a link to an image and downloading it that way, saving into photos app
-                        // add support for notes on each of the section items
+//                        // later handle providing a link to an image and downloading it that way, saving into photos app
+//                        // add support for notes on each of the section items
                     }
                 }
             }

@@ -61,7 +61,7 @@ struct AddNewSectionButtonStyle: ButtonStyle {
         let isPressed = configuration.isPressed
         configuration.label
             .font(.custom("CooperHewitt-Regular", size: 16))
-            .padding(4)
+            .padding(8)
             .background(Color(hex: 0x131944, opacity: 1.0))
             .foregroundColor(.white)
             .clipShape(Circle())
@@ -91,8 +91,8 @@ struct AddImageButtonStyle: ButtonStyle {
         let isPressed = configuration.isPressed
         configuration.label
             .foregroundColor(Color(hex: 0x131944, opacity: 1.0))
-            .font(.system(size: 28))
-            .padding(10)
+            .font(.system(size: 24))
+            .padding(8)
             .clipShape(RoundedRectangle(cornerRadius: 9))
             .scaleEffect(isPressed ? 0.95 : 1)
             .brightness(isPressed ? -0.05 : 0)
