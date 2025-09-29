@@ -78,7 +78,7 @@ struct ProjectView: View {
                                 Image(systemName: "photo.badge.plus")
                             }
                             .buttonStyle(AddImageButtonStyle())
-                            .photosPicker(isPresented: $showPhotoPicker, selection: $pickerItem)
+                            .photosPicker(isPresented: $showPhotoPicker, selection: $pickerItem, matching: .images)
                             .onChange(of: pickerItem) {
                                 Task {
                                     let result = try await pickerItem?.loadTransferable(type: Data.self)
