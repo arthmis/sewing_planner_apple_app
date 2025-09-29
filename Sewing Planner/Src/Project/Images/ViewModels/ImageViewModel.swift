@@ -5,7 +5,6 @@
 //  Created by Art on 10/30/24.
 //
 
-import CryptoKit
 import SwiftUI
 
 // TODO: make this a class since storing data like an image is too expensive to be copying
@@ -32,18 +31,6 @@ struct ProjectImage {
         self.image = image
         self.path = path
     }
-
-
-//    func getHash() -> String? {
-//        if let imageData = image {
-//            if let data = imageData.tiffRepresentation {
-//                let digest = SHA256.hash(data: data)
-//                return digest.description
-//            }
-//        }
-//
-//        return nil
-//    }
 }
 
 extension ProjectImage: Hashable {
@@ -59,20 +46,14 @@ extension ProjectImage: Hashable {
 
 struct ProjectImageInput {
     var record: ProjectImageRecord?
-    var identifier: String?
     var image: UIImage
-
+    
     init(image: UIImage) {
         self.image = image
     }
-
-    init(identifier: String?, image: UIImage) {
-        self.identifier = identifier
-        self.image = image
-    }
-
-    init(record: ProjectImageRecord, identifier: String?, image: UIImage) {
+    
+    init(record: ProjectImageRecord, image: UIImage) {
         self.record = record
         self.image = image
-        self.identifier = identifier
     }
+}

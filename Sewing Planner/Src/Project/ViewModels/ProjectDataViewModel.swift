@@ -89,7 +89,7 @@ class ProjectImages {
             for image in images {
                 do {
                     if image.record == nil {
-                        let newFilePath = try AppFiles().saveProjectImage(projectId: projectId, image: image)
+                        let newFilePath = try AppFiles().saveProjectImage(projectId: projectId, image: image)!
                         let now = Date.now
                         var record = ProjectImageRecord(id: nil, projectId: projectId, filePath: newFilePath, isDeleted: false, createDate: now, updateDate: now)
                         try record.save(db)

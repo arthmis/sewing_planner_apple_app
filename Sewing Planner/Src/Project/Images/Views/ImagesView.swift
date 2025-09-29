@@ -38,14 +38,13 @@ struct ImagesView: View {
             .onChange(of: pickerItem) {
                 Task {
                     let result = try await pickerItem?.loadTransferable(type: Data.self)
-                    let identifier = pickerItem?.itemIdentifier
 
                     switch result {
                     case let .some(files):
                         let img = UIImage(data: files)!
                         // TODO: think about how to deal with path that couldn't become an image
                         // I'm thinking display an error alert that lists every image that couldn't be uploaded
-                        let projectImage = ProjectImageInput(identifier: identifier, image: img)
+                        let projectImage = ProjectImageInput(image: img)
                         try! projectImages.importImages([projectImage])
                     case .none:
                         errorToast = ErrorToast(show: true, message: "Error importing images. Please try again later")

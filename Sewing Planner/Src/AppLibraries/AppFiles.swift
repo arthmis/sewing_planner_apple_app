@@ -33,44 +33,50 @@ struct AppFiles {
         return photosDirectory.appendingPathComponent(String(projectId))
     }
 
-    func saveProjectImage(projectId: Int64, image: ProjectImageInput) throws -> URL {
+    private func photoDirectoryExists() -> Bool {
+        FileManager.default.fileExists(atPath: getPhotosDirectoryPath().path())
+    }
+
+    private func projectPhotoDirectoryExists(id: Int64) -> Bool {
+        FileManager.default.fileExists(atPath: getProjectPhotoDirectoryPath(projectId: id).path())
+    }
+
+    func saveProjectImage(projectId: Int64, image: ProjectImageInput) throws -> URL? {
         let fileManager = FileManager.default
         let usersPhotosUrl = getPhotosDirectoryPath()
 
-        do {
-            try fileManager.createDirectory(at: usersPhotosUrl, withIntermediateDirectories: true, attributes: nil)
-        } catch {
-            print("Error \(error)")
+        if !photoDirectoryExists() {
+            do {
+                try fileManager.createDirectory(at: usersPhotosUrl, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                print("Error \(error)")
+                return nil
+            }
         }
 
         let imagesFolderForProject = getProjectPhotoDirectoryPath(projectId: projectId)
-        do {
-            try fileManager.createDirectory(at: imagesFolderForProject, withIntermediateDirectories: true, attributes: nil)
-        } catch {
-            fatalError("Error \(error)")
+        if !projectPhotoDirectoryExists(id: projectId) {
+            do {
+                try fileManager.createDirectory(at: imagesFolderForProject, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                fatalError("Error \(error)")
+                return nil
+            }
         }
 
         // get image's new file path
-        let fileIdentifier = image.identifier!
-        let newFilePath = imagesFolderForProject.appendingPathComponent(fileIdentifier).appendingPathExtension(for: .png)
+        let newFilePath = imagesFolderForProject.appendingPathComponent(UUID().uuidString).appendingPathExtension(for: .png)
         print("project folder for images: \(imagesFolderForProject)")
         print("new path for image: \(newFilePath)")
 
-        let createFileSuccess = fileManager.createFile(atPath: newFilePath.path(), contents: nil)
+        let data = image.image.pngData()
+        let createFileSuccess = fileManager.createFile(atPath: newFilePath.path, contents: data)
 
-        if createFileSuccess {
-//                let tiffRep = imageData.tiffRepresentation
-//                let bitmap = NSBitmapImageRep(data: tiffRep!)!
-//                let data = bitmap.representation(using: .png, properties: [:])
-            let data = image.image.pngData()
-            do {
-                try data!.write(to: newFilePath, options: Data.WritingOptions.atomic)
-            } catch {
-                fatalError("Error: \(error)")
-            }
-        } else {
-            print("couldn't create file for file URL \(image.identifier) at file path: \(newFilePath)")
+        if !createFileSuccess {
+            print("couldn't create file at file path: \(newFilePath)")
+            return nil
         }
+
 
         return newFilePath
     }
@@ -112,11 +118,11 @@ struct AppFiles {
 //    }
 
     func getImage(fromPath path: URL) -> UIImage? {
-//        let fileManager = FileManager.default
-//
-//        if let data = fileManager.contents(atPath: path.path()) {
-//            return NSImage(data: data)
-//        }
+        let fileManager = FileManager.default
+
+        if let data = fileManager.contents(atPath: path.path()) {
+            return UIImage(data: data)
+        }
 
         return nil
     }
