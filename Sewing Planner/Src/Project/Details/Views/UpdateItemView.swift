@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct UpdateItemView: View {
-    @Binding var data: SectionItemRecord
+    @Binding var data: SectionItem
     @Binding var isEditing: Bool
     @Binding var newText: String
     @State var showErrorText = false
@@ -17,7 +17,7 @@ struct UpdateItemView: View {
     let resetToPreviousText: () -> Void
 
     private var isNewTextValid: Bool {
-        newText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && newText != data.text
+        newText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && newText != data.record.text
     }
 
     func update() {
@@ -28,8 +28,8 @@ struct UpdateItemView: View {
 
         let validText = newText.trimmingCharacters(in: .whitespacesAndNewlines)
         do {
-            try updateText(data.id!, validText)
-            data.text = validText
+            try updateText(data.record.id!, validText)
+            data.record.text = validText
         } catch {
             fatalError("\(error)")
         }
@@ -66,7 +66,7 @@ struct UpdateItemView: View {
 }
 
 #Preview {
-    @Previewable @State var record = SectionItemRecord(id: 1, text: "something", order: 0)
+    @Previewable @State var record = SectionItem(record: SectionItemRecord(id: 1, text: "something", order: 0), note: SectionItemNoteRecord(text: "nonte", sectionItemId: 1 ))
     @Previewable @State var isEditing = true
     @Previewable @State var newText = ""
     UpdateItemView(data: $record, isEditing: $isEditing, newText: $newText, updateText: { id, text throws in print(id ?? 1, text) }, resetToPreviousText: { () in print("resetting") })

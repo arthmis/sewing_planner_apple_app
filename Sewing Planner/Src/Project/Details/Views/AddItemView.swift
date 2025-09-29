@@ -10,7 +10,7 @@ import SwiftUI
 struct AddItemView: View {
     @Binding var isAddingItem: Bool
     @Binding var newItem: String
-    let addItem: (_ text: String) throws -> Void
+    let addItem: (_ text: String, _ note: String?) throws -> Void
     @State var showErrorText = false
     @State var itemNote = ""
     let errorText = "Item text can't be empty."
@@ -27,7 +27,7 @@ struct AddItemView: View {
         }
 
         do {
-            try addItem(newItem)
+            try addItem(newItem, itemNote)
         } catch {
             // add some kind of toast if failure
             fatalError("\(error)")
@@ -132,7 +132,7 @@ struct SecondaryButtonStyle: ButtonStyle {
     @Previewable @State var isAddingItem = true
     @Previewable @State var newItem = ""
 
-    AddItemView(isAddingItem: $isAddingItem, newItem: $newItem, addItem: { val throws in print(val) })
+    AddItemView(isAddingItem: $isAddingItem, newItem: $newItem, addItem: { val, note throws in print(val) })
         .frame(height: 300)
         .padding(8)
 }

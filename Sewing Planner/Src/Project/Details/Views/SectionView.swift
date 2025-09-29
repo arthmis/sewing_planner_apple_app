@@ -19,13 +19,13 @@ struct SectionView: View {
     @State var isAddingItem = false
     @State var newItem = ""
     @FocusState var headerFocus: Bool
-    @State private var draggedItem: SectionItemRecord?
+    @State private var draggedItem: SectionItem?
     @State var isEditingSection = false
 
     func deleteItem(at offsets: IndexSet) {
         for index in offsets {
             let step = data.items.remove(at: index)
-            data.deletedItems.append(step)
+            data.deletedItems.append(step.record)
         }
     }
 
@@ -117,7 +117,7 @@ struct SectionView: View {
             .overlay(Divider()
                 .frame(maxWidth: .infinity, maxHeight: 1)
                 .background(Color(red: 230, green: 230, blue: 230)), alignment: .bottom)
-            ForEach($data.items, id: \.self.id) { $item in
+            ForEach($data.items, id: \.self.record.id) { $item in
                 if !isEditingSection {
                     ItemView(data: $item, updateText: data.updateText, updateCompletedState: data.updateCompletedState)
                         .contentShape(Rectangle())
@@ -141,7 +141,7 @@ struct SectionView: View {
 }
 
 struct SelectedSectionItemView: View {
-    @Binding var data: SectionItemRecord
+    @Binding var data: SectionItem
     @State var isEditing = false
     @State var newText = ""
     @Binding var selected: Set<Int64>
@@ -149,31 +149,31 @@ struct SelectedSectionItemView: View {
     var updateCompletedState: (Int64) throws -> Void
 
     var isSelected: Bool {
-        selected.contains(data.id!)
+        selected.contains(data.record.id!)
     }
 
     var body: some View {
         HStack(alignment: .firstTextBaseline) {
-            Toggle(data.text, isOn: $data.isComplete)
-                .toggleStyle(CheckboxStyle(id: data.id, updateCompletedState: updateCompletedState))
+            Toggle(data.record.text, isOn: $data.record.isComplete)
+                .toggleStyle(CheckboxStyle(id: data.record.id, updateCompletedState: updateCompletedState))
             Spacer()
         }
         .contentShape(Rectangle())
         .background(isSelected ? Color.blue : Color.white)
         .onTapGesture {
             if !isSelected {
-                selected.insert(data.id!)
+                selected.insert(data.record.id!)
             } else {
-                selected.remove(data.id!)
+                selected.remove(data.record.id!)
             }
         }
     }
 }
 
 struct DropSectionItemViewDelegate: DropDelegate {
-    var item: SectionItemRecord
-    @Binding var data: [SectionItemRecord]
-    @Binding var draggedItem: SectionItemRecord?
+    var item: SectionItem
+    @Binding var data: [SectionItem]
+    @Binding var draggedItem: SectionItem?
     var saveNewOrder: () throws -> Void
 
     func dropEntered(info: DropInfo) {

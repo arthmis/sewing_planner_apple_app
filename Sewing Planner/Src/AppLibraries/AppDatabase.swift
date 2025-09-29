@@ -87,6 +87,14 @@ extension AppDatabase {
                 table.column("createDate", .datetime).notNull()
                 table.column("updateDate", .datetime).notNull()
             }
+
+            try db.create(table: "sectionItemNote", options: [.ifNotExists]) { table in
+                table.autoIncrementedPrimaryKey("id")
+                table.belongsTo("sectionItem").notNull()
+                table.column("text", .text).notNull().indexed()
+                table.column("createDate", .datetime).notNull()
+                table.column("updateDate", .datetime).notNull()
+            }
         }
 
         #if DEBUG
@@ -145,18 +153,19 @@ extension AppDatabase {
                 .fetchAll(db)
 
             for sectionRecord in sectionRecords {
-                let sectionItemRecords: [SectionItemRecord] = try SectionItemRecord
-                    .all()
-                    .filter(Column("sectionId") == sectionRecord.id!)
-                    .filter(Column("isDeleted") == false)
-                    .order(Column("order"))
-                    .fetchAll(db)
-
-                sections.append(Section(section: sectionRecord, items: sectionItemRecords, id: UUID()))
+                let sectionItems = try getSectionItems(sectionId: sectionRecord.id!, from: db)
+                sections.append(Section(section: sectionRecord, items: sectionItems, id: UUID()))
             }
 
             return ProjectSections(sections: sections)
         }
+    }
+
+    func getSectionItems(sectionId: Int64, from db: Database) throws -> [SectionItem] {
+        let request = SectionItemRecord.including(optional: SectionItemRecord.notes)
+        let sectionItems = try SectionItem.fetchAll(db, request)
+
+        return sectionItems
     }
 
     func getImages(projectId: Int64) throws -> ProjectImages {

@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct ItemView: View {
-    @Binding var data: SectionItemRecord
+    @Binding var data: SectionItem
     @State var isEditing = false
     @State var newText = ""
     var updateText: (Int64, String) throws -> Void
     var updateCompletedState: (Int64) throws -> Void
 
     func resetToPreviousText() {
-        newText = data.text
+        newText = data.record.text
         isEditing = false
     }
 
@@ -24,7 +24,7 @@ struct ItemView: View {
             UpdateItemView(data: $data, isEditing: $isEditing, newText: $newText, updateText: updateText, resetToPreviousText: resetToPreviousText)
         } else {
             HStack(alignment: .firstTextBaseline) {
-                Toggle(data.text, isOn: $data.isComplete).toggleStyle(CheckboxStyle(id: data.id, updateCompletedState: updateCompletedState))
+                Toggle(data.record.text, isOn: $data.record.isComplete).toggleStyle(CheckboxStyle(id: data.record.id, updateCompletedState: updateCompletedState))
                 Spacer()
 //                Image(systemName: "line.3.horizontal")
             }
@@ -32,7 +32,7 @@ struct ItemView: View {
             .onTapGesture {
                 if !isEditing {
                     isEditing = true
-                    newText = data.text
+                    newText = data.record.text
                 }
             }
         }

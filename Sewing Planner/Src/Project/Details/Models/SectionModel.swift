@@ -56,3 +56,34 @@ struct SectionItemRecord: Hashable, Identifiable, Codable, EncodableRecord, Fetc
         self.order = order
     }
 }
+
+extension SectionItemRecord {
+    static let notes = hasOne(SectionItemNoteRecord.self)
+    var notes: QueryInterfaceRequest<SectionItemNoteRecord> {
+        request(for: SectionItemRecord.notes)
+    }
+}
+
+struct SectionItemNoteRecord: Hashable, Identifiable, Codable, EncodableRecord, FetchableRecord, MutablePersistableRecord, TableRecord {
+    var id: Int64?
+    var sectionItemId: Int64
+    var text: String = ""
+    var createDate: Date = .init()
+    var updateDate: Date = .init()
+    static let databaseTableName = "sectionItemNote"
+    
+    static let sectionItem = belongsTo(SectionItemRecord.self).forKey("sectionItem")
+
+    mutating func didInsert(_ inserted: InsertionSuccess) {
+        id = inserted.rowID
+    }
+
+    init(text: String, sectionItemId: Int64) {
+        self.text = text
+        self.sectionItemId = sectionItemId
+        let now = Date()
+        createDate = now
+        updateDate = now
+    }
+
+}
