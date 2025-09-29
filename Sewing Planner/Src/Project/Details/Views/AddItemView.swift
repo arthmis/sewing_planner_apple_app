@@ -12,8 +12,9 @@ struct AddItemView: View {
     @Binding var newItem: String
     let addItem: (_ text: String) throws -> Void
     @State var showErrorText = false
+    @State var itemNote = ""
     let errorText = "Item text can't be empty."
-    @FocusState var addItemFocus: Bool
+//    @FocusState var addItemFocus: Bool
 
     private var isNewItemTextValid: Bool {
         !newItem.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -39,64 +40,91 @@ struct AddItemView: View {
     var body: some View {
         if isAddingItem {
             VStack(alignment: .leading) {
-                TextField("", text: $newItem, axis: .vertical).onSubmit {
-                    add()
-                }
-                .textFieldStyle(.plain)
-                .primaryTextFieldStyle(when: newItem.isEmpty, placeholder: "type item")
-                .frame(maxWidth: .infinity)
-                .padding(.trailing, 50)
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    addItemFocus = true
-                }
-                .focused($addItemFocus)
-                .onChange(of: addItemFocus) { _, newFocus in
-                    if !newFocus {
-                        guard isNewItemTextValid else {
-                            isAddingItem = false
-                            newItem = ""
-                            return
-                        }
-
-                        do {
-                            try addItem(newItem)
-                        } catch {
-                            fatalError("\(error)")
-                        }
-                        isAddingItem = false
-                        newItem = ""
+                VStack {
+                    TextField("Task", text: $newItem, axis: .vertical).onSubmit {
+                        add()
                     }
+                    .textFieldStyle(.plain)
+                    .padding(.vertical, 4)
+//                .primaryTextFieldStyle(when: newItem.isEmpty, placeholder: "type item")
+                    .frame(maxWidth: .infinity)
+//                .padding(.trailing, 50)
+                    .contentShape(Rectangle())
+                    TextField("Note", text: $itemNote, axis: .vertical)
+                        .onSubmit {}
+                        .padding(.vertical, 4)
                 }
+                .padding(4)
+//                .onTapGesture {
+//                    addItemFocus = true
+//                }
+//                .focused($addItemFocus)
+//                .onChange(of: addItemFocus) { _, newFocus in
+//                    if !newFocus {
+//                        guard isNewItemTextValid else {
+//                            isAddingItem = false
+//                            newItem = ""
+//                            return
+//                        }
+//
+//                        do {
+//                            try addItem(newItem)
+//                        } catch {
+//                            fatalError("\(error)")
+//                        }
+//                        isAddingItem = false
+//                        newItem = ""
+//                    }
+//                }
                 if showErrorText {
                     Text(errorText)
                         .padding(.leading, 8)
                         .foregroundStyle(Color.red)
                 }
-                HStack(alignment: .center) {
-                    Button("Add") {
+                HStack(alignment: .lastTextBaseline) {
+                    Button {
                         add()
+                    } label: {
+                        Image(systemName: "arrow.up.circle.fill")
+                            .font(.system(size: 32))
                     }
                     .disabled(!isNewItemTextValid)
-                    .buttonStyle(PrimaryButtonStyle())
-                    Button("Cancel") {
-                        isAddingItem = false
-                        newItem = ""
-                        showErrorText = false
-                    }
-                    .buttonStyle(SecondaryButtonStyle())
-                    .padding([.leading], 8)
+                    .padding([.trailing, .bottom], 8)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                .frame(maxWidth: .infinity, alignment: .bottomTrailing)
             }
+            .background(Color(hex: 0xF2F2F2, opacity: 0.9))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
         } else {
-            Button("Add Item") {
+            Button {
                 isAddingItem = true
-                addItemFocus = true
+//                addItemFocus = true
+            }
+            label: {
+                HStack {
+                    Image(systemName: "plus")
+                    Text("New Item")
+                }
             }
             .buttonStyle(SecondaryButtonStyle())
             .accessibilityIdentifier("NewStepButton")
         }
+    }
+}
+
+struct SecondaryButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        let isPressed = configuration.isPressed
+        configuration.label
+            .padding([.top, .bottom], 12)
+            .padding([.leading, .trailing], 16)
+            .background(Color(hex: 0xEFEFEF, opacity: 0.5))
+            .foregroundColor(.black)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .scaleEffect(isPressed ? 0.95 : 1)
+            .brightness(isPressed ? -0.05 : 0)
+//            .shadow(color: Color(hex: 0xCFCFCF), radius: isPressed ? 1.5 : 3, x: 1, y: 3)
+            .animation(.easeIn(duration: 0.1), value: isPressed)
     }
 }
 
@@ -106,4 +134,5 @@ struct AddItemView: View {
 
     AddItemView(isAddingItem: $isAddingItem, newItem: $newItem, addItem: { val throws in print(val) })
         .frame(height: 300)
+        .padding(8)
 }

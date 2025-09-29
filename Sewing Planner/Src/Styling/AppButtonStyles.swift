@@ -24,21 +24,6 @@ struct PrimaryButtonStyle: ButtonStyle {
     }
 }
 
-struct SecondaryButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        let isPressed = configuration.isPressed
-        configuration.label
-            .padding([.top, .bottom], 7.5)
-            .padding([.leading, .trailing], 18)
-            .background(Color(hex: 0xEFEFEF))
-            .foregroundColor(.black)
-            .clipShape(RoundedRectangle(cornerRadius: 9))
-            .scaleEffect(isPressed ? 0.95 : 1)
-            .brightness(isPressed ? -0.05 : 0)
-            .shadow(color: Color(hex: 0xCFCFCF), radius: isPressed ? 1.5 : 3, x: 1, y: 3)
-            .animation(.easeIn(duration: 0.1), value: isPressed)
-    }
-}
 
 struct SaveProjectButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
