@@ -142,8 +142,8 @@
             filePath = "Sewing Planner/Src/Project/Details/ViewModels/SectionViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "78"
-            endingLineNumber = "78"
+            startingLineNumber = "80"
+            endingLineNumber = "80"
             landmarkName = "updateText(id:newText:newNoteText:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -174,8 +174,8 @@
             filePath = "Sewing Planner/Src/Project/Details/ViewModels/SectionViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "86"
-            endingLineNumber = "86"
+            startingLineNumber = "92"
+            endingLineNumber = "92"
             landmarkName = "updateText(id:newText:newNoteText:)"
             landmarkType = "7">
          </BreakpointContent>

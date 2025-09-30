@@ -72,16 +72,22 @@ class Section {
     // TODO: investigate updateText and updateItem redundancy
     func updateText(id: Int64, newText: String, newNoteText: String?) throws {
         try db.getWriter().write { db in
+            // TODO turn this loop into a find by id and just work on the section item
+            // shouldn't need to loop through every item
             for case (let i, var item) in items.enumerated() {
                 if let itemId = item.record.id {
                     if itemId == id {
-                        item.record.text = newText
+                        item.record.text = newText.trimmingCharacters(in: .whitespacesAndNewlines)
                         try item.record.save(db)
                         items[i].record = item.record
 
                         if let noteText = newNoteText {
+                            if noteText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                return
+                            }
+                            
                             if var itemNote = item.note {
-                                itemNote.text = noteText
+                                itemNote.text = noteText.trimmingCharacters(in: .whitespacesAndNewlines)
                                 try itemNote.save(db)
                                 items[i].note = itemNote
                             } else {
