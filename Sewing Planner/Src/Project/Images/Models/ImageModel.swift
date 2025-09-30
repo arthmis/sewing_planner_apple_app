@@ -9,6 +9,25 @@ import GRDB
 import SwiftUI
 
 struct ProjectImageRecord: Identifiable, Codable, EncodableRecord, FetchableRecord, MutablePersistableRecord, TableRecord {
+    var id: Int64
+    var projectId: Int64
+    var filePath: URL
+    var isDeleted: Bool
+    var createDate: Date
+    var updateDate: Date
+    static let databaseTableName = "projectImage"
+    
+    init(from input: ProjectImageRecordInput) {
+        id = input.id!
+        projectId = input.projectId
+        filePath = input.filePath
+        isDeleted = input.isDeleted
+        createDate = input.createDate
+        updateDate = input.updateDate
+    }
+}
+
+struct ProjectImageRecordInput: Identifiable, Codable, EncodableRecord, MutablePersistableRecord, TableRecord {
     var id: Int64?
     var projectId: Int64
     var filePath: URL
@@ -16,4 +35,8 @@ struct ProjectImageRecord: Identifiable, Codable, EncodableRecord, FetchableReco
     var createDate: Date
     var updateDate: Date
     static let databaseTableName = "projectImage"
+    
+    mutating func didInsert(_ inserted: InsertionSuccess) {
+        id = inserted.rowID
+    }
 }

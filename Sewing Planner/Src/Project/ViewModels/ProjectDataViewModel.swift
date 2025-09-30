@@ -91,9 +91,10 @@ class ProjectImages {
                     if image.record == nil {
                         let newFilePath = try AppFiles().saveProjectImage(projectId: projectId, image: image)!
                         let now = Date.now
-                        var record = ProjectImageRecord(id: nil, projectId: projectId, filePath: newFilePath, isDeleted: false, createDate: now, updateDate: now)
-                        try record.save(db)
-                        let projectImage = ProjectImage(record: record, path: newFilePath, image: image.image)
+                        var input = ProjectImageRecordInput(id: nil, projectId: projectId, filePath: newFilePath, isDeleted: false, createDate: now, updateDate: now)
+                        try input.save(db)
+                        let record = ProjectImageRecord(from: consume input)
+                        let projectImage = ProjectImage(record: consume record, path: newFilePath, image: image.image)
                         addImage(projectImage)
                     }
                 } catch {

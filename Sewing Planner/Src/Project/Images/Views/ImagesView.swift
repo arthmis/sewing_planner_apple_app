@@ -57,12 +57,12 @@ struct ImagesView: View {
             }
             .frame(maxWidth: .infinity)
             ScrollView {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 150), spacing: 30)]) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 100, maximum: 100), spacing: 4)]) {
                     ForEach($projectImages.images, id: \.self.path) { $image in
                         ImageButton(image: $image, selectedImageForDeletion: $selectedImageForDeletion, overlaySelectedImage: $overlaySelectedImage, selectedImage: $selectedImage)
                     }
                 }
-                .padding(30)
+                .padding(8)
             }
         }
         .overlay(alignment: .center) {

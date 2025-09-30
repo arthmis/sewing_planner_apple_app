@@ -8,6 +8,7 @@
 // import AppKit
 import Foundation
 import SwiftUI
+import System
 
 struct AppFiles {
     private func getPhotosDirectoryPath() -> URL {
@@ -71,7 +72,7 @@ struct AppFiles {
 
         let data = image.image.pngData()
         let createFileSuccess = fileManager.createFile(atPath: newFilePath.path, contents: data)
-
+        
         if !createFileSuccess {
             print("couldn't create file at file path: \(newFilePath)")
             return nil
@@ -120,7 +121,13 @@ struct AppFiles {
     func getImage(fromPath path: URL) -> UIImage? {
         let fileManager = FileManager.default
 
-        if let data = fileManager.contents(atPath: path.path()) {
+        let fullPath = path.absoluteString
+        let relativePath = path.relativePath
+        let varPath = path.path()
+        let filePath = FilePath(path)
+        let exists = fileManager.fileExists(atPath: varPath)
+        if let data = fileManager.contents(atPath: fullPath) {
+//            if let data = fileManager.contents(atPath: path.path()) {
             return UIImage(data: data)
         }
 

@@ -74,14 +74,14 @@ struct ImageButton: View {
                 Image(uiImage: img)
                 .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: 150, height: 250)
+                    .frame(width: 75, height: 100)
                     .clipped()
                     .clipShape(RoundedRectangle(cornerRadius: 9))
-                    .padding(10)
-                    .shadow(color: Color(hex: 0x000000, opacity: isHovering ? 0.5 : 0.25), radius: isHovering ? 5 : 3, x: 0, y: 4)
-                    .scaleEffect(isHovering ? 1.03 : 1, anchor: .center)
+                    .padding(8)
+//                    .shadow(color: Color(hex: 0x000000, opacity: isHovering ? 0.5 : 0.25), radius: isHovering ? 5 : 3, x: 0, y: 4)
+//                    .scaleEffect(isHovering ? 1.03 : 1, anchor: .center)
                     .animation(.easeIn(duration: 0.05), value: isPressed)
-                    .padding(5)
+                    .padding(4)
                     .background(Color(hex: 0xDDDDDD, opacity: isPressed ? 1 : 0))
                     .background(Color(hex: 0x780606))
                     .clipShape(RoundedRectangle(cornerRadius: 9))
@@ -110,7 +110,7 @@ struct ImageButton: View {
                     Image(uiImage: img)
                     .resizable()
                         .aspectRatio(contentMode: .fill)
-                        .frame(width: 150, height: 250)
+                        .frame(width: 75, height: 100)
                         .clipped()
                         .clipShape(RoundedRectangle(cornerRadius: 9))
                         .padding(10)
@@ -125,9 +125,9 @@ struct ImageButton: View {
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .onHover { hover in
-                    isHovering = hover
-                }
+//                .onHover { hover in
+//                    isHovering = hover
+//                }
                 .simultaneousGesture(
                     LongPressGesture(minimumDuration: 2)
                         .onEnded { _ in
@@ -152,14 +152,12 @@ struct ImageButton: View {
                 Image("black_dress_sketch")
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: 150, height: 250)
+                    .frame(width: 75, height: 100)
                     .clipped()
                     .clipShape(RoundedRectangle(cornerRadius: 9))
-                    .padding(10)
                     .shadow(color: Color(hex: 0x000000, opacity: isHovering ? 0.5 : 0.25), radius: isHovering ? 5 : 3, x: 0, y: 4)
-                    .scaleEffect(isHovering ? 1.03 : 1, anchor: .center)
+//                    .scaleEffect(isHovering ? 1.03 : 1, anchor: .center)
                     .animation(.easeIn(duration: 0.05), value: isPressed)
-                    .padding(5)
                     .background(Color(hex: 0xDDDDDD, opacity: isPressed ? 1 : 0))
                     .clipShape(RoundedRectangle(cornerRadius: 9))
                     .animation(.easeIn(duration: 0.05), value: isHovering)
