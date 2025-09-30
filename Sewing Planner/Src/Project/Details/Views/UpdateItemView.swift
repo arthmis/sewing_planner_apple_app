@@ -30,7 +30,7 @@ struct UpdateItemView: View {
         let validText = newText.trimmingCharacters(in: .whitespacesAndNewlines)
         let validNoteText = newNoteText.trimmingCharacters(in: .whitespacesAndNewlines)
         let noteText = validNoteText.isEmpty ? nil : validNoteText
-        
+
         do {
             // this should update the data.record.text so don't need to do that step afterwards
             try updateText(data.record.id!, validText, noteText)
@@ -46,14 +46,27 @@ struct UpdateItemView: View {
     var body: some View {
         VStack(alignment: .leading) {
             VStack {
-                TextField("Task", text: $newText, axis: .vertical)
-                    .textFieldStyle(.plain)
-                    .onSubmit {
-                        update()
+                HStack {
+                    TextField("Task", text: $newText, axis: .vertical)
+                        .textFieldStyle(.plain)
+                        .onSubmit {
+                            update()
+                        }
+                        .padding(.vertical, 4)
+                        .frame(maxWidth: .infinity)
+                        .contentShape(Rectangle())
+                    Button {
+                        showErrorText = false
+                        isEditing = false
+                        newText = ""
+                        newNoteText = ""
+                    } label: {
+                        Image(systemName: "xmark.circle")
+                            .foregroundStyle(Color.red)
+                            .font(.system(size: 24, weight: Font.Weight.thin))
                     }
-                    .padding(.vertical, 4)
-                    .frame(maxWidth: .infinity)
-                    .contentShape(Rectangle())
+                    .padding([.trailing], 8)
+                }
                 TextField("Note", text: $newNoteText, axis: .vertical)
                     .onSubmit {}
                     .padding(.vertical, 4)
@@ -86,6 +99,6 @@ struct UpdateItemView: View {
     @Previewable @State var isEditing = true
     @Previewable @State var newText = ""
     @Previewable @State var newNoteText = ""
-    UpdateItemView(data: $record, isEditing: $isEditing, newText: $newText, newNoteText: $newNoteText, updateText: { id, text, noteText throws in print(id, text) }, resetToPreviousText: { () in print("resetting") })
+    UpdateItemView(data: $record, isEditing: $isEditing, newText: $newText, newNoteText: $newNoteText, updateText: { id, text, _ throws in print(id, text) }, resetToPreviousText: { () in print("resetting") })
         .frame(height: 300)
 }

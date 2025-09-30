@@ -35,20 +35,33 @@ struct AddItemView: View {
         showErrorText = false
         isAddingItem = false
         newItem = ""
+        itemNote = ""
     }
 
     var body: some View {
         if isAddingItem {
             VStack(alignment: .leading) {
                 VStack {
+                    HStack {
+
                     TextField("Task", text: $newItem, axis: .vertical).onSubmit {
                         add()
                     }
                     .textFieldStyle(.plain)
                     .padding(.vertical, 4)
-//                .primaryTextFieldStyle(when: newItem.isEmpty, placeholder: "type item")
                     .frame(maxWidth: .infinity)
-//                .padding(.trailing, 50)
+                        Button {
+                            showErrorText = false
+                            isAddingItem = false
+                            newItem = ""
+                            itemNote = ""
+                        } label: {
+                            Image(systemName: "xmark.circle")
+                                .foregroundStyle(Color.red)
+                                .font(.system(size: 24, weight: Font.Weight.thin))
+                        }
+                        .padding([.trailing], 8)
+                    }
                     .contentShape(Rectangle())
                     TextField("Note", text: $itemNote, axis: .vertical)
                         .onSubmit {}
