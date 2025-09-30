@@ -70,7 +70,7 @@ class Section {
     }
 
     // TODO: investigate updateText and updateItem redundancy
-    func updateText(id: Int64, newText: String, newNoteText: String?) throws {
+    func updateText(id: Int64, consume newText: String, consume newNoteText: String?) throws {
         try db.getWriter().write { db in
             if let i = items.firstIndex(where: { $0.record.id == id }) {
                 var item = items[i]
@@ -89,7 +89,8 @@ class Section {
                         try itemNote.save(db)
                         items[i].note = itemNote
                     } else {
-                        item.note = SectionItemNoteRecord(text: noteText, sectionItemId: item.record.id!)
+                        let trimmedNoteText = noteText.trimmingCharacters(in: .whitespacesAndNewlines)
+                        item.note = SectionItemNoteRecord(text: trimmedNoteText, sectionItemId: item.record.id!)
                         try item.note?.save(db)
                         items[i].note = item.note
                     }
