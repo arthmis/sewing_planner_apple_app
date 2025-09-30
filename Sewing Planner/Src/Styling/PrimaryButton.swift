@@ -62,9 +62,9 @@ extension View {
 struct ImageButton: View {
     @State var isHovering = false
     @Binding var image: ProjectImage
-    @Binding var selectedImageForDeletion: URL?
+    @Binding var selectedImageForDeletion: String?
     @Binding var overlaySelectedImage: Bool
-    @Binding var selectedImage: URL?
+    @Binding var selectedImage: String?
     @State var isPressed = false
 
     var body: some View {

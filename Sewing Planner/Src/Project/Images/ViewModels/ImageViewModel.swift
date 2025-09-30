@@ -10,7 +10,7 @@ import SwiftUI
 // TODO: make this a class since storing data like an image is too expensive to be copying
 struct ProjectImage {
     var record: ProjectImageRecord?
-    var path: URL?
+    var path: String?
     var image: UIImage?
     var name: String {
         "path name"
@@ -21,12 +21,12 @@ struct ProjectImage {
         self.image = image
     }
 
-    init(path: URL, image: UIImage? = nil) {
+    init(path: String, image: UIImage? = nil) {
         self.path = path
         self.image = image
     }
 
-    init(record: ProjectImageRecord, path: URL, image: UIImage? = nil) {
+    init(record: ProjectImageRecord, path: String, image: UIImage? = nil) {
         self.record = record
         self.image = image
         self.path = path

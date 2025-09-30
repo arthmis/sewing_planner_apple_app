@@ -17,14 +17,14 @@ struct AppDatabase {
         self.dbWriter = dbWriter
         try migrator.migrate(self.dbWriter)
 
-//        #if DEBUG
-//            try self.dbWriter.read { db in
-//                let rows = try ProjectMetadata.all().fetchAll(db)
-//                if rows.isEmpty {
-        ////                    AppFiles().deleteImagesFolder()
-//                }
-//            }
-//        #endif
+        #if DEBUG
+            try self.dbWriter.read { db in
+                let rows = try ProjectMetadata.all().fetchAll(db)
+                if rows.isEmpty {
+                    AppFiles().deleteImagesFolder()
+                }
+            }
+        #endif
     }
 }
 
@@ -90,7 +90,8 @@ extension AppDatabase {
 
             try db.create(table: "sectionItemNote", options: [.ifNotExists]) { table in
                 table.autoIncrementedPrimaryKey("id")
-                table.belongsTo("sectionItem").notNull().unique()
+                table.belongsTo("sectionItem").notNull()
+                    .unique()
                 table.column("text", .text).notNull().indexed()
                 table.column("createDate", .datetime).notNull()
                 table.column("updateDate", .datetime).notNull()
@@ -125,7 +126,8 @@ extension AppDatabase {
                 let projectIdColumn = Column("projectId")
                 // can unwrap project.id because an image can't be stored without having a project id
                 if let record = try ProjectImageRecord.all().filter(projectIdColumn == project.id!).order(Column("id")).fetchOne(db) {
-                    let image = AppFiles().getImage(fromPath: record.filePath)
+                    let imagePath = AppFiles().getPathForImage(forProject: project.id!, fileIdentifier: record.filePath)
+                    let image = AppFiles().getImage(fromPath: imagePath)
                     let projectImage = ProjectImage(record: record, path: record.filePath, image: image)
                     projectDisplayData.append(ProjectDisplay(project: project, image: projectImage))
                 } else {
@@ -179,7 +181,8 @@ extension AppDatabase {
 
             var projectImages: [ProjectImage] = []
             for record in records {
-                let image = AppFiles().getImage(fromPath: record.filePath)
+                let imagePath = AppFiles().getPathForImage(forProject: projectId, fileIdentifier: record.filePath)
+                let image = AppFiles().getImage(fromPath: imagePath)
                 let projectImage = ProjectImage(record: record, path: record.filePath, image: image)
                 projectImages.append(projectImage)
             }
@@ -223,8 +226,8 @@ extension AppDatabase {
 
             // open or create database
             let databaseUrl = directoryUrl.appendingPathComponent(name).appendingPathExtension("sqlite")
-            let dbQueue = try DatabaseQueue(path: databaseUrl.path)
-            NSLog("Database stored at \(databaseUrl.path)")
+            let dbQueue = try DatabaseQueue(path: databaseUrl.path(percentEncoded: false))
+            NSLog("Database stored at \(databaseUrl.path())")
 
             // create AppDatabase
             let appDatabase = try AppDatabase(dbQueue)

@@ -20,13 +20,13 @@ struct AppFiles {
 
     // only used when the schema is changed during development
     // ensures the images don't conflict with new images
-//    func deleteImagesFolder() {
-//        let directory = getPhotosDirectoryPath()
-//        let fileManager = FileManager.default
-//        if fileManager.fileExists(atPath: directory.path()) {
-//            try! fileManager.removeItem(at: directory)
-//        }
-//    }
+    func deleteImagesFolder() {
+        let directory = getPhotosDirectoryPath()
+        let fileManager = FileManager.default
+        if fileManager.fileExists(atPath: directory.path()) {
+            try! fileManager.removeItem(at: directory)
+        }
+    }
 
     func getProjectPhotoDirectoryPath(projectId: Int64) -> URL {
         let photosDirectory = getPhotosDirectoryPath()
@@ -42,7 +42,7 @@ struct AppFiles {
         FileManager.default.fileExists(atPath: getProjectPhotoDirectoryPath(projectId: id).path())
     }
 
-    func saveProjectImage(projectId: Int64, image: ProjectImageInput) throws -> URL? {
+    func saveProjectImage(projectId: Int64, image: ProjectImageInput) throws -> String? {
         let fileManager = FileManager.default
         let usersPhotosUrl = getPhotosDirectoryPath()
 
@@ -66,9 +66,8 @@ struct AppFiles {
         }
 
         // get image's new file path
-        let newFilePath = imagesFolderForProject.appendingPathComponent(UUID().uuidString).appendingPathExtension(for: .png)
-        print("project folder for images: \(imagesFolderForProject)")
-        print("new path for image: \(newFilePath)")
+        let fileIdentifier = UUID().uuidString
+        let newFilePath = imagesFolderForProject.appendingPathComponent(fileIdentifier).appendingPathExtension(for: .png)
 
         let data = image.image.pngData()
         let createFileSuccess = fileManager.createFile(atPath: newFilePath.path(), contents: data)
@@ -78,49 +77,20 @@ struct AppFiles {
             return nil
         }
 
-        return newFilePath
+        return fileIdentifier
     }
-
-//    // TODO: handle situation where file names might be duplicates because they have the same name but comes from different file paths
-//    func saveProjectImages(projectId: Int64, images: [ProjectImage]) throws {
-//        let fileManager = FileManager.default
-//        let usersPhotosUrl = getPhotosDirectoryPath()
-//
-//        do {
-//            try fileManager.createDirectory(at: usersPhotosUrl, withIntermediateDirectories: true, attributes: nil)
-//        } catch {
-//            print("Error \(error)")
-//        }
-//
-//        let projectFolder = usersPhotosUrl.appendingPathComponent(String(projectId))
-//        do {
-//            try fileManager.createDirectory(at: projectFolder, withIntermediateDirectories: true, attributes: nil)
-//        } catch {
-//            fatalError("Error \(error)")
-//        }
-//
-//        for file in images {
-//            let createFileSuccess = fileManager.createFile(atPath: file.path.path(), contents: nil)
-//
-//            if createFileSuccess {
-//                let tiffRep = file.image?.tiffRepresentation
-//                let bitmap = NSBitmapImageRep(data: tiffRep!)!
-//                let data = bitmap.representation(using: .png, properties: [:])
-//                do {
-//                    try data?.write(to: file.path, options: Data.WritingOptions.atomic)
-//                } catch {
-//                    fatalError("Error: \(error)")
-//                }
-//            } else {
-//                print("couldn't create file for file URL \(file.path) at file path: \(file.path.path())")
-//            }
-//        }
-//    }
+    
+    func getPathForImage(forProject project: Int64, fileIdentifier: String) -> URL {
+        let fileManager = FileManager.default
+        let projectPhotosPath = getProjectPhotoDirectoryPath(projectId: project)
+        return projectPhotosPath.appendingPathComponent(fileIdentifier).appendingPathExtension(for: .png)
+    }
 
     func getImage(fromPath path: URL) -> UIImage? {
         let fileManager = FileManager.default
 
-        if let data = fileManager.contents(atPath: path.path()) {
+        let filePath = path.path()
+        if let data = fileManager.contents(atPath: filePath) {
             return UIImage(data: data)
         }
 

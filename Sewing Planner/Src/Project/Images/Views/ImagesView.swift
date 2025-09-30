@@ -22,9 +22,9 @@ struct ErrorToast {
 
 struct ImagesView: View {
     @Binding var projectImages: ProjectImages
-    @State var selectedImageForDeletion: URL?
+    @State var selectedImageForDeletion: String?
     @State var overlaySelectedImage = false
-    @State var selectedImage: URL?
+    @State var selectedImage: String?
     @State private var pickerItem: PhotosPickerItem?
     @State private var photosAppSelectedImage: Data?
     @State var errorToast = ErrorToast()

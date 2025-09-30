@@ -11,7 +11,7 @@ import SwiftUI
 struct ProjectImageRecord: Identifiable, Codable, EncodableRecord, FetchableRecord, MutablePersistableRecord, TableRecord {
     var id: Int64
     var projectId: Int64
-    var filePath: URL
+    var filePath: String
     var isDeleted: Bool
     var createDate: Date
     var updateDate: Date
@@ -30,7 +30,7 @@ struct ProjectImageRecord: Identifiable, Codable, EncodableRecord, FetchableReco
 struct ProjectImageRecordInput: Identifiable, Codable, EncodableRecord, MutablePersistableRecord, TableRecord {
     var id: Int64?
     var projectId: Int64
-    var filePath: URL
+    var filePath: String
     var isDeleted: Bool
     var createDate: Date
     var updateDate: Date
