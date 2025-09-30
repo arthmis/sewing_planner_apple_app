@@ -135,22 +135,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "99A4BAB1-8939-499C-A215-66A46A555B00"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Sewing Planner/Src/Project/Details/ViewModels/SectionViewModel.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "80"
-            endingLineNumber = "80"
-            landmarkName = "updateText(id:newText:newNoteText:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "08552335-5BBF-4EA6-8EDB-3951016D3F1A"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -161,22 +145,6 @@
             startingLineNumber = "173"
             endingLineNumber = "173"
             landmarkName = "getSectionItems(sectionId:from:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "BCF17AB0-E9C6-4DEF-BBBD-3B64DBC551C7"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Sewing Planner/Src/Project/Details/ViewModels/SectionViewModel.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "92"
-            endingLineNumber = "92"
-            landmarkName = "updateText(id:newText:newNoteText:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
