@@ -26,8 +26,12 @@ struct AddItemView: View {
             return
         }
 
+        let validText = newItem.trimmingCharacters(in: .whitespacesAndNewlines)
+        let validNoteText = itemNote.trimmingCharacters(in: .whitespacesAndNewlines)
+        let noteText = validNoteText.isEmpty ? nil : validNoteText
+        
         do {
-            try addItem(newItem, itemNote)
+            try addItem(newItem, noteText)
         } catch {
             // add some kind of toast if failure
             fatalError("\(error)")

@@ -32,7 +32,6 @@ struct UpdateItemView: View {
         let noteText = validNoteText.isEmpty ? nil : validNoteText
 
         do {
-            // this should update the data.record.text so don't need to do that step afterwards
             try updateText(data.record.id!, validText, noteText)
         } catch {
             fatalError("\(error)")
