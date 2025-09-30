@@ -151,11 +151,16 @@ struct SelectedSectionItemView: View {
         selected.contains(data.record.id!)
     }
 
+    private var hasNote: Bool {
+        data.note != nil
+    }
+
     var body: some View {
         HStack(alignment: .firstTextBaseline) {
             Toggle(data.record.text, isOn: $data.record.isComplete)
-                .toggleStyle(CheckboxStyle(id: data.record.id, updateCompletedState: updateCompletedState))
+                .toggleStyle(CheckboxStyle(id: data.record.id, hasNote: hasNote, updateCompletedState: updateCompletedState))
             Spacer()
+            Image(systemName: "line.3.horizontal")
         }
         .contentShape(Rectangle())
         .background(isSelected ? Color.blue : Color.white)

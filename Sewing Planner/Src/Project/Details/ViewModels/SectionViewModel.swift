@@ -77,6 +77,7 @@ class Section {
                     if itemId == id {
                         item.record.text = newText
                         try item.record.save(db)
+                        items[i].record = item.record
 
                         if let noteText = newNoteText {
                             if var itemNote = item.note {

@@ -20,14 +20,19 @@ struct ItemView: View {
         isEditing = false
     }
 
+    private var hasNote: Bool {
+        data.note != nil
+    }
+
     var body: some View {
         if isEditing {
             UpdateItemView(data: $data, isEditing: $isEditing, newText: $newText, newNoteText: $newNoteText, updateText: updateText, resetToPreviousText: resetToPreviousText)
         } else {
-            HStack(alignment: .firstTextBaseline) {
-                Toggle(data.record.text, isOn: $data.record.isComplete).toggleStyle(CheckboxStyle(id: data.record.id, updateCompletedState: updateCompletedState))
-                Spacer()
-//                Image(systemName: "line.3.horizontal")
+            VStack(alignment: .leading) {
+                HStack(alignment: .firstTextBaseline) {
+                    Toggle(data.record.text, isOn: $data.record.isComplete).toggleStyle(CheckboxStyle(id: data.record.id, hasNote: hasNote, updateCompletedState: updateCompletedState,))
+                    Spacer()
+                }
             }
             .contentShape(Rectangle())
             .onTapGesture {
@@ -43,6 +48,7 @@ struct ItemView: View {
 
 struct CheckboxStyle: ToggleStyle {
     var id: Int64?
+    var hasNote: Bool
     var updateCompletedState: (Int64) throws -> Void
 
     func makeBody(configuration: Configuration) -> some View {
@@ -54,19 +60,30 @@ struct CheckboxStyle: ToggleStyle {
                 Image(systemName: configuration.isOn ? "checkmark.square" : "square")
             }
             configuration.label
+                .frame(maxWidth: .infinity, alignment: .topLeading)
+            if hasNote {
+                Image(systemName: "note.text")
+                    .font(.system(size: 14, weight: Font.Weight.light))
+                    .foregroundStyle(Color.gray)
+                    .padding(.horizontal, 4)
+            }
+//            }
         }
     }
 }
 
-// #Preview {
-//    @Previewable @State var val = SectionItemRecord(text: "a set of text")
-//    ItemView(data: $val) { id in
-//        print(id)
-//    } updateItem: { id in
-//        print(id)
-//    }
-//    .padding(30)
-//    .border(Color.black, width: 1)
-//    .frame(maxWidth: 400, maxHeight: 400)
-//    .background(.white)
-// }
+#Preview {
+    @Previewable @State var val = SectionItem(record: SectionItemRecord(text: "This is really long task to see how it gets displayed. Making this message way longer because it still isn't long enough", order: 1), note: SectionItemNoteRecord(text: "string", sectionItemId: 1))
+    var updateText: (Int64, String, String?) throws -> Void
+    var updateCompletedState: (Int64) throws -> Void
+
+    ItemView(data: $val) { id, _, _ in
+        print(id)
+    } updateCompletedState: { id in
+        print(id)
+    }
+    .padding(30)
+    .border(Color.black, width: 1)
+    .frame(maxWidth: 400, maxHeight: 400)
+    .background(.white)
+}

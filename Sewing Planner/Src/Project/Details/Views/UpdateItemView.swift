@@ -34,8 +34,6 @@ struct UpdateItemView: View {
         do {
             // this should update the data.record.text so don't need to do that step afterwards
             try updateText(data.record.id!, validText, noteText)
-//            data.record.text = validText
-//            data.record.text = validText
         } catch {
             fatalError("\(error)")
         }
