@@ -90,7 +90,7 @@ extension AppDatabase {
 
             try db.create(table: "sectionItemNote", options: [.ifNotExists]) { table in
                 table.autoIncrementedPrimaryKey("id")
-                table.belongsTo("sectionItem").notNull()
+                table.belongsTo("sectionItem").notNull().unique()
                 table.column("text", .text).notNull().indexed()
                 table.column("createDate", .datetime).notNull()
                 table.column("updateDate", .datetime).notNull()
@@ -162,8 +162,12 @@ extension AppDatabase {
     }
 
     func getSectionItems(sectionId: Int64, from db: Database) throws -> [SectionItem] {
-        let request = SectionItemRecord.including(optional: SectionItemRecord.notes)
-        let sectionItems = try SectionItem.fetchAll(db, request)
+        let sectionItems = try SectionItemRecord
+            .including(optional: SectionItemRecord.note)
+            .filter(Column("sectionId") == sectionId)
+            .filter(Column("isDeleted") == false)
+            .asRequest(of: SectionItem.self)
+            .fetchAll(db)
 
         return sectionItems
     }

@@ -11,7 +11,8 @@ struct ItemView: View {
     @Binding var data: SectionItem
     @State var isEditing = false
     @State var newText = ""
-    var updateText: (Int64, String) throws -> Void
+    @State var newNoteText = ""
+    var updateText: (Int64, String, String?) throws -> Void
     var updateCompletedState: (Int64) throws -> Void
 
     func resetToPreviousText() {
@@ -21,7 +22,7 @@ struct ItemView: View {
 
     var body: some View {
         if isEditing {
-            UpdateItemView(data: $data, isEditing: $isEditing, newText: $newText, updateText: updateText, resetToPreviousText: resetToPreviousText)
+            UpdateItemView(data: $data, isEditing: $isEditing, newText: $newText, newNoteText: $newNoteText, updateText: updateText, resetToPreviousText: resetToPreviousText)
         } else {
             HStack(alignment: .firstTextBaseline) {
                 Toggle(data.record.text, isOn: $data.record.isComplete).toggleStyle(CheckboxStyle(id: data.record.id, updateCompletedState: updateCompletedState))
@@ -33,6 +34,7 @@ struct ItemView: View {
                 if !isEditing {
                     isEditing = true
                     newText = data.record.text
+                    newNoteText = data.note != nil ? data.note!.text : ""
                 }
             }
         }

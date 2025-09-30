@@ -33,6 +33,12 @@ struct SectionItemRecord: Hashable, Identifiable, Codable, EncodableRecord, Fetc
     var updateDate: Date = .init()
     static let databaseTableName = "sectionItem"
 
+    // the "note" in forKey has to match the name of the property in SectionItem struct
+    static let note = hasOne(SectionItemNoteRecord.self).forKey("note")
+    var notes: QueryInterfaceRequest<SectionItemNoteRecord> {
+        request(for: SectionItemRecord.note)
+    }
+
     mutating func didInsert(_ inserted: InsertionSuccess) {
         id = inserted.rowID
     }
@@ -57,12 +63,6 @@ struct SectionItemRecord: Hashable, Identifiable, Codable, EncodableRecord, Fetc
     }
 }
 
-extension SectionItemRecord {
-    static let notes = hasOne(SectionItemNoteRecord.self)
-    var notes: QueryInterfaceRequest<SectionItemNoteRecord> {
-        request(for: SectionItemRecord.notes)
-    }
-}
 
 struct SectionItemNoteRecord: Hashable, Identifiable, Codable, EncodableRecord, FetchableRecord, MutablePersistableRecord, TableRecord {
     var id: Int64?
@@ -71,8 +71,7 @@ struct SectionItemNoteRecord: Hashable, Identifiable, Codable, EncodableRecord, 
     var createDate: Date = .init()
     var updateDate: Date = .init()
     static let databaseTableName = "sectionItemNote"
-    
-    static let sectionItem = belongsTo(SectionItemRecord.self).forKey("sectionItem")
+
 
     mutating func didInsert(_ inserted: InsertionSuccess) {
         id = inserted.rowID

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AddItemView: View {
     @Binding var isAddingItem: Bool
-    @Binding var newItem: String
+    @State var newItem = ""
     let addItem: (_ text: String, _ note: String?) throws -> Void
     @State var showErrorText = false
     @State var itemNote = ""
@@ -132,7 +132,7 @@ struct SecondaryButtonStyle: ButtonStyle {
     @Previewable @State var isAddingItem = true
     @Previewable @State var newItem = ""
 
-    AddItemView(isAddingItem: $isAddingItem, newItem: $newItem, addItem: { val, note throws in print(val) })
+    AddItemView(isAddingItem: $isAddingItem, addItem: { val, note throws in print(val) })
         .frame(height: 300)
         .padding(8)
 }

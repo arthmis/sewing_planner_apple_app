@@ -29,7 +29,7 @@ class Section {
 
     func addItem(text: String, note: String?) throws {
         try db.getWriter().write { db in
-            // TODO do this in a transaction or see if the write is already a transaction
+            // TODO: do this in a transaction or see if the write is already a transaction
             let order = Int64(items.count)
             var record = SectionItemRecord(text: text.trimmingCharacters(in: .whitespacesAndNewlines), order: order)
             record.sectionId = section.id!
@@ -37,10 +37,11 @@ class Section {
 
             if let noteText = note {
                 var noteRecord = SectionItemNoteRecord(text: noteText.trimmingCharacters(in: .whitespacesAndNewlines), sectionItemId: record.id!)
-                var sectionItem = SectionItem(record: record, note: noteRecord)
+                try noteRecord.save(db)
+                let sectionItem = SectionItem(record: record, note: noteRecord)
                 items.append(sectionItem)
             } else {
-                var sectionItem = SectionItem(record: record, note: nil)
+                let sectionItem = SectionItem(record: record, note: nil)
                 items.append(sectionItem)
             }
         }
@@ -68,14 +69,26 @@ class Section {
         }
     }
 
-    // TODO investigate updateText and updateItem redundancy
-    func updateText(id: Int64, newText: String) throws {
+    // TODO: investigate updateText and updateItem redundancy
+    func updateText(id: Int64, newText: String, newNoteText: String?) throws {
         try db.getWriter().write { db in
-            for var item in items {
+            for case (let i, var item) in items.enumerated() {
                 if let itemId = item.record.id {
                     if itemId == id {
                         item.record.text = newText
                         try item.record.save(db)
+
+                        if let noteText = newNoteText {
+                            if var itemNote = item.note {
+                                itemNote.text = noteText
+                                try itemNote.save(db)
+                                items[i].note = itemNote
+                            } else {
+                                item.note = SectionItemNoteRecord(text: noteText, sectionItemId: item.record.id!)
+                                try item.note?.save(db)
+                                items[i].note = item.note
+                            }
+                        }
                     }
                 }
             }

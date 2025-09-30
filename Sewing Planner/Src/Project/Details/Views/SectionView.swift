@@ -17,7 +17,6 @@ struct SectionView: View {
     @State var isRenamingSection = false
     @State var name = ""
     @State var isAddingItem = false
-    @State var newItem = ""
     @FocusState var headerFocus: Bool
     @State private var draggedItem: SectionItem?
     @State var isEditingSection = false
@@ -135,7 +134,7 @@ struct SectionView: View {
                 }
             }
             .frame(maxWidth: .infinity)
-            AddItemView(isAddingItem: $isAddingItem, newItem: $newItem, addItem: data.addItem)
+            AddItemView(isAddingItem: $isAddingItem, addItem: data.addItem)
         }
     }
 }
@@ -145,7 +144,7 @@ struct SelectedSectionItemView: View {
     @State var isEditing = false
     @State var newText = ""
     @Binding var selected: Set<Int64>
-    var updateText: (Int64, String) throws -> Void
+    var updateText: (Int64, String, String?) throws -> Void
     var updateCompletedState: (Int64) throws -> Void
 
     var isSelected: Bool {

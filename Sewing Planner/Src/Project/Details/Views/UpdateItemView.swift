@@ -11,13 +11,14 @@ struct UpdateItemView: View {
     @Binding var data: SectionItem
     @Binding var isEditing: Bool
     @Binding var newText: String
+    @Binding var newNoteText: String
     @State var showErrorText = false
     let errorText = "Item text can't be empty."
-    let updateText: (Int64, String) throws -> Void
+    let updateText: (Int64, String, String?) throws -> Void
     let resetToPreviousText: () -> Void
 
     private var isNewTextValid: Bool {
-        newText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && newText != data.record.text
+        newText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     func update() {
@@ -27,9 +28,14 @@ struct UpdateItemView: View {
         }
 
         let validText = newText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let validNoteText = newNoteText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let noteText = validNoteText.isEmpty ? nil : validNoteText
+        
         do {
-            try updateText(data.record.id!, validText)
-            data.record.text = validText
+            // this should update the data.record.text so don't need to do that step afterwards
+            try updateText(data.record.id!, validText, noteText)
+//            data.record.text = validText
+//            data.record.text = validText
         } catch {
             fatalError("\(error)")
         }
@@ -39,36 +45,47 @@ struct UpdateItemView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            TextField("", text: $newText, axis: .vertical)
-                .textFieldStyle(.plain)
-                .primaryTextFieldStyle(when: newText.isEmpty, placeholder: "type item")
-                .onSubmit {
-                    update()
-                }
+            VStack {
+                TextField("Task", text: $newText, axis: .vertical)
+                    .textFieldStyle(.plain)
+                    .onSubmit {
+                        update()
+                    }
+                    .padding(.vertical, 4)
+                    .frame(maxWidth: .infinity)
+                    .contentShape(Rectangle())
+                TextField("Note", text: $newNoteText, axis: .vertical)
+                    .onSubmit {}
+                    .padding(.vertical, 4)
+            }
+            .padding(4)
             if showErrorText {
                 Text(errorText)
-                    .padding(.leading, 10)
+                    .padding(.leading, 8)
                     .foregroundStyle(Color.red)
             }
-            HStack(alignment: .center) {
-                Button("Update") {
+            HStack(alignment: .lastTextBaseline) {
+                Button {
                     update()
+                } label: {
+                    Image(systemName: "arrow.up.circle.fill")
+                        .font(.system(size: 32))
                 }
                 .disabled(isNewTextValid)
-                .buttonStyle(PrimaryButtonStyle())
-                Button("Cancel") {
-                    resetToPreviousText()
-                }
-                .buttonStyle(SecondaryButtonStyle())
+                .padding([.trailing, .bottom], 8)
             }
+            .frame(maxWidth: .infinity, alignment: .bottomTrailing)
         }
+        .background(Color(hex: 0xF2F2F2, opacity: 0.9))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }
 
 #Preview {
-    @Previewable @State var record = SectionItem(record: SectionItemRecord(id: 1, text: "something", order: 0), note: SectionItemNoteRecord(text: "nonte", sectionItemId: 1 ))
+    @Previewable @State var record = SectionItem(record: SectionItemRecord(id: 1, text: "something", order: 0), note: SectionItemNoteRecord(text: "nonte", sectionItemId: 1))
     @Previewable @State var isEditing = true
     @Previewable @State var newText = ""
-    UpdateItemView(data: $record, isEditing: $isEditing, newText: $newText, updateText: { id, text throws in print(id ?? 1, text) }, resetToPreviousText: { () in print("resetting") })
+    @Previewable @State var newNoteText = ""
+    UpdateItemView(data: $record, isEditing: $isEditing, newText: $newText, newNoteText: $newNoteText, updateText: { id, text, noteText throws in print(id, text) }, resetToPreviousText: { () in print("resetting") })
         .frame(height: 300)
 }
