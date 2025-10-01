@@ -128,7 +128,7 @@ extension AppDatabase {
                 if let record = try ProjectImageRecord.all().filter(projectIdColumn == project.id!).order(Column("id")).fetchOne(db) {
                     let imagePath = AppFiles().getPathForImage(forProject: project.id!, fileIdentifier: record.filePath)
                     let image = AppFiles().getImage(fromPath: imagePath)
-                    let projectImage = ProjectImage(record: record, path: record.filePath, image: image)
+                    let projectImage = ProjectDisplayImage(record: record, path: record.filePath, image: image)
                     projectDisplayData.append(ProjectDisplay(project: project, image: projectImage))
                 } else {
                     projectDisplayData.append(ProjectDisplay(project: project))
@@ -183,7 +183,11 @@ extension AppDatabase {
             for record in records {
                 let imagePath = AppFiles().getPathForImage(forProject: projectId, fileIdentifier: record.filePath)
                 let image = AppFiles().getImage(fromPath: imagePath)
-                let projectImage = ProjectImage(record: record, path: record.filePath, image: image)
+                guard let imageData = image else {
+                    // TODO add logging if this fails
+                    continue
+                }
+                let projectImage = ProjectImage(record: record, path: record.filePath, image: imageData)
                 projectImages.append(projectImage)
             }
 

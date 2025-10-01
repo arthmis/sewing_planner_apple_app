@@ -9,7 +9,19 @@ import SwiftUI
 
 struct ProjectDisplay {
     var project: ProjectMetadata
-    var image: ProjectImage?
+    var image: ProjectDisplayImage?
+}
+
+class ProjectDisplayImage {
+    var record: ProjectImageRecord
+    var path: String
+    var image: UIImage?
+    
+    init(record: ProjectImageRecord, path: String, image: UIImage?) {
+        self.record = record
+        self.image = image
+        self.path = path
+    }
 }
 
 @Observable

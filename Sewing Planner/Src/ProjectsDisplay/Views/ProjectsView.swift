@@ -88,12 +88,11 @@ struct ProjectDisplayView: View {
 }
 
 struct MaybeProjectImageView: View {
-    let projectImage: ProjectImage?
+    let projectImage: ProjectDisplayImage?
 
     var body: some View {
         if let imageData = projectImage {
             if let image = imageData.image {
-//                Image(image)
                 Image(uiImage: image)
                     .resizable()
                     .interpolation(.high)

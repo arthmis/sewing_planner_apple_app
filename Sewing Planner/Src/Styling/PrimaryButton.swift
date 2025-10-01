@@ -62,98 +62,75 @@ extension View {
 struct ImageButton: View {
     @State var isHovering = false
     @Binding var image: ProjectImage
-    @Binding var selectedImageForDeletion: String?
+    @Binding var selectedImages: Set<String?>
     @Binding var overlaySelectedImage: Bool
     @Binding var selectedImage: String?
     @State var isPressed = false
 
+    var isSelectedForDeletion: Bool {
+        selectedImages.contains(image.path)
+    }
+
     var body: some View {
-        if let img = image.image {
-            if image.path == selectedImageForDeletion {
-//                Image(img)
-                Image(uiImage: img)
-                .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 100, height: 100)
-                    .clipped()
-                    .animation(.easeIn(duration: 0.05), value: isPressed)
-//                    .padding(4)
-                    .background(Color(hex: 0xDDDDDD, opacity: isPressed ? 1 : 0))
-                    .background(Color(hex: 0x780606))
-//                    .onTapGesture {
-//                        selectedImage = image.path
-//                        overlaySelectedImage = true
-//                    }
-//                    .onLongPressGesture {
-//                        selectedImageForDeletion = image.path
-//                    }
-//                    .onPress {
-//                        isPressed = true
-//                    } onRelease: {
-//                        isPressed = false
-//                    }
-            } else {
-                Button {
-                    selectedImage = image.path
-                    overlaySelectedImage = true
-                } label: {
-                    Image(uiImage: img)
-                    .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 100, height: 100)
-                        .clipped()
-                        .animation(.easeIn(duration: 0.05), value: isPressed)
+        Image(uiImage: image.image)
+            .resizable()
+            .aspectRatio(contentMode: .fill)
+            .frame(width: 100, height: 100)
+            .clipped()
+            .animation(.easeIn(duration: 0.05), value: isPressed)
 //                        .padding(5)
-                        .background(Color(hex: 0xDDDDDD, opacity: isPressed ? 1 : 0))
-//                        .animation(.easeIn(duration: 0.05), value: isHovering)
-                        // parts of the image that were clipped still respond to the mouse events so this constrains it to the correct area
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .simultaneousGesture(
-                    LongPressGesture(minimumDuration: 2)
-                        .onEnded { _ in
-                            selectedImageForDeletion = image.path
-                            isPressed = false
-                        }
-                )
-                .onPress {
-                    isPressed = true
-                } onRelease: {
-                    isPressed = false
-                }
-            }
-        } else {
-            // Place holder image if displaying an image fails or loading failed
-            // TODO: think about if to use this or just display an error
-            Button {
+            .background(Color(hex: 0xDDDDDD, opacity: isPressed ? 1 : 0))
+            // parts of the image that were clipped still respond to the mouse events so this constrains it to the correct area
+            .contentShape(Rectangle())
+            .onTapGesture {
                 selectedImage = image.path
                 overlaySelectedImage = true
-            } label: {
-                Image("black_dress_sketch")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 100, height: 100)
-                    .clipped()
-                    .animation(.easeIn(duration: 0.05), value: isPressed)
-                    .background(Color(hex: 0xDDDDDD, opacity: isPressed ? 1 : 0))
-                    // parts of the image that were clipped still respond to the mouse events so this constrains it to the correct area
-                    .contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
-            .simultaneousGesture(
-                LongPressGesture(minimumDuration: 2)
-                    .onEnded { _ in
-                        selectedImageForDeletion = image.path
-                        isPressed = false
-                    }
-            )
             .onPress {
                 isPressed = true
             } onRelease: {
                 isPressed = false
             }
-        }
+    }
+}
+
+struct SelectedImageButton: View {
+    @State var isHovering = false
+    @Binding var image: ProjectImage
+    @Binding var selectedImages: Set<String?>
+    @Binding var overlaySelectedImage: Bool
+    @Binding var selectedImage: String?
+    @State var isPressed = false
+
+    var isSelectedForDeletion: Bool {
+        selectedImages.contains(image.path)
+    }
+
+    var body: some View {
+        Image(uiImage: image.image)
+            .resizable()
+            .aspectRatio(contentMode: .fill)
+            .frame(width: 100, height: 100)
+            .clipped()
+            .animation(.easeIn(duration: 0.05), value: isPressed)
+//                        .padding(5)
+            .background(Color(hex: 0xDDDDDD, opacity: isPressed ? 1 : 0))
+            .padding(4)
+            .background(isSelectedForDeletion ? Color.blue : Color.white)
+            // parts of the image that were clipped still respond to the mouse events so this constrains it to the correct area
+            .contentShape(Rectangle())
+            .onTapGesture {
+                if !isSelectedForDeletion {
+                    selectedImages.insert(image.path)
+                } else {
+                    selectedImages.remove(image.path)
+                }
+            }
+            .onPress {
+                isPressed = true
+            } onRelease: {
+                isPressed = false
+            }
     }
 }
 

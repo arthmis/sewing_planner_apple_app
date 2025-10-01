@@ -29,7 +29,7 @@ class ProjectDetailData {
             let images = try db.getImages(projectId: id)
             print(images.images.count)
             for image in images.images {
-                print(image.record!)
+                print(image.record)
             }
             projectImages = images
 

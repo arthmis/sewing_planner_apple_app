@@ -22,38 +22,39 @@ struct ErrorToast {
 
 struct ImagesView: View {
     @Binding var projectImages: ProjectImages
-    @State var selectedImageForDeletion: String?
+    @State var selectedImages: Set<String?> = []
     @State var overlaySelectedImage = false
-    @State var selectedImage: String?
+    @State var overlayedImage: String?
     @State private var pickerItem: PhotosPickerItem?
     @State private var photosAppSelectedImage: Data?
     @State var errorToast = ErrorToast()
-
+    @State var isInDeleteMode = false
+    
     var body: some View {
         VStack(alignment: .center) {
             HStack {
-                if let imagePath = selectedImageForDeletion {
+                if isInDeleteMode {
                     HStack(alignment: .center) {
                         Button("Cancel") {
-                            selectedImageForDeletion = nil
+                            selectedImages = Set()
+                            isInDeleteMode = false
                         }
                         Spacer()
                         Button("Delete") {
-                            if let index = self.projectImages.images.firstIndex(where: { $0.path == imagePath }) {
-                                let image = self.projectImages.images.remove(at: index)
-                                projectImages.deletedImages.append(image)
+                            for imagePath in selectedImages {
+                                // TODO actually delete image record and delete image from file system
+                                if let index = self.projectImages.images.firstIndex(where: { $0.path == imagePath }) {
+                                    let image = self.projectImages.images.remove(at: index)
+                                    projectImages.deletedImages.append(image)
+                                }
                             }
 
-                            selectedImageForDeletion = nil
+                            isInDeleteMode = false
+                            selectedImages = Set()
                         }
                     }
                 }
                 Spacer()
-                SectionViewButton {} label: {
-                    Image(systemName: "ellipsis")
-                }
-                .padding(.vertical, 10)
-                .padding(.horizontal, 30)
             }
             .frame(maxWidth: .infinity)
             ScrollView {
@@ -64,7 +65,14 @@ struct ImagesView: View {
                     GridItem(.flexible(minimum: 100, maximum: 100), spacing: 4)
                 ], spacing: 4) {
                     ForEach($projectImages.images, id: \.self.path) { $image in
-                        ImageButton(image: $image, selectedImageForDeletion: $selectedImageForDeletion, overlaySelectedImage: $overlaySelectedImage, selectedImage: $selectedImage)
+                        if !isInDeleteMode {
+                            ImageButton(image: $image, selectedImages: $selectedImages, overlaySelectedImage: $overlaySelectedImage, selectedImage: $overlayedImage)
+                                .onLongPressGesture {
+                                    isInDeleteMode = true
+                                }
+                        } else {
+                            SelectedImageButton(image: $image, selectedImages: $selectedImages, overlaySelectedImage: $overlaySelectedImage, selectedImage: $overlayedImage)
+                        }
                     }
                 }
                 .padding(8)
@@ -76,7 +84,7 @@ struct ImagesView: View {
                     HStack(alignment: .firstTextBaseline) {
                         Button {
                             overlaySelectedImage = false
-                            selectedImage = nil
+                            overlayedImage = nil
                         } label: {
                             Image(systemName: "xmark.circle")
                                 .font(.system(size: 22, weight: Font.Weight.thin))
@@ -85,7 +93,7 @@ struct ImagesView: View {
                         .padding(.bottom, 8)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    if let imgIdentifier = selectedImage {
+                    if let imgIdentifier = overlayedImage {
                         // TODO: figure out what to do if image doesn't exist, some default image
                         Image(uiImage: projectImages.images.first(where: { $0.path == imgIdentifier })?.image ?? UIImage())
                             .resizable()
@@ -116,19 +124,6 @@ struct ImagesView: View {
         )
     }
 }
-
-// TODO: support photospicker as well
-// var body: some View {
-//    VStack(alignment: .center) {
-//        PhotosPicker("Select image", selection: $pickerItem, matching: .images)
-//            .onChange(of: pickerItem) {
-//                Task {
-//                    selectedImage = try await pickerItem?.loadTransferable(type: Image.self)
-//                }
-//            }
-//        selectedImage?.resizable().scaledToFit()
-//    }
-// }
 
 // #Preview {
 //    VStack {

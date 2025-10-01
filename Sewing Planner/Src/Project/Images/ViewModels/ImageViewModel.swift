@@ -9,24 +9,11 @@ import SwiftUI
 
 // TODO: make this a class since storing data like an image is too expensive to be copying
 struct ProjectImage {
-    var record: ProjectImageRecord?
-    var path: String?
-    var image: UIImage?
-    var name: String {
-        "path name"
-        //        path.deletingPathExtension().lastPathComponent
-    }
+    var record: ProjectImageRecord
+    var path: String
+    var image: UIImage
 
-    init(image: UIImage? = nil) {
-        self.image = image
-    }
-
-    init(path: String, image: UIImage? = nil) {
-        self.path = path
-        self.image = image
-    }
-
-    init(record: ProjectImageRecord, path: String, image: UIImage? = nil) {
+    init(record: ProjectImageRecord, path: String, image: UIImage) {
         self.record = record
         self.image = image
         self.path = path
@@ -47,11 +34,11 @@ extension ProjectImage: Hashable {
 struct ProjectImageInput {
     var record: ProjectImageRecord?
     var image: UIImage
-    
+
     init(image: UIImage) {
         self.image = image
     }
-    
+
     init(record: ProjectImageRecord, image: UIImage) {
         self.record = record
         self.image = image
