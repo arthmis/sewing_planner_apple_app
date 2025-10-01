@@ -74,21 +74,12 @@ struct ImageButton: View {
                 Image(uiImage: img)
                 .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: 75, height: 100)
+                    .frame(width: 100, height: 100)
                     .clipped()
-                    .clipShape(RoundedRectangle(cornerRadius: 9))
-                    .padding(8)
-//                    .shadow(color: Color(hex: 0x000000, opacity: isHovering ? 0.5 : 0.25), radius: isHovering ? 5 : 3, x: 0, y: 4)
-//                    .scaleEffect(isHovering ? 1.03 : 1, anchor: .center)
                     .animation(.easeIn(duration: 0.05), value: isPressed)
-                    .padding(4)
+//                    .padding(4)
                     .background(Color(hex: 0xDDDDDD, opacity: isPressed ? 1 : 0))
                     .background(Color(hex: 0x780606))
-                    .clipShape(RoundedRectangle(cornerRadius: 9))
-                    .animation(.easeIn(duration: 0.05), value: isHovering)
-//                    .onHover { hover in
-//                        isHovering = hover
-//                    }
 //                    .onTapGesture {
 //                        selectedImage = image.path
 //                        overlaySelectedImage = true
@@ -106,28 +97,19 @@ struct ImageButton: View {
                     selectedImage = image.path
                     overlaySelectedImage = true
                 } label: {
-//                    Image(nsImage: img)
                     Image(uiImage: img)
                     .resizable()
                         .aspectRatio(contentMode: .fill)
-                        .frame(width: 75, height: 100)
+                        .frame(width: 100, height: 100)
                         .clipped()
-                        .clipShape(RoundedRectangle(cornerRadius: 9))
-                        .padding(10)
-                        .shadow(color: Color(hex: 0x000000, opacity: isHovering ? 0.5 : 0.25), radius: isHovering ? 5 : 3, x: 0, y: 4)
-                        .scaleEffect(isHovering ? 1.03 : 1, anchor: .center)
                         .animation(.easeIn(duration: 0.05), value: isPressed)
-                        .padding(5)
+//                        .padding(5)
                         .background(Color(hex: 0xDDDDDD, opacity: isPressed ? 1 : 0))
-                        .clipShape(RoundedRectangle(cornerRadius: 9))
-                        .animation(.easeIn(duration: 0.05), value: isHovering)
+//                        .animation(.easeIn(duration: 0.05), value: isHovering)
                         // parts of the image that were clipped still respond to the mouse events so this constrains it to the correct area
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-//                .onHover { hover in
-//                    isHovering = hover
-//                }
                 .simultaneousGesture(
                     LongPressGesture(minimumDuration: 2)
                         .onEnded { _ in
@@ -145,29 +127,20 @@ struct ImageButton: View {
             // Place holder image if displaying an image fails or loading failed
             // TODO: think about if to use this or just display an error
             Button {
-                print(image.path)
                 selectedImage = image.path
                 overlaySelectedImage = true
             } label: {
                 Image("black_dress_sketch")
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: 75, height: 100)
+                    .frame(width: 100, height: 100)
                     .clipped()
-                    .clipShape(RoundedRectangle(cornerRadius: 9))
-                    .shadow(color: Color(hex: 0x000000, opacity: isHovering ? 0.5 : 0.25), radius: isHovering ? 5 : 3, x: 0, y: 4)
-//                    .scaleEffect(isHovering ? 1.03 : 1, anchor: .center)
                     .animation(.easeIn(duration: 0.05), value: isPressed)
                     .background(Color(hex: 0xDDDDDD, opacity: isPressed ? 1 : 0))
-                    .clipShape(RoundedRectangle(cornerRadius: 9))
-                    .animation(.easeIn(duration: 0.05), value: isHovering)
                     // parts of the image that were clipped still respond to the mouse events so this constrains it to the correct area
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .onHover { hover in
-                isHovering = hover
-            }
             .simultaneousGesture(
                 LongPressGesture(minimumDuration: 2)
                     .onEnded { _ in

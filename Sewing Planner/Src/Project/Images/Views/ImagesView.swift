@@ -57,7 +57,12 @@ struct ImagesView: View {
             }
             .frame(maxWidth: .infinity)
             ScrollView {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 100, maximum: 100), spacing: 4)]) {
+//                LazyVGrid(columns: [GridItem(.flexible(minimum: 100, maximum: 100), spacing: 0)], spacing: 0) {
+                LazyVGrid(columns: [
+                    GridItem(.flexible(minimum: 100, maximum: 100), spacing: 4),
+                    GridItem(.flexible(minimum: 100, maximum: 100), spacing: 4),
+                    GridItem(.flexible(minimum: 100, maximum: 100), spacing: 4)
+                ], spacing: 4) {
                     ForEach($projectImages.images, id: \.self.path) { $image in
                         ImageButton(image: $image, selectedImageForDeletion: $selectedImageForDeletion, overlaySelectedImage: $overlaySelectedImage, selectedImage: $selectedImage)
                     }
@@ -74,16 +79,19 @@ struct ImagesView: View {
                             selectedImage = nil
                         } label: {
                             Image(systemName: "xmark.circle")
+                                .font(.system(size: 22, weight: Font.Weight.thin))
+                                .foregroundStyle(Color.red)
                         }
+                        .padding(.bottom, 8)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    if let imgPath = selectedImage {
+                    if let imgIdentifier = selectedImage {
                         // TODO: figure out what to do if image doesn't exist, some default image
-                        Image(systemName: "xmark.circle")
-//                        Image(nsImage: projectImages.images.first(where: { $0.path == imgPath })?.image ?? NSImage(size: NSZeroSize))
-//                            .resizable()
-//                            .interpolation(.high)
-//                            .scaledToFit()
+                        Image(uiImage: projectImages.images.first(where: { $0.path == imgIdentifier })?.image ?? UIImage())
+                            .resizable()
+                            .interpolation(.high)
+                            .scaledToFit()
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                     } else {
                         // TODO: display a toast saying something went wrong and say try again
                         //                    overlaySelectedImage = false
