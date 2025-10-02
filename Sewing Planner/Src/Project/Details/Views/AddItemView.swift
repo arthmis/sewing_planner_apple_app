@@ -133,11 +133,11 @@ struct SecondaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         let isPressed = configuration.isPressed
         configuration.label
-            .padding([.top, .bottom], 12)
-            .padding([.leading, .trailing], 16)
+            .padding([.top, .bottom], 8)
+            .padding([.leading, .trailing], 8)
             .background(Color(hex: 0xEFEFEF, opacity: 0.5))
             .foregroundColor(.black)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .clipShape(RoundedRectangle(cornerRadius: 4))
             .scaleEffect(isPressed ? 0.95 : 1)
             .brightness(isPressed ? -0.05 : 0)
 //            .shadow(color: Color(hex: 0xCFCFCF), radius: isPressed ? 1.5 : 3, x: 1, y: 3)

@@ -5,7 +5,6 @@
 //  Created by Art on 9/12/24.
 //
 
-// import AppKit
 import GRDB
 import PhotosUI
 import SwiftUI
@@ -39,8 +38,23 @@ struct ImagesView: View {
                             selectedImages = Set()
                             isInDeleteMode = false
                         }
+                        .buttonStyle(SecondaryButtonStyle())
                         Spacer()
-                        Button("Delete") {
+                        Button {} label: {
+                            HStack {
+                                Text("Delete")
+                                Image(systemName: "trash")
+                                    .font(.system(size: 20, weight: Font.Weight.medium))
+                                    .foregroundStyle(Color.white)
+                            }
+                        }
+                        .disabled(selectedImages.isEmpty)
+                        .buttonStyle(DeleteButtonStyle())
+                        .simultaneousGesture(LongPressGesture(minimumDuration: 3).onEnded { _ in
+                            if selectedImages.isEmpty {
+                                return
+                            }
+
                             for imagePath in selectedImages {
                                 if let index = self.projectImages.images.firstIndex(where: { $0.path == imagePath }) {
                                     let image = self.projectImages.images.remove(at: index)
@@ -51,18 +65,17 @@ struct ImagesView: View {
 
                             isInDeleteMode = false
                             selectedImages = Set()
-                        }
+                        })
                     }
+                    .padding(.top, 16)
                 }
-                Spacer()
             }
             .frame(maxWidth: .infinity)
             ScrollView {
-//                LazyVGrid(columns: [GridItem(.flexible(minimum: 100, maximum: 100), spacing: 0)], spacing: 0) {
                 LazyVGrid(columns: [
-                    GridItem(.flexible(minimum: 100, maximum: 100), spacing: 4),
-                    GridItem(.flexible(minimum: 100, maximum: 100), spacing: 4),
-                    GridItem(.flexible(minimum: 100, maximum: 100), spacing: 4)
+                    GridItem(.flexible(minimum: 100, maximum: 400), spacing: 4),
+                    GridItem(.flexible(minimum: 100, maximum: 400), spacing: 4),
+//                    GridItem(.adaptive(minimum: 100), spacing: 4),
                 ], spacing: 4) {
                     ForEach($projectImages.images, id: \.self.path) { $image in
                         if !isInDeleteMode {
@@ -75,9 +88,9 @@ struct ImagesView: View {
                         }
                     }
                 }
-                .padding(8)
             }
         }
+        .padding([.horizontal, .bottom], 8)
         .overlay(alignment: .center) {
             if overlaySelectedImage {
                 VStack {
@@ -120,7 +133,6 @@ struct ImagesView: View {
         .frame(
             maxWidth: .infinity,
             maxHeight: .infinity,
-            alignment: .topLeading
         )
     }
 }

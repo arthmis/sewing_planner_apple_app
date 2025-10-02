@@ -20,7 +20,7 @@ struct ProjectView: View {
     @State var model = ProjectDetailData()
     @Binding var projectsNavigation: [ProjectMetadata]
     let fetchProjects: () -> Void
-    @State var currentView = CurrentView.details
+    @State var currentView = CurrentView.images
     @State var name = ""
     @State var showAddTextboxPopup = false
     @State var doesProjectHaveName = false
