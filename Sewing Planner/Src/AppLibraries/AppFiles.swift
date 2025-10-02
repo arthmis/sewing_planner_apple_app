@@ -96,4 +96,11 @@ struct AppFiles {
 
         return nil
     }
+    
+    func deleteImage(projectId: Int64, image: ProjectImage) throws {
+        let fileManager = FileManager.default
+        let filePath = getPathForImage(forProject: projectId, fileIdentifier: image.record.filePath)
+        
+        try fileManager.removeItem(at: filePath )
+    }
 }

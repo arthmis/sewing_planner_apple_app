@@ -20,7 +20,7 @@ struct ProjectView: View {
     @State var model = ProjectDetailData()
     @Binding var projectsNavigation: [ProjectMetadata]
     let fetchProjects: () -> Void
-    @State var currentView = CurrentView.images
+    @State var currentView = CurrentView.details
     @State var name = ""
     @State var showAddTextboxPopup = false
     @State var doesProjectHaveName = false
@@ -98,8 +98,6 @@ struct ProjectView: View {
                                 }
                             }
                         }
-//                        // later handle providing a link to an image and downloading it that way, saving into photos app
-//                        // add support for notes on each of the section items
                     }
                 }
             }

@@ -29,7 +29,7 @@ struct ImagesView: View {
     @State private var photosAppSelectedImage: Data?
     @State var errorToast = ErrorToast()
     @State var isInDeleteMode = false
-    
+
     var body: some View {
         VStack(alignment: .center) {
             HStack {
@@ -42,12 +42,12 @@ struct ImagesView: View {
                         Spacer()
                         Button("Delete") {
                             for imagePath in selectedImages {
-                                // TODO actually delete image record and delete image from file system
                                 if let index = self.projectImages.images.firstIndex(where: { $0.path == imagePath }) {
                                     let image = self.projectImages.images.remove(at: index)
                                     projectImages.deletedImages.append(image)
                                 }
                             }
+                            try! projectImages.deleteImages()
 
                             isInDeleteMode = false
                             selectedImages = Set()
