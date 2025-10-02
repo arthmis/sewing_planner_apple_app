@@ -75,10 +75,10 @@ struct ImageButton: View {
         Image(uiImage: image.image)
             .resizable()
             .aspectRatio(contentMode: .fill)
-            .frame(minWidth: 100, maxWidth: .infinity,  minHeight: 200, alignment: .center)
+            .frame(minWidth: 100, maxWidth: .infinity, minHeight: 200, alignment: .center)
             .clipped()
             .animation(.easeIn(duration: 0.05), value: isPressed)
-//                        .padding(5)
+
             .background(Color(hex: 0xDDDDDD, opacity: isPressed ? 1 : 0))
             // parts of the image that were clipped still respond to the mouse events so this constrains it to the correct area
             .contentShape(Rectangle())
@@ -110,12 +110,10 @@ struct SelectedImageButton: View {
         Image(uiImage: image.image)
             .resizable()
             .aspectRatio(contentMode: .fill)
-            .frame(minWidth: 100, maxWidth: .infinity,  minHeight: 200, alignment: .center)
+            .frame(minWidth: 100, maxWidth: .infinity, minHeight: 200, alignment: .center)
             .clipped()
             .animation(.easeIn(duration: 0.05), value: isPressed)
-//                        .padding(5)
             .background(Color(hex: 0xDDDDDD, opacity: isPressed ? 1 : 0))
-            .background(isSelectedForDeletion ? Color.blue : Color.white)
             // parts of the image that were clipped still respond to the mouse events so this constrains it to the correct area
             .contentShape(Rectangle())
             .onTapGesture {
@@ -123,6 +121,23 @@ struct SelectedImageButton: View {
                     selectedImages.insert(image.path)
                 } else {
                     selectedImages.remove(image.path)
+                }
+            }
+            .overlay(alignment: .center) {
+                if isSelectedForDeletion {
+                    Rectangle()
+                        .foregroundStyle(Color.gray.opacity(0.4))
+                }
+            }
+            .overlay(alignment: .bottomTrailing) {
+                if isSelectedForDeletion {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 24))
+                        .foregroundStyle(.white, .white, .blue)
+                        .frame(width: 28, height: 28)
+                        .background(Color.white)
+                        .clipShape(Circle())
+                        .padding([.bottom, .trailing], 16)
                 }
             }
             .onPress {
