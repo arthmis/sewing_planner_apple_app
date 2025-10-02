@@ -50,7 +50,7 @@ struct ImagesView: View {
                         }
                         .disabled(selectedImages.isEmpty)
                         .buttonStyle(DeleteButtonStyle())
-                        .simultaneousGesture(LongPressGesture(minimumDuration: 3).onEnded { _ in
+                        .simultaneousGesture(LongPressGesture(minimumDuration: 2).onEnded { _ in
                             if selectedImages.isEmpty {
                                 return
                             }
@@ -79,12 +79,12 @@ struct ImagesView: View {
                 ], spacing: 4) {
                     ForEach($projectImages.images, id: \.self.path) { $image in
                         if !isInDeleteMode {
-                            ImageButton(image: $image, selectedImages: $selectedImages, overlaySelectedImage: $overlaySelectedImage, selectedImage: $overlayedImage)
+                            ImageButton(image: $image, selectedImagesForDeletion: $selectedImages, overlaySelectedImage: $overlaySelectedImage, selectedImage: $overlayedImage)
                                 .onLongPressGesture {
                                     isInDeleteMode = true
                                 }
                         } else {
-                            SelectedImageButton(image: $image, selectedImages: $selectedImages, overlaySelectedImage: $overlaySelectedImage, selectedImage: $overlayedImage)
+                            SelectedImageButton(image: $image, selectedImagesForDeletion: $selectedImages, overlaySelectedImage: $overlaySelectedImage, selectedImage: $overlayedImage)
                         }
                     }
                 }

@@ -62,13 +62,14 @@ extension View {
 struct ImageButton: View {
     @State var isHovering = false
     @Binding var image: ProjectImage
-    @Binding var selectedImages: Set<String?>
+    // TODO remove this binding, isn't used
+    @Binding var selectedImagesForDeletion: Set<String?>
     @Binding var overlaySelectedImage: Bool
     @Binding var selectedImage: String?
     @State var isPressed = false
 
     var isSelectedForDeletion: Bool {
-        selectedImages.contains(image.path)
+        selectedImagesForDeletion.contains(image.path)
     }
 
     var body: some View {
@@ -97,13 +98,13 @@ struct ImageButton: View {
 struct SelectedImageButton: View {
     @State var isHovering = false
     @Binding var image: ProjectImage
-    @Binding var selectedImages: Set<String?>
+    @Binding var selectedImagesForDeletion: Set<String?>
     @Binding var overlaySelectedImage: Bool
     @Binding var selectedImage: String?
     @State var isPressed = false
 
     var isSelectedForDeletion: Bool {
-        selectedImages.contains(image.path)
+        selectedImagesForDeletion.contains(image.path)
     }
 
     var body: some View {
@@ -116,13 +117,6 @@ struct SelectedImageButton: View {
             .background(Color(hex: 0xDDDDDD, opacity: isPressed ? 1 : 0))
             // parts of the image that were clipped still respond to the mouse events so this constrains it to the correct area
             .contentShape(Rectangle())
-            .onTapGesture {
-                if !isSelectedForDeletion {
-                    selectedImages.insert(image.path)
-                } else {
-                    selectedImages.remove(image.path)
-                }
-            }
             .overlay(alignment: .center) {
                 if isSelectedForDeletion {
                     Rectangle()
@@ -138,6 +132,13 @@ struct SelectedImageButton: View {
                         .background(Color.white)
                         .clipShape(Circle())
                         .padding([.bottom, .trailing], 16)
+                }
+            }
+            .onTapGesture {
+                if !isSelectedForDeletion {
+                    selectedImagesForDeletion.insert(image.path)
+                } else {
+                    selectedImagesForDeletion.remove(image.path)
                 }
             }
             .onPress {
