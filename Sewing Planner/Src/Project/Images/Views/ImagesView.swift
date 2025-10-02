@@ -70,6 +70,7 @@ struct ImagesView: View {
                     .padding(.top, 16)
                 }
             }
+            .animation(.smooth(duration: 0.1), value: isInDeleteMode)
             .frame(maxWidth: .infinity)
             ScrollView {
                 LazyVGrid(columns: [
@@ -134,6 +135,7 @@ struct ImagesView: View {
             maxWidth: .infinity,
             maxHeight: .infinity,
         )
+        .animation(.smooth(duration: 0.25), value: isInDeleteMode)
     }
 }
 
