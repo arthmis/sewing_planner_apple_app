@@ -80,6 +80,7 @@ struct ProjectName: View {
             }
         }
         .frame(maxWidth: .infinity)
+        .padding(.top, 16)
         .onAppear {
             if project.data.name != "" {
                 project.bindedName = project.data.name

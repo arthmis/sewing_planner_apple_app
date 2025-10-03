@@ -25,24 +25,28 @@ struct ItemView: View {
     }
 
     var body: some View {
-        if isEditing {
-            UpdateItemView(data: $data, isEditing: $isEditing, newText: $newText, newNoteText: $newNoteText, updateText: updateText, resetToPreviousText: resetToPreviousText)
-        } else {
-            VStack(alignment: .leading) {
-                HStack(alignment: .firstTextBaseline) {
-                    Toggle(data.record.text, isOn: $data.record.isComplete).toggleStyle(CheckboxStyle(id: data.record.id, hasNote: hasNote, updateCompletedState: updateCompletedState,))
-                    Spacer()
+        VStack {
+            if isEditing {
+                UpdateItemView(data: $data, isEditing: $isEditing, newText: $newText, newNoteText: $newNoteText, updateText: updateText, resetToPreviousText: resetToPreviousText)
+                    .transition(.growFromTop)
+            } else {
+                VStack(alignment: .leading) {
+                    HStack(alignment: .firstTextBaseline) {
+                        Toggle(data.record.text, isOn: $data.record.isComplete).toggleStyle(CheckboxStyle(id: data.record.id, hasNote: hasNote, updateCompletedState: updateCompletedState,))
+                        Spacer()
+                    }
                 }
-            }
-            .contentShape(Rectangle())
-            .onTapGesture {
-                if !isEditing {
-                    isEditing = true
-                    newText = data.record.text
-                    newNoteText = data.note != nil ? data.note!.text : ""
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    if !isEditing {
+                        isEditing = true
+                        newText = data.record.text
+                        newNoteText = data.note != nil ? data.note!.text : ""
+                    }
                 }
             }
         }
+        .animation(.linear(duration: 0.075), value: isEditing)
     }
 }
 
@@ -67,8 +71,31 @@ struct CheckboxStyle: ToggleStyle {
                     .foregroundStyle(Color.gray)
                     .padding(.horizontal, 4)
             }
-//            }
         }
+    }
+}
+
+// 1. Create a ViewModifier that handles the scaling effect.
+// We use a near-zero value for the start to avoid division-by-zero issues.
+struct VerticalScaleModifier: ViewModifier {
+    var scaleY: CGFloat
+    
+    func body(content: Content) -> some View {
+        content.scaleEffect(x: 1, y: scaleY, anchor: .top)
+    }
+}
+
+// 2. Create a static extension on AnyTransition to make our new transition reusable.
+extension AnyTransition {
+    static var growFromTop: AnyTransition {
+        .modifier(
+            // `active` is the state during the transition (view is appearing)
+            active: VerticalScaleModifier(scaleY: 0.00001),
+
+            // `identity` is the final state (view is fully visible)
+            identity: VerticalScaleModifier(scaleY: 1)
+        )
+        .combined(with: .opacity) // Adding opacity makes it look smoother
     }
 }
 

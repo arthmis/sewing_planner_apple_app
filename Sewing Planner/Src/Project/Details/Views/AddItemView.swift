@@ -29,7 +29,6 @@ struct AddItemView: View {
         let validText = newItem.trimmingCharacters(in: .whitespacesAndNewlines)
         let validNoteText = itemNote.trimmingCharacters(in: .whitespacesAndNewlines)
         let noteText = validNoteText.isEmpty ? nil : validNoteText
-        
         do {
             try addItem(newItem, noteText)
         } catch {
@@ -47,18 +46,21 @@ struct AddItemView: View {
             VStack(alignment: .leading) {
                 VStack {
                     HStack {
-
-                    TextField("Task", text: $newItem, axis: .vertical).onSubmit {
-                        add()
-                    }
-                    .textFieldStyle(.plain)
-                    .padding(.vertical, 4)
-                    .frame(maxWidth: .infinity)
+                        TextField("Task", text: $newItem, axis: .vertical).onSubmit {
+                            withAnimation(.spring(duration: 0.25)) {
+                                add()
+                            }
+                        }
+                        .textFieldStyle(.plain)
+                        .padding(.vertical, 4)
+                        .frame(maxWidth: .infinity)
                         Button {
-                            showErrorText = false
-                            isAddingItem = false
-                            newItem = ""
-                            itemNote = ""
+                            withAnimation(.spring(duration: 0.25)) {
+                                showErrorText = false
+                                isAddingItem = false
+                                newItem = ""
+                                itemNote = ""
+                            }
                         } label: {
                             Image(systemName: "xmark.circle")
                                 .foregroundStyle(Color.red)
@@ -100,7 +102,9 @@ struct AddItemView: View {
                 }
                 HStack(alignment: .lastTextBaseline) {
                     Button {
-                        add()
+                        withAnimation(.spring(duration: 0.25)) {
+                            add()
+                        }
                     } label: {
                         Image(systemName: "arrow.up.circle.fill")
                             .font(.system(size: 32))
@@ -114,7 +118,9 @@ struct AddItemView: View {
             .clipShape(RoundedRectangle(cornerRadius: 8))
         } else {
             Button {
-                isAddingItem = true
+                withAnimation(.spring(duration: 0.25)) {
+                    isAddingItem = true
+                }
 //                addItemFocus = true
             }
             label: {
@@ -149,7 +155,7 @@ struct SecondaryButtonStyle: ButtonStyle {
     @Previewable @State var isAddingItem = true
     @Previewable @State var newItem = ""
 
-    AddItemView(isAddingItem: $isAddingItem, addItem: { val, note throws in print(val) })
+    AddItemView(isAddingItem: $isAddingItem, addItem: { val, _ throws in print(val) })
         .frame(height: 300)
         .padding(8)
 }
