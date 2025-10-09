@@ -28,7 +28,7 @@ struct ItemView: View {
         VStack {
             if isEditing {
                 UpdateItemView(data: $data, isEditing: $isEditing, newText: $newText, newNoteText: $newNoteText, updateText: updateText, resetToPreviousText: resetToPreviousText)
-                    .transition(.growFromTop)
+                    .transition(.revealFrom(edge: .top).combined(with: .opacity))
             } else {
                 VStack(alignment: .leading) {
                     HStack(alignment: .firstTextBaseline) {
@@ -72,30 +72,6 @@ struct CheckboxStyle: ToggleStyle {
                     .padding(.horizontal, 4)
             }
         }
-    }
-}
-
-// 1. Create a ViewModifier that handles the scaling effect.
-// We use a near-zero value for the start to avoid division-by-zero issues.
-struct VerticalScaleModifier: ViewModifier {
-    var scaleY: CGFloat
-    
-    func body(content: Content) -> some View {
-        content.scaleEffect(x: 1, y: scaleY, anchor: .top)
-    }
-}
-
-// 2. Create a static extension on AnyTransition to make our new transition reusable.
-extension AnyTransition {
-    static var growFromTop: AnyTransition {
-        .modifier(
-            // `active` is the state during the transition (view is appearing)
-            active: VerticalScaleModifier(scaleY: 0.00001),
-
-            // `identity` is the final state (view is fully visible)
-            identity: VerticalScaleModifier(scaleY: 1)
-        )
-        .combined(with: .opacity) // Adding opacity makes it look smoother
     }
 }
 
