@@ -86,11 +86,13 @@ struct ProjectView: View {
                                     switch result {
                                     case let .some(files):
                                         let img = UIImage(data: files)!
-                                        // TODO: think about how to deal with path that couldn't become an image
-                                        // I'm thinking display an error alert that lists every image that couldn't be uploaded
+                                        // TODO: Performance problem here, scale the images in a background task
+                                        let resizedImage = img.scaleToAppImageMaxDimension()
                                         let projectImage = ProjectImageInput(image: img)
                                         try! model.projectImages.importImages([projectImage])
                                     case .none:
+                                        // TODO: think about how to deal with path that couldn't become an image
+                                        // I'm thinking display an error alert that lists every image that couldn't be uploaded
                                         print("couldn't load image")
                                         //                                        errorToast = ErrorToast(show: true, message: "Error importing images. Please try again later")
                                         // log error

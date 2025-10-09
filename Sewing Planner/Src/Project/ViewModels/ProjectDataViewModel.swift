@@ -115,7 +115,7 @@ class ProjectImages {
                 }
             }
         }
-        
+
         deletedImages.removeAll()
     }
 }
