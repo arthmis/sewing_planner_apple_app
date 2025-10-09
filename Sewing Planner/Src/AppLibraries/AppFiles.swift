@@ -78,12 +78,23 @@ struct AppFiles {
         let projectPhotosPath = getProjectPhotoDirectoryPath(projectId: project)
         return projectPhotosPath.appendingPathComponent(fileIdentifier).appendingPathExtension(for: .png)
     }
-
-    func getImage(fromPath path: URL) -> UIImage? {
+    
+    func getImage(for file: String, fromProject projectId: Int64) -> UIImage? {
         let fileManager = FileManager.default
+        let filePath = getPathForImage(forProject: projectId, fileIdentifier: file)
 
-        let filePath = path.path()
-        if let data = fileManager.contents(atPath: filePath) {
+        if let data = fileManager.contents(atPath: filePath.path()) {
+            return UIImage(data: data)
+        }
+
+        return nil
+    }
+
+    func getThumbnailImage(for file: String, fromProject projectId: Int64) -> UIImage? {
+        let fileManager = FileManager.default
+        let filePath = getPathForThumbnail(withIdentifier: file, forProject: projectId)
+
+        if let data = fileManager.contents(atPath: filePath.path()) {
             return UIImage(data: data)
         }
 

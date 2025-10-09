@@ -127,8 +127,7 @@ extension AppDatabase {
                 let projectIdColumn = Column("projectId")
                 // can unwrap project.id because an image can't be stored without having a project id
                 if let record = try ProjectImageRecord.all().filter(projectIdColumn == project.id!).order(Column("id")).fetchOne(db) {
-                    let imagePath = AppFiles().getPathForImage(forProject: project.id!, fileIdentifier: record.filePath)
-                    let image = AppFiles().getImage(fromPath: imagePath)
+                    let image = AppFiles().getThumbnailImage(for: record.thumbnail, fromProject: project.id!)
                     let projectImage = ProjectDisplayImage(record: record, path: record.filePath, image: image)
                     projectDisplayData.append(ProjectDisplay(project: project, image: projectImage))
                 } else {
@@ -182,13 +181,12 @@ extension AppDatabase {
 
             var projectImages: [ProjectImage] = []
             for record in records {
-                let imagePath = AppFiles().getPathForImage(forProject: projectId, fileIdentifier: record.filePath)
-                let image = AppFiles().getImage(fromPath: imagePath)
-                guard let imageData = image else {
-                    // TODO add logging if this fails
+                let thumbnailData = AppFiles().getThumbnailImage(for: record.thumbnail, fromProject: projectId)
+                guard let thumbnail = thumbnailData else {
+                    NSLog("couldn't get image thumbnail \(record.thumbnail) for project: \(projectId)")
                     continue
                 }
-                let projectImage = ProjectImage(record: record, path: record.filePath, image: imageData)
+                let projectImage = ProjectImage(record: record, path: record.filePath, image: thumbnail)
                 projectImages.append(projectImage)
             }
 
