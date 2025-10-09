@@ -48,7 +48,7 @@ struct AppFiles {
         let fileIdentifier = UUID().uuidString
         let newFilePath = imagesFolderForProject.appendingPathComponent(fileIdentifier).appendingPathExtension(for: .png)
 
-        let thumbnailSize = image.image.scaleDimensions(maxDimension: 200)
+        let thumbnailSize = image.image.scaleDimensions(maxDimension: 300)
         let thumbnailIdentifier = UUID().uuidString
 
         image.image.prepareThumbnail(of: thumbnailSize) { thumbnailImage in
@@ -170,6 +170,7 @@ extension AppFiles {
         }
 
         let thumbnailPath = getPathForThumbnail(withIdentifier: thumbnailIdentifier, forProject: projectId)
+        // TODO deal with createFileSuccess
         let createFileSuccess = fileManager.createFile(atPath: thumbnailPath.path(), contents: data)
     }
 }

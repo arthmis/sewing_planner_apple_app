@@ -108,8 +108,9 @@ struct ImagesView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     if let imgIdentifier = overlayedImage {
+                        let overlayedImage = AppFiles().getImage(for: imgIdentifier, fromProject: projectImages.projectId)
                         // TODO: figure out what to do if image doesn't exist, some default image
-                        Image(uiImage: projectImages.images.first(where: { $0.path == imgIdentifier })?.image ?? UIImage())
+                        Image(uiImage: overlayedImage ?? UIImage())
                             .resizable()
                             .interpolation(.high)
                             .scaledToFit()
