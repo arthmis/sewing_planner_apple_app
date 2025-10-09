@@ -12,6 +12,7 @@ struct ProjectImageRecord: Identifiable, Codable, EncodableRecord, FetchableReco
     var id: Int64
     var projectId: Int64
     var filePath: String
+    var thumbnail: String
     var isDeleted: Bool
     var createDate: Date
     var updateDate: Date
@@ -21,6 +22,7 @@ struct ProjectImageRecord: Identifiable, Codable, EncodableRecord, FetchableReco
         id = input.id!
         projectId = input.projectId
         filePath = input.filePath
+        thumbnail = input.thumbnail
         isDeleted = input.isDeleted
         createDate = input.createDate
         updateDate = input.updateDate
@@ -31,6 +33,7 @@ struct ProjectImageRecordInput: Identifiable, Codable, EncodableRecord, MutableP
     var id: Int64?
     var projectId: Int64
     var filePath: String
+    var thumbnail: String
     var isDeleted: Bool
     var createDate: Date
     var updateDate: Date

@@ -17,25 +17,25 @@ extension UIImage {
     
     // TODO write a test for this or resizeImageTo
     func scaleToAppImageMaxDimension() -> UIImage {
-        let (newWidth, newHeight) = self.scaleDimensions(maxDimension: UIImage.maxDimension)
-        return resizeImageTo(size: CGSize(width: newWidth, height: newHeight))
+        let newSize = self.scaleDimensions(maxDimension: UIImage.maxDimension)
+        return resizeImageTo(size: newSize)
     }
     
-    fileprivate func scaleDimensions(maxDimension: Double) -> (Double, Double) {
+    func scaleDimensions(maxDimension: Double) -> CGSize {
         if self.size.width >= self.size.height {
             if (self.size.width < maxDimension) {
-                return (self.size.width, self.size.height)
+                return CGSize(width: self.size.width, height: self.size.height)
             }
             
             let scale = maxDimension / self.size.width
-            return (self.size.width * scale, self.size.height * scale)
+            return CGSize(width: self.size.width * scale, height: self.size.height * scale)
         } else {
             if (self.size.height < maxDimension) {
-                return (self.size.width, self.size.height)
+                return CGSize(width: self.size.width, height: self.size.height)
             }
             
             let scale = maxDimension / self.size.height
-            return (self.size.width * scale, self.size.height * scale)
+            return CGSize(width: self.size.width * scale, height: self.size.height * scale)
         }
     }
 }

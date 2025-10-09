@@ -11,13 +11,6 @@ import SwiftUI
 import System
 
 struct AppFiles {
-    private func getPhotosDirectoryPath() -> URL {
-        let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        let usersPhotosUrl = documentsURL.appendingPathComponent("ProjectPhotos")
-
-        return usersPhotosUrl
-    }
-
     // only used when the schema is changed during development
     // ensures the images don't conflict with new images
     func deleteImagesFolder() {
@@ -28,21 +21,7 @@ struct AppFiles {
         }
     }
 
-    func getProjectPhotoDirectoryPath(projectId: Int64) -> URL {
-        let photosDirectory = getPhotosDirectoryPath()
-
-        return photosDirectory.appendingPathComponent(String(projectId))
-    }
-
-    private func photoDirectoryExists() -> Bool {
-        FileManager.default.fileExists(atPath: getPhotosDirectoryPath().path())
-    }
-
-    private func projectPhotoDirectoryExists(id: Int64) -> Bool {
-        FileManager.default.fileExists(atPath: getProjectPhotoDirectoryPath(projectId: id).path())
-    }
-
-    func saveProjectImage(projectId: Int64, image: ProjectImageInput) throws -> String? {
+    func saveProjectImage(projectId: Int64, image: ProjectImageInput) throws -> (String, String)? {
         let fileManager = FileManager.default
         let usersPhotosUrl = getPhotosDirectoryPath()
 
@@ -69,6 +48,21 @@ struct AppFiles {
         let fileIdentifier = UUID().uuidString
         let newFilePath = imagesFolderForProject.appendingPathComponent(fileIdentifier).appendingPathExtension(for: .png)
 
+        let thumbnailSize = image.image.scaleDimensions(maxDimension: 200)
+        let thumbnailIdentifier = UUID().uuidString
+
+        image.image.prepareThumbnail(of: thumbnailSize) { thumbnailImage in
+            if let thumbnail = thumbnailImage {
+                let data = thumbnail.pngData()
+                do {
+                    try createThumbnailForImage(withIdentifier: thumbnailIdentifier, forProject: projectId, withContents: data)
+                } catch {
+                    // TODO: figure out better logging
+                    NSLog("couldn't create thumbnail for image: \(fileIdentifier) for project: \(projectId)")
+                }
+            }
+        }
+
         let data = image.image.pngData()
         let createFileSuccess = fileManager.createFile(atPath: newFilePath.path(), contents: data)
 
@@ -77,11 +71,10 @@ struct AppFiles {
             return nil
         }
 
-        return fileIdentifier
+        return (fileIdentifier, thumbnailIdentifier)
     }
-    
+
     func getPathForImage(forProject project: Int64, fileIdentifier: String) -> URL {
-        let fileManager = FileManager.default
         let projectPhotosPath = getProjectPhotoDirectoryPath(projectId: project)
         return projectPhotosPath.appendingPathComponent(fileIdentifier).appendingPathExtension(for: .png)
     }
@@ -96,11 +89,76 @@ struct AppFiles {
 
         return nil
     }
-    
+
     func deleteImage(projectId: Int64, image: ProjectImage) throws {
         let fileManager = FileManager.default
         let filePath = getPathForImage(forProject: projectId, fileIdentifier: image.record.filePath)
+
+        try fileManager.removeItem(at: filePath)
+    }
+}
+
+extension AppFiles {
+    private func getPhotosDirectoryPath() -> URL {
+        let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let usersPhotosUrl = documentsURL.appendingPathComponent("ProjectPhotos")
+
+        return usersPhotosUrl
+    }
+
+    func getProjectPhotoDirectoryPath(projectId: Int64) -> URL {
+        let photosDirectory = getPhotosDirectoryPath()
+
+        return photosDirectory.appendingPathComponent(String(projectId))
+    }
+
+    private func photoDirectoryExists() -> Bool {
+        FileManager.default.fileExists(atPath: getPhotosDirectoryPath().path())
+    }
+
+    private func projectPhotoDirectoryExists(id: Int64) -> Bool {
+        FileManager.default.fileExists(atPath: getProjectPhotoDirectoryPath(projectId: id).path())
+    }
+}
+
+extension AppFiles {
+    private func appPhotoThumbnailsDirectoryExists() -> Bool {
+        FileManager.default.fileExists(atPath: getAppPhotosThumbnailDirectoryPath().path())
+    }
+
+    private func projectPhotosThumbnailsDirectoryExists(id: Int64) -> Bool {
+        FileManager.default.fileExists(atPath: getProjectPhotosThumbnailsPath(projectId: id).path())
+    }
+
+    private func getAppPhotosThumbnailDirectoryPath() -> URL {
+        let cacheUrl = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        return cacheUrl.appendingPathComponent("ProjectPhotosThumbnails")
+    }
+
+    private func getProjectPhotosThumbnailsPath(projectId: Int64) -> URL {
+        let thumbnailsDirectory = getAppPhotosThumbnailDirectoryPath()
+
+        return thumbnailsDirectory.appendingPathComponent(String(projectId))
+    }
+
+    func getPathForThumbnail(withIdentifier fileIdentifier: String, forProject project: Int64) -> URL {
+        let projectPhotosPath = getProjectPhotosThumbnailsPath(projectId: project)
+        return projectPhotosPath.appendingPathComponent(fileIdentifier).appendingPathExtension(for: .png)
+    }
+
+    private func createThumbnailForImage(withIdentifier thumbnailIdentifier: String, forProject projectId: Int64, withContents data: Data?) throws {
+        let fileManager = FileManager.default
         
-        try fileManager.removeItem(at: filePath )
+        let thumbnailsFolderForProject = getProjectPhotosThumbnailsPath(projectId: projectId)
+        if !projectPhotosThumbnailsDirectoryExists(id: projectId) {
+            do {
+                try fileManager.createDirectory(at: thumbnailsFolderForProject, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                fatalError("Error \(error)")
+            }
+        }
+
+        let thumbnailPath = getPathForThumbnail(withIdentifier: thumbnailIdentifier, forProject: projectId)
+        let createFileSuccess = fileManager.createFile(atPath: thumbnailPath.path(), contents: data)
     }
 }
