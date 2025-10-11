@@ -42,8 +42,8 @@ struct SectionInputRecord: Hashable, Identifiable, Codable, EncodableRecord, Mut
 }
 
 struct SectionItemRecord: Hashable, Identifiable, Codable, EncodableRecord, FetchableRecord, MutablePersistableRecord, TableRecord {
-    var id: Int64?
-    var sectionId: Int64?
+    var id: Int64
+    var sectionId: Int64
     var text: String = ""
     var isComplete: Bool = false
     var isDeleted = false
@@ -62,8 +62,36 @@ struct SectionItemRecord: Hashable, Identifiable, Codable, EncodableRecord, Fetc
         id = inserted.rowID
     }
 
-    init(text: String, order: Int64) {
+    init(from record: SectionItemInputRecord) {
+        self.id = record.id!
+        self.sectionId = record.sectionId
+        self.text = record.text
+        self.isComplete = record.isComplete
+        self.isDeleted = record.isDeleted
+        self.order = record.order
+        self.createDate = record.createDate
+        self.updateDate = record.updateDate
+    }
+}
+
+struct SectionItemInputRecord: Hashable, Identifiable, Codable, EncodableRecord, FetchableRecord, MutablePersistableRecord, TableRecord {
+    var id: Int64?
+    var sectionId: Int64
+    var text: String = ""
+    var isComplete: Bool = false
+    var isDeleted = false
+    var order: Int64
+    var createDate: Date = .init()
+    var updateDate: Date = .init()
+    static let databaseTableName = "sectionItem"
+
+    mutating func didInsert(_ inserted: InsertionSuccess) {
+        id = inserted.rowID
+    }
+
+    init(text: String, order: Int64, sectionId: Int64) {
         self.text = text
+        self.sectionId = sectionId
         isComplete = false
         let now = Date()
         createDate = now
@@ -71,9 +99,10 @@ struct SectionItemRecord: Hashable, Identifiable, Codable, EncodableRecord, Fetc
         self.order = order
     }
 
-    init(id: Int64, text: String, order: Int64) {
+    init(id: Int64, text: String, order: Int64, sectionId: Int64) {
         self.id = id
         self.text = text
+        self.sectionId = sectionId
         isComplete = false
         let now = Date()
         createDate = now
@@ -81,7 +110,6 @@ struct SectionItemRecord: Hashable, Identifiable, Codable, EncodableRecord, Fetc
         self.order = order
     }
 }
-
 
 struct SectionItemNoteRecord: Hashable, Identifiable, Codable, EncodableRecord, FetchableRecord, MutablePersistableRecord, TableRecord {
     var id: Int64?

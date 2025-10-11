@@ -31,12 +31,13 @@ class Section {
         try db.getWriter().write { db in
             // TODO: do this in a transaction or see if the write is already a transaction
             let order = Int64(items.count)
-            var record = SectionItemRecord(text: text.trimmingCharacters(in: .whitespacesAndNewlines), order: order)
-            record.sectionId = section.id
-            try record.save(db)
+            var recordInput = SectionItemInputRecord(text: text.trimmingCharacters(in: .whitespacesAndNewlines), order: order, sectionId: section.id)
+            recordInput.sectionId = section.id
+            try recordInput.save(db)
+            let record = SectionItemRecord(from: recordInput)
 
             if let noteText = note {
-                var noteRecord = SectionItemNoteRecord(text: noteText.trimmingCharacters(in: .whitespacesAndNewlines), sectionItemId: record.id!)
+                var noteRecord = SectionItemNoteRecord(text: noteText.trimmingCharacters(in: .whitespacesAndNewlines), sectionItemId: record.id)
                 try noteRecord.save(db)
                 let sectionItem = SectionItem(record: record, note: noteRecord)
                 items.append(sectionItem)
@@ -50,11 +51,9 @@ class Section {
     func updateItem(id: Int64) throws {
         try db.getWriter().write { db in
             for var item in items {
-                if let itemId = item.record.id {
-                    if itemId == id {
-                        try item.record.save(db)
-                        try item.note?.save(db)
-                    }
+                if item.record.id == id {
+                    try item.record.save(db)
+                    try item.note?.save(db)
                 }
             }
         }
@@ -90,7 +89,7 @@ class Section {
                         items[i].note = itemNote
                     } else {
                         let trimmedNoteText = noteText.trimmingCharacters(in: .whitespacesAndNewlines)
-                        item.note = SectionItemNoteRecord(text: trimmedNoteText, sectionItemId: item.record.id!)
+                        item.note = SectionItemNoteRecord(text: trimmedNoteText, sectionItemId: item.record.id)
                         try item.note?.save(db)
                         items[i].note = item.note
                     }
@@ -103,10 +102,7 @@ class Section {
         try db.getWriter().write { db in
             for id in selectedItems {
                 let maybeIndex = items.firstIndex { val in
-                    if let valId = val.record.id {
-                        return valId == id
-                    }
-                    return false
+                    return val.record.id == id
                 }
                 if let index = maybeIndex {
                     var deletedItem = items.remove(at: index)
@@ -119,7 +115,7 @@ class Section {
 
     func updateCompletedState(id: Int64) throws {
         try db.getWriter().write { db in
-            if var item = items.first(where: { $0.record.id! == id }) {
+            if var item = items.first(where: { $0.record.id == id }) {
                 item.record.isComplete.toggle()
                 try item.record.save(db)
             }

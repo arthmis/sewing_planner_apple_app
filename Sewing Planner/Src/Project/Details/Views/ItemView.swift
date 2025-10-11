@@ -75,18 +75,18 @@ struct CheckboxStyle: ToggleStyle {
     }
 }
 
-#Preview {
-    @Previewable @State var val = SectionItem(record: SectionItemRecord(text: "This is really long task to see how it gets displayed. Making this message way longer because it still isn't long enough", order: 1), note: SectionItemNoteRecord(text: "string", sectionItemId: 1))
-    var updateText: (Int64, String, String?) throws -> Void
-    var updateCompletedState: (Int64) throws -> Void
-
-    ItemView(data: $val) { id, _, _ in
-        print(id)
-    } updateCompletedState: { id in
-        print(id)
-    }
-    .padding(30)
-    .border(Color.black, width: 1)
-    .frame(maxWidth: 400, maxHeight: 400)
-    .background(.white)
-}
+//#Preview {
+//    @Previewable @State var val = SectionItem(record: SectionItemRecord(text: "This is really long task to see how it gets displayed. Making this message way longer because it still isn't long enough", order: 1), note: SectionItemNoteRecord(text: "string", sectionItemId: 1))
+//    var updateText: (Int64, String, String?) throws -> Void
+//    var updateCompletedState: (Int64) throws -> Void
+//
+//    ItemView(data: $val) { id, _, _ in
+//        print(id)
+//    } updateCompletedState: { id in
+//        print(id)
+//    }
+//    .padding(30)
+//    .border(Color.black, width: 1)
+//    .frame(maxWidth: 400, maxHeight: 400)
+//    .background(.white)
+//}

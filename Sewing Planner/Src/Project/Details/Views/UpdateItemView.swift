@@ -32,7 +32,7 @@ struct UpdateItemView: View {
         let noteText = validNoteText.isEmpty ? nil : validNoteText
 
         do {
-            try updateText(data.record.id!, validText, noteText)
+            try updateText(data.record.id, validText, noteText)
         } catch {
             fatalError("\(error)")
         }
@@ -91,11 +91,11 @@ struct UpdateItemView: View {
     }
 }
 
-#Preview {
-    @Previewable @State var record = SectionItem(record: SectionItemRecord(id: 1, text: "something", order: 0), note: SectionItemNoteRecord(text: "nonte", sectionItemId: 1))
-    @Previewable @State var isEditing = true
-    @Previewable @State var newText = ""
-    @Previewable @State var newNoteText = ""
-    UpdateItemView(data: $record, isEditing: $isEditing, newText: $newText, newNoteText: $newNoteText, updateText: { id, text, _ throws in print(id, text) }, resetToPreviousText: { () in print("resetting") })
-        .frame(height: 300)
-}
+//#Preview {
+//    @Previewable @State var record = SectionItem(record: SectionItemRecord(id: 1, text: "something", order: 0), note: SectionItemNoteRecord(text: "nonte", sectionItemId: 1))
+//    @Previewable @State var isEditing = true
+//    @Previewable @State var newText = ""
+//    @Previewable @State var newNoteText = ""
+//    UpdateItemView(data: $record, isEditing: $isEditing, newText: $newText, newNoteText: $newNoteText, updateText: { id, text, _ throws in print(id, text) }, resetToPreviousText: { () in print("resetting") })
+//        .frame(height: 300)
+//}

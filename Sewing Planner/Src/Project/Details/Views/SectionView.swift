@@ -148,7 +148,7 @@ struct SelectedSectionItemView: View {
     var updateCompletedState: (Int64) throws -> Void
 
     var isSelected: Bool {
-        selected.contains(data.record.id!)
+        selected.contains(data.record.id)
     }
 
     private var hasNote: Bool {
@@ -166,9 +166,9 @@ struct SelectedSectionItemView: View {
         .background(isSelected ? Color.blue : Color.white)
         .onTapGesture {
             if !isSelected {
-                selected.insert(data.record.id!)
+                selected.insert(data.record.id)
             } else {
-                selected.remove(data.record.id!)
+                selected.remove(data.record.id)
             }
         }
     }
