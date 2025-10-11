@@ -159,7 +159,7 @@ extension AppDatabase {
                 .fetchAll(db)
 
             for sectionRecord in sectionRecords {
-                let sectionItems = try getSectionItems(sectionId: sectionRecord.id!, from: db)
+                let sectionItems = try getSectionItems(sectionId: sectionRecord.id, from: db)
                 sections.append(Section(section: sectionRecord, items: sectionItems, id: UUID()))
             }
 

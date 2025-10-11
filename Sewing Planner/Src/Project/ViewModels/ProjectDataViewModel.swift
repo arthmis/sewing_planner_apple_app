@@ -65,9 +65,11 @@ class ProjectSections {
 
     func addSection(projectId: Int64) throws {
         try appDatabase.getWriter().write { db in
-            let section = Section(id: UUID(), name: "Section \(sections.count + 1)")
-            section.section.projectId = projectId
-            try section.section.save(db)
+            let now = Date()
+            var sectionInput = SectionInputRecord(projectId: projectId, name: "Section \(sections.count + 1)", createDate: now, updateDate: now)
+            try sectionInput.save(db)
+            let sectionRecord = SectionRecord(from: sectionInput)
+            let section = Section(id: UUID(), name: sectionRecord)
             sections.append(section)
         }
     }

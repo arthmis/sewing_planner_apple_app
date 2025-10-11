@@ -9,8 +9,27 @@ import GRDB
 import SwiftUI
 
 struct SectionRecord: Hashable, Identifiable, Codable, EncodableRecord, FetchableRecord, MutablePersistableRecord, TableRecord {
+    var id: Int64
+    var projectId: Int64
+    var name: String = ""
+    var isDeleted = false
+    var createDate: Date = .init()
+    var updateDate: Date = .init()
+    static let databaseTableName = "section"
+
+    init(from record: SectionInputRecord) {
+        self.id = record.id!
+        self.projectId = record.projectId
+        self.name = record.name
+        self.isDeleted = record.isDeleted
+        self.createDate = record.createDate
+        self.updateDate = record.updateDate
+    }
+}
+
+struct SectionInputRecord: Hashable, Identifiable, Codable, EncodableRecord, MutablePersistableRecord, TableRecord {
     var id: Int64?
-    var projectId: Int64?
+    var projectId: Int64
     var name: String = ""
     var isDeleted = false
     var createDate: Date = .init()

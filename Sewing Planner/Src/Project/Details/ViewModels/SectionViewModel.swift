@@ -9,15 +9,15 @@ import SwiftUI
 
 @Observable
 class Section {
-    var section: SectionRecord = .init()
+    var section: SectionRecord
     var items: [SectionItem] = []
     var id: UUID
     var deletedItems: [SectionItemRecord] = []
     var selectedItems: Set<Int64> = []
     private let db: AppDatabase = .db()
 
-    init(id: UUID, name: String) {
-        section = SectionRecord(name: name)
+    init(id: UUID, name: SectionRecord) {
+        section = name
         self.id = id
     }
 
@@ -32,7 +32,7 @@ class Section {
             // TODO: do this in a transaction or see if the write is already a transaction
             let order = Int64(items.count)
             var record = SectionItemRecord(text: text.trimmingCharacters(in: .whitespacesAndNewlines), order: order)
-            record.sectionId = section.id!
+            record.sectionId = section.id
             try record.save(db)
 
             if let noteText = note {
