@@ -51,17 +51,25 @@ struct AppFiles {
         let thumbnailSize = image.image.scaleDimensions(maxDimension: 300)
         let thumbnailIdentifier = UUID().uuidString
 
-        image.image.prepareThumbnail(of: thumbnailSize) { thumbnailImage in
-            if let thumbnail = thumbnailImage {
-                let data = thumbnail.pngData()
-                do {
-                    try createThumbnailForImage(withIdentifier: thumbnailIdentifier, forProject: projectId, withContents: data)
-                } catch {
-                    // TODO: figure out better logging
-                    NSLog("couldn't create thumbnail for image: \(fileIdentifier) for project: \(projectId)")
-                }
-            }
+        // TODO: do this resize and create thumbnail in a background task
+        let thumbnail = image.image.resizeImageTo(size: thumbnailSize)
+        do {
+            try createThumbnailForImage(withIdentifier: thumbnailIdentifier, forProject: projectId, withContents: thumbnail.pngData())
+        } catch {
+            // TODO: figure out better logging
+            NSLog("couldn't create thumbnail for image: \(fileIdentifier) for project: \(projectId)")
         }
+//        image.image.prepareThumbnail(of: thumbnailSize) { thumbnailImage in
+//            if let thumbnail = thumbnailImage {
+//                let data = thumbnail.pngData()
+//                do {
+//                    try createThumbnailForImage(withIdentifier: thumbnailIdentifier, forProject: projectId, withContents: data)
+//                } catch {
+//                    // TODO: figure out better logging
+//                    NSLog("couldn't create thumbnail for image: \(fileIdentifier) for project: \(projectId)")
+//                }
+//            }
+//        }
 
         let data = image.image.pngData()
         let createFileSuccess = fileManager.createFile(atPath: newFilePath.path(), contents: data)
@@ -78,7 +86,7 @@ struct AppFiles {
         let projectPhotosPath = getProjectPhotoDirectoryPath(projectId: project)
         return projectPhotosPath.appendingPathComponent(fileIdentifier).appendingPathExtension(for: .png)
     }
-    
+
     func getImage(for file: String, fromProject projectId: Int64) -> UIImage? {
         let fileManager = FileManager.default
         let filePath = getPathForImage(forProject: projectId, fileIdentifier: file)
@@ -95,7 +103,8 @@ struct AppFiles {
         let filePath = getPathForThumbnail(withIdentifier: file, forProject: projectId)
 
         if let data = fileManager.contents(atPath: filePath.path()) {
-            return UIImage(data: data)
+            let image = UIImage(data: data)
+            return image
         }
 
         return nil
@@ -159,7 +168,7 @@ extension AppFiles {
 
     private func createThumbnailForImage(withIdentifier thumbnailIdentifier: String, forProject projectId: Int64, withContents data: Data?) throws {
         let fileManager = FileManager.default
-        
+
         let thumbnailsFolderForProject = getProjectPhotosThumbnailsPath(projectId: projectId)
         if !projectPhotosThumbnailsDirectoryExists(id: projectId) {
             do {
@@ -170,7 +179,7 @@ extension AppFiles {
         }
 
         let thumbnailPath = getPathForThumbnail(withIdentifier: thumbnailIdentifier, forProject: projectId)
-        // TODO deal with createFileSuccess
+        // TODO: deal with createFileSuccess
         let createFileSuccess = fileManager.createFile(atPath: thumbnailPath.path(), contents: data)
     }
 }
