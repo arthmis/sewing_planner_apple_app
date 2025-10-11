@@ -37,8 +37,9 @@ class Section {
             let record = SectionItemRecord(from: recordInput)
 
             if let noteText = note {
-                var noteRecord = SectionItemNoteRecord(text: noteText.trimmingCharacters(in: .whitespacesAndNewlines), sectionItemId: record.id)
-                try noteRecord.save(db)
+                var noteInputRecord = SectionItemNoteInputRecord(text: noteText.trimmingCharacters(in: .whitespacesAndNewlines), sectionItemId: record.id)
+                try noteInputRecord.save(db)
+                let noteRecord = SectionItemNoteRecord(from: noteInputRecord)
                 let sectionItem = SectionItem(record: record, note: noteRecord)
                 items.append(sectionItem)
             } else {
@@ -89,8 +90,9 @@ class Section {
                         items[i].note = itemNote
                     } else {
                         let trimmedNoteText = noteText.trimmingCharacters(in: .whitespacesAndNewlines)
-                        item.note = SectionItemNoteRecord(text: trimmedNoteText, sectionItemId: item.record.id)
-                        try item.note?.save(db)
+                        var noteInput = SectionItemNoteInputRecord(text: trimmedNoteText, sectionItemId: item.record.id)
+                        try noteInput.save(db)
+                        item.note = SectionItemNoteRecord(from: noteInput)
                         items[i].note = item.note
                     }
                 }

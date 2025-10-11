@@ -112,6 +112,38 @@ struct SectionItemInputRecord: Hashable, Identifiable, Codable, EncodableRecord,
 }
 
 struct SectionItemNoteRecord: Hashable, Identifiable, Codable, EncodableRecord, FetchableRecord, MutablePersistableRecord, TableRecord {
+    var id: Int64
+    var sectionItemId: Int64
+    var text: String = ""
+    var createDate: Date = .init()
+    var updateDate: Date = .init()
+    static let databaseTableName = "sectionItemNote"
+
+
+    mutating func didInsert(_ inserted: InsertionSuccess) {
+        id = inserted.rowID
+    }
+
+    init(id: Int64, text: String, sectionItemId: Int64) {
+        self.id = id
+        self.text = text
+        self.sectionItemId = sectionItemId
+        let now = Date()
+        createDate = now
+        updateDate = now
+    }
+    
+    init(from record: SectionItemNoteInputRecord) {
+        self.id = record.id!
+        self.text = record.text
+        self.sectionItemId = record.sectionItemId
+        createDate = record.createDate
+        updateDate = record.updateDate
+    }
+
+}
+
+struct SectionItemNoteInputRecord: Hashable, Identifiable, Codable, EncodableRecord, FetchableRecord, MutablePersistableRecord, TableRecord {
     var id: Int64?
     var sectionItemId: Int64
     var text: String = ""
