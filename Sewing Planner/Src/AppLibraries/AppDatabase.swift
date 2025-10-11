@@ -29,14 +29,18 @@ struct AppDatabase {
 }
 
 extension AppDatabase {
-    func addProject(project: inout ProjectMetadata) throws -> ProjectMetadata {
+    func addProject(project: inout ProjectMetadataInput) throws -> ProjectMetadata {
         try dbWriter.write { db in
             let now = Date()
-            try db.execute(sql: "INSERT INTO project (name, completed, createDate, updateDate) VALUES (?, ?, ?, ?)", arguments: [project.name, project.completed, now, now])
-            project.id = db.lastInsertedRowID
             project.createDate = now
             project.updateDate = now
-            return project
+            try project.save(db)
+            return ProjectMetadata(from: project)
+            //            try db.execute(sql: "INSERT INTO project (name, completed, createDate, updateDate) VALUES (?, ?, ?, ?)", arguments: [project.name, project.completed, now, now])
+//            project.id = db.lastInsertedRowID
+//            project.createDate = now
+//            project.updateDate = now
+//            return project
         }
     }
 
@@ -126,8 +130,8 @@ extension AppDatabase {
             for project in projects {
                 let projectIdColumn = Column("projectId")
                 // can unwrap project.id because an image can't be stored without having a project id
-                if let record = try ProjectImageRecord.all().filter(projectIdColumn == project.id!).order(Column("id")).fetchOne(db) {
-                    let image = AppFiles().getThumbnailImage(for: record.thumbnail, fromProject: project.id!)
+                if let record = try ProjectImageRecord.all().filter(projectIdColumn == project.id).order(Column("id")).fetchOne(db) {
+                    let image = AppFiles().getThumbnailImage(for: record.thumbnail, fromProject: project.id)
                     let projectImage = ProjectDisplayImage(record: record, path: record.filePath, image: image)
                     projectDisplayData.append(ProjectDisplay(project: project, image: projectImage))
                 } else {
@@ -174,7 +178,7 @@ extension AppDatabase {
         return sectionItems
     }
 
-    func getImages(projectId: Int64) throws -> ProjectImages {
+    func getProjectThumbnails(projectId: Int64) throws -> ProjectImages {
         return try dbWriter.read { db in
             let projectIdColumn = Column("projectId")
             let records: [ProjectImageRecord] = try ProjectImageRecord.all().filter(projectIdColumn == projectId).order(Column("id")).fetchAll(db)

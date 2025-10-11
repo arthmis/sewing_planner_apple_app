@@ -11,31 +11,44 @@ import SwiftUI
 
 @Observable
 class ProjectDetailData {
-    var project = ProjectMetadataViewModel()
+    var project: ProjectMetadataViewModel
     var projectSections: ProjectSections = .init()
     var projectImages: ProjectImages = .init(projectId: 0)
     var deletedImages: [ProjectImage] = []
     let db: AppDatabase = .db()
 
-    func getProject(with id: Int64) {
+    init(project: ProjectMetadataViewModel) {
+        self.project = project
+    }
+
+    init(project: ProjectMetadataViewModel, projectSections: ProjectSections, projectImages: ProjectImages) {
+        self.project = project
+        self.projectSections = projectSections
+        self.projectImages = projectImages
+    }
+
+    static func getProject(with id: Int64, from db: AppDatabase) throws -> ProjectDetailData? {
         do {
-            let project = try db.getProject(id: id)
-            let projectData = ProjectMetadataViewModel(data: project!)
-            self.project = projectData
-            print(projectData.data)
-            let sections = try db.getSections(projectId: id)
-            projectSections = sections
-            print(sections.sections.count)
-            let images = try db.getImages(projectId: id)
-            print(images.images.count)
-            for image in images.images {
-                print(image.record)
+            if let project = try db.getProject(id: id) {
+                let projectData = ProjectMetadataViewModel(data: project)
+                let project = projectData
+                print(projectData.data)
+                let sections = try db.getSections(projectId: id)
+                let projectSections = sections
+                print(sections.sections.count)
+                let images = try db.getProjectThumbnails(projectId: id)
+                print(images.images.count)
+                for image in images.images {
+                    print(image.record)
+                }
+                let projectImages = images
+                return (ProjectDetailData(project: project, projectSections: projectSections, projectImages: projectImages))
             }
-            projectImages = images
 
         } catch {
             print("error retrieving data: \(error)")
         }
+        return nil
     }
 }
 

@@ -48,7 +48,7 @@ struct ProjectsView: View {
                     }
                 }
             }
-            .navigationDestination(for: ProjectMetadata.self) { _ in
+            .navigationDestination(for: ProjectMetadata.self) { project in
                 VStack {
                     ProjectView(projectsNavigation: $model.projects, fetchProjects: fetchProjects)
                 }

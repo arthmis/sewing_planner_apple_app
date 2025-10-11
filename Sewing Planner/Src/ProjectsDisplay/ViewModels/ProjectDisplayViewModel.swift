@@ -32,9 +32,10 @@ class ProjectsViewModel {
 
     func addProject() throws {
         try db.getWriter().write { db in
-            var newProject = ProjectMetadata()
-            try newProject.save(db)
-            projects.append(newProject)
+            var newProjectInput = ProjectMetadataInput()
+            try newProjectInput.save(db)
+            
+            projects.append(ProjectMetadata(from: newProjectInput))
         }
     }
 }

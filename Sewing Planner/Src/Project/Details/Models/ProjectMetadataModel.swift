@@ -9,6 +9,35 @@ import GRDB
 import SwiftUI
 
 struct ProjectMetadata: Hashable, Codable, EncodableRecord, FetchableRecord, MutablePersistableRecord, TableRecord {
+    var id: Int64
+    var name: String
+    var completed: Bool
+    var isDeleted: Bool
+    var createDate: Date
+    var updateDate: Date
+    static let databaseTableName = "project"
+
+    init(id: Int64, name: String, completed: Bool, createDate: Date, updateDate: Date) {
+        self.id = id
+        self.name = name
+        self.completed = completed
+        self.createDate = createDate
+        self.updateDate = updateDate
+        isDeleted = false
+    }
+    
+    init(from input: ProjectMetadataInput) {
+        self.id = input.id!
+        self.name = input.name
+        self.completed = input.completed
+        self.createDate = input.createDate
+        self.updateDate = input.updateDate
+        isDeleted = input.isDeleted
+    }
+
+}
+
+struct ProjectMetadataInput: Hashable, Codable, EncodableRecord, MutablePersistableRecord, TableRecord {
     var id: Int64?
     var name: String
     var completed: Bool
