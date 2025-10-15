@@ -64,7 +64,6 @@ struct ImageButton: View {
     @Binding var image: ProjectImage
     // TODO remove this binding, isn't used
     @Binding var selectedImagesForDeletion: Set<String?>
-    @Binding var overlaySelectedImage: Bool
     @Binding var selectedImage: OverlayedImage?
     @State var isPressed = false
 
@@ -85,7 +84,6 @@ struct ImageButton: View {
             .contentShape(Rectangle())
             .onTapGesture {
                 selectedImage = OverlayedImage(body: image.path)
-                overlaySelectedImage = true
             }
             .onPress {
                 isPressed = true
@@ -99,7 +97,6 @@ struct SelectedImageButton: View {
     @State var isHovering = false
     @Binding var image: ProjectImage
     @Binding var selectedImagesForDeletion: Set<String?>
-    @Binding var overlaySelectedImage: Bool
     @State var isPressed = false
 
     var isSelectedForDeletion: Bool {
