@@ -65,7 +65,7 @@ struct ImageButton: View {
     // TODO remove this binding, isn't used
     @Binding var selectedImagesForDeletion: Set<String?>
     @Binding var overlaySelectedImage: Bool
-    @Binding var selectedImage: String?
+    @Binding var selectedImage: OverlayedImage?
     @State var isPressed = false
 
     var isSelectedForDeletion: Bool {
@@ -84,7 +84,7 @@ struct ImageButton: View {
             // parts of the image that were clipped still respond to the mouse events so this constrains it to the correct area
             .contentShape(Rectangle())
             .onTapGesture {
-                selectedImage = image.path
+                selectedImage = OverlayedImage(body: image.path)
                 overlaySelectedImage = true
             }
             .onPress {
@@ -100,7 +100,6 @@ struct SelectedImageButton: View {
     @Binding var image: ProjectImage
     @Binding var selectedImagesForDeletion: Set<String?>
     @Binding var overlaySelectedImage: Bool
-    @Binding var selectedImage: String?
     @State var isPressed = false
 
     var isSelectedForDeletion: Bool {

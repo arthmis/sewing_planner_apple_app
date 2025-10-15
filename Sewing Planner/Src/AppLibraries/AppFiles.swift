@@ -87,9 +87,9 @@ struct AppFiles {
         return projectPhotosPath.appendingPathComponent(fileIdentifier).appendingPathExtension(for: .png)
     }
 
-    func getImage(for file: String, fromProject projectId: Int64) -> UIImage? {
+    func getImage(for file: OverlayedImage, fromProject projectId: Int64) -> UIImage? {
         let fileManager = FileManager.default
-        let filePath = getPathForImage(forProject: projectId, fileIdentifier: file)
+        let filePath = getPathForImage(forProject: projectId, fileIdentifier: file.body)
 
         if let data = fileManager.contents(atPath: filePath.path()) {
             return UIImage(data: data)

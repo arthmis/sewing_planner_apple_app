@@ -136,6 +136,7 @@ struct SectionView: View {
             .frame(maxWidth: .infinity)
             AddItemView(isAddingItem: $isAddingItem, addItem: data.addItem)
         }
+        .animation(.easeOut(duration: 0.15), value: isAddingItem)
     }
 }
 

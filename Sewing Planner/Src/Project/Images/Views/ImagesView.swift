@@ -19,15 +19,24 @@ struct ErrorToast {
     }
 }
 
+struct OverlayedImage: Identifiable, Hashable {
+    var id: String {
+        return body
+    }
+
+    var body: String
+}
+
 struct ImagesView: View {
     @Binding var projectImages: ProjectImages
     @State var selectedImages: Set<String?> = []
     @State var overlaySelectedImage = false
-    @State var overlayedImage: String?
+    @State var overlayedImage: OverlayedImage?
     @State private var pickerItem: PhotosPickerItem?
     @State private var photosAppSelectedImage: Data?
     @State var errorToast = ErrorToast()
     @State var isInDeleteMode = false
+    @Namespace var transitionNamespace
 
     var body: some View {
         VStack(alignment: .center) {
@@ -70,7 +79,7 @@ struct ImagesView: View {
                     .padding(.top, 16)
                 }
             }
-            .animation(.smooth(duration: 0.1), value: isInDeleteMode)
+            .animation(.easeOut(duration: 0.12), value: isInDeleteMode)
             .frame(maxWidth: .infinity)
             ScrollView {
                 LazyVGrid(columns: [
@@ -84,48 +93,94 @@ struct ImagesView: View {
                                 .onLongPressGesture {
                                     isInDeleteMode = true
                                 }
+                                .matchedTransitionSource(id: image.path, in: transitionNamespace)
                         } else {
-                            SelectedImageButton(image: $image, selectedImagesForDeletion: $selectedImages, overlaySelectedImage: $overlaySelectedImage, selectedImage: $overlayedImage)
+                            SelectedImageButton(image: $image, selectedImagesForDeletion: $selectedImages, overlaySelectedImage: $overlaySelectedImage)
                         }
                     }
                 }
             }
         }
         .padding([.horizontal, .bottom], 8)
-        .overlay(alignment: .center) {
-            if overlaySelectedImage {
+//        .fullScreenCover(item: $overlayedImage) { zoomedImage in
+        .fullScreenCover(isPresented: $overlaySelectedImage) {
+            NavigationStack {
                 VStack {
-                    HStack(alignment: .firstTextBaseline) {
-                        Button {
-                            overlaySelectedImage = false
-                            overlayedImage = nil
-                        } label: {
-                            Image(systemName: "xmark.circle")
-                                .font(.system(size: 22, weight: Font.Weight.thin))
-                                .foregroundStyle(Color.red)
-                        }
-                        .padding(.bottom, 8)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    if let imgIdentifier = overlayedImage {
-                        let overlayedImage = AppFiles().getImage(for: imgIdentifier, fromProject: projectImages.projectId)
-                        // TODO: figure out what to do if image doesn't exist, some default image
-                        Image(uiImage: overlayedImage ?? UIImage())
-                            .resizable()
-                            .interpolation(.high)
-                            .scaledToFit()
-                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                    } else {
-                        // TODO: display a toast saying something went wrong and say try again
-                        //                    overlaySelectedImage = false
-                        Text("Something went wrong. Image could not be selected. Please try again later")
-                    }
+//                    HStack(alignment: .firstTextBaseline) {
+//                        Button {
+//                            overlaySelectedImage = false
+//                            overlayedImage = nil
+//                        } label: {
+//                            Image(systemName: "xmark.circle")
+//                                .font(.system(size: 22, weight: Font.Weight.thin))
+//                                .foregroundStyle(Color.red)
+//                        }
+//                        .padding(.bottom, 8)
+//                    }
+//                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                    // TODO: figure out what to do if image doesn't exist, some default image
+                    Image(uiImage: AppFiles().getImage(for: overlayedImage!, fromProject: projectImages.projectId) ?? UIImage())
+                        .resizable()
+                        .interpolation(.low)
+                        .scaledToFit()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                 }
-                .padding(20)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                .background(.ultraThinMaterial)
+                .toolbar {
+//                    Button {
+//                        overlayedImage = nil
+//                    } label: {
+//                        Text("Done")
+//                    }
+                    Button {
+                        overlaySelectedImage = false
+                        overlayedImage = nil
+                    } label: {
+                        Image(systemName: "xmark.circle")
+                            .font(.system(size: 22, weight: Font.Weight.thin))
+                            .foregroundStyle(Color.red)
+                    }
+                    .padding(.bottom, 8)
+                    .padding(.top, 16)
+                }
             }
+            .navigationTransition(.zoom(sourceID: overlayedImage, in: transitionNamespace))
         }
+//        .overlay(alignment: .center) {
+//            if overlaySelectedImage {
+//                VStack {
+//                    HStack(alignment: .firstTextBaseline) {
+//                        Button {
+//                            overlaySelectedImage = false
+//                            overlayedImage = nil
+//                        } label: {
+//                            Image(systemName: "xmark.circle")
+//                                .font(.system(size: 22, weight: Font.Weight.thin))
+//                                .foregroundStyle(Color.red)
+//                        }
+//                        .padding(.bottom, 8)
+//                    }
+//                    .frame(maxWidth: .infinity, alignment: .leading)
+//                    if let imgIdentifier = overlayedImage {
+//                        let overlayedImage = AppFiles().getImage(for: imgIdentifier, fromProject: projectImages.projectId)
+//                        // TODO: figure out what to do if image doesn't exist, some default image
+//                        Image(uiImage: overlayedImage ?? UIImage())
+//                            .resizable()
+//                            .interpolation(.high)
+//                            .scaledToFit()
+//                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+//                    } else {
+//                        // TODO: display a toast saying something went wrong and say try again
+//                        //                    overlaySelectedImage = false
+//                        Text("Something went wrong. Image could not be selected. Please try again later")
+//                    }
+//                }
+//                .padding(20)
+//                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+//                .background(.ultraThinMaterial)
+//                .transition(.scale(0, anchor: .topLeading) )
+//            }
+//        }
         .overlay(alignment: .bottomTrailing) {
             if errorToast.show {
                 Toast(showToast: $errorToast.show, message: errorToast.message)
@@ -136,7 +191,8 @@ struct ImagesView: View {
             maxWidth: .infinity,
             maxHeight: .infinity,
         )
-        .animation(.smooth(duration: 0.25), value: isInDeleteMode)
+        .animation(.easeOut(duration: 0.25), value: isInDeleteMode)
+        .animation(.easeOut(duration: 0.2), value: overlayedImage)
     }
 }
 

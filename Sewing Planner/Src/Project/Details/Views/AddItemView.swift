@@ -14,7 +14,6 @@ struct AddItemView: View {
     @State var showErrorText = false
     @State var itemNote = ""
     let errorText = "Item text can't be empty."
-//    @FocusState var addItemFocus: Bool
 
     private var isNewItemTextValid: Bool {
         !newItem.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -47,7 +46,7 @@ struct AddItemView: View {
                 VStack {
                     HStack {
                         TextField("Task", text: $newItem, axis: .vertical).onSubmit {
-                            withAnimation(.spring(duration: 0.25)) {
+                            withAnimation(.easeOut(duration: 0.15)) {
                                 add()
                             }
                         }
@@ -55,7 +54,7 @@ struct AddItemView: View {
                         .padding(.vertical, 4)
                         .frame(maxWidth: .infinity)
                         Button {
-                            withAnimation(.spring(duration: 0.25)) {
+                            withAnimation(.easeOut(duration: 0.15)) {
                                 showErrorText = false
                                 isAddingItem = false
                                 newItem = ""
@@ -74,27 +73,6 @@ struct AddItemView: View {
                         .padding(.vertical, 4)
                 }
                 .padding(4)
-//                .onTapGesture {
-//                    addItemFocus = true
-//                }
-//                .focused($addItemFocus)
-//                .onChange(of: addItemFocus) { _, newFocus in
-//                    if !newFocus {
-//                        guard isNewItemTextValid else {
-//                            isAddingItem = false
-//                            newItem = ""
-//                            return
-//                        }
-//
-//                        do {
-//                            try addItem(newItem)
-//                        } catch {
-//                            fatalError("\(error)")
-//                        }
-//                        isAddingItem = false
-//                        newItem = ""
-//                    }
-//                }
                 if showErrorText {
                     Text(errorText)
                         .padding(.leading, 8)
@@ -102,7 +80,7 @@ struct AddItemView: View {
                 }
                 HStack(alignment: .lastTextBaseline) {
                     Button {
-                        withAnimation(.spring(duration: 0.25)) {
+                        withAnimation(.easeOut(duration: 0.25)) {
                             add()
                         }
                     } label: {
@@ -116,9 +94,10 @@ struct AddItemView: View {
             }
             .background(Color(hex: 0xF2F2F2, opacity: 0.9))
             .clipShape(RoundedRectangle(cornerRadius: 8))
+            .transition(.revealFrom(edge: .top))
         } else {
             Button {
-                withAnimation(.spring(duration: 0.25)) {
+                withAnimation(.easeOut(duration: 0.3)) {
                     isAddingItem = true
                 }
 //                addItemFocus = true
@@ -131,6 +110,7 @@ struct AddItemView: View {
             }
             .buttonStyle(SecondaryButtonStyle())
             .accessibilityIdentifier("NewStepButton")
+            .transition(.revealFrom(edge: .bottom))
         }
     }
 }
