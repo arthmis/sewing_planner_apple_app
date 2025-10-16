@@ -30,9 +30,9 @@ struct ItemView: View {
                 UpdateItemView(data: $data, isEditing: $isEditing, newText: $newText, newNoteText: $newNoteText, updateText: updateText, resetToPreviousText: resetToPreviousText)
                     .transition(.revealFrom(edge: .top).combined(with: .opacity))
             } else {
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 0) {
                     HStack(alignment: .firstTextBaseline) {
-                        Toggle(data.record.text, isOn: $data.record.isComplete).toggleStyle(CheckboxStyle(id: data.record.id, hasNote: hasNote, updateCompletedState: updateCompletedState,))
+                        Toggle(data.record.text, isOn: $data.record.isComplete).toggleStyle(CheckboxStyle(id: data.record.id, hasNote: hasNote, updateCompletedState: updateCompletedState, isSelected: false))
                         Spacer()
                     }
                 }
@@ -46,7 +46,7 @@ struct ItemView: View {
                 }
             }
         }
-        .animation(.linear(duration: 0.075), value: isEditing)
+        .animation(.easeOut(duration: 0.075), value: isEditing)
     }
 }
 
@@ -54,28 +54,31 @@ struct CheckboxStyle: ToggleStyle {
     var id: Int64?
     var hasNote: Bool
     var updateCompletedState: (Int64) throws -> Void
+    let isSelected: Bool
 
     func makeBody(configuration: Configuration) -> some View {
-        HStack(alignment: .firstTextBaseline) {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
             Button {
                 try! updateCompletedState(id!)
                 configuration.isOn.toggle()
             } label: {
                 Image(systemName: configuration.isOn ? "checkmark.square" : "square")
             }
-            configuration.label
-                .frame(maxWidth: .infinity, alignment: .topLeading)
-            if hasNote {
-                Image(systemName: "note.text")
-                    .font(.system(size: 14, weight: Font.Weight.light))
-                    .foregroundStyle(Color.gray)
-                    .padding(.horizontal, 4)
+            VStack(spacing: 0) {
+                configuration.label
+                    .frame(maxWidth: .infinity, alignment: .topLeading)
+                if hasNote {
+                    Image(systemName: "note.text")
+                        .font(.system(size: 14, weight: Font.Weight.light))
+                        .foregroundStyle(isSelected ? Color.white : Color.gray)
+                        .frame(maxWidth: .infinity, alignment: .topLeading)
+                }
             }
         }
     }
 }
 
-//#Preview {
+// #Preview {
 //    @Previewable @State var val = SectionItem(record: SectionItemRecord(text: "This is really long task to see how it gets displayed. Making this message way longer because it still isn't long enough", order: 1), note: SectionItemNoteRecord(text: "string", sectionItemId: 1))
 //    var updateText: (Int64, String, String?) throws -> Void
 //    var updateCompletedState: (Int64) throws -> Void
@@ -89,4 +92,4 @@ struct CheckboxStyle: ToggleStyle {
 //    .border(Color.black, width: 1)
 //    .frame(maxWidth: 400, maxHeight: 400)
 //    .background(.white)
-//}
+// }

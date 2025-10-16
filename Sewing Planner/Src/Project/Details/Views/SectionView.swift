@@ -45,7 +45,7 @@ struct SectionView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 4) {
             // TODO: this if else can become a view called SectionName
             HStack {
                 if isRenamingSection {
@@ -97,15 +97,22 @@ struct SectionView: View {
 //                            alignment: .bottom)
                     if isEditingSection {
                         HStack {
-                            Button("cancel") {
-                                isEditingSection = false
+                            Button("Cancel") {
+                                withAnimation(.smooth(duration: 0.2)) {
+                                    isEditingSection = false
+                                }
                             }
                             Button {
                                 try! data.deleteSelection()
+                                withAnimation(.smooth(duration: 0.2)) {
+                                    isEditingSection = false
+                                }
                             } label: {
                                 Image(systemName: "trash")
+                                    .foregroundStyle(Color.red)
                                     .padding(.horizontal, 8)
                             }
+                            .disabled(!data.hasSelections)
                         }
                     }
                 }
@@ -116,25 +123,34 @@ struct SectionView: View {
             .overlay(Divider()
                 .frame(maxWidth: .infinity, maxHeight: 1)
                 .background(Color(red: 230, green: 230, blue: 230)), alignment: .bottom)
-            ForEach($data.items, id: \.self.record.id) { $item in
-                if !isEditingSection {
-                    ItemView(data: $item, updateText: data.updateText, updateCompletedState: data.updateCompletedState)
-                        .contentShape(Rectangle())
-                        .onLongPressGesture {
-                            isEditingSection = true
-                        }
-                } else {
-                    SelectedSectionItemView(data: $item, selected: $data.selectedItems, updateText: data.updateText, updateCompletedState: data.updateCompletedState)
-                        .contentShape(Rectangle())
-                        .onDrag {
-                            draggedItem = item
-                            return NSItemProvider(object: "\(item.hashValue)" as NSString)
-                        }
-                        .onDrop(of: [.text], delegate: DropSectionItemViewDelegate(item: item, data: $data.items, draggedItem: $draggedItem, saveNewOrder: data.saveOrder))
+            VStack(spacing: 0) {
+                ForEach($data.items, id: \.self.record.id) { $item in
+                    if !isEditingSection {
+                        ItemView(data: $item, updateText: data.updateText, updateCompletedState: data.updateCompletedState)
+                            .contentShape(Rectangle())
+                            .onLongPressGesture {
+                                withAnimation(.smooth(duration: 0.2)) {
+                                    isEditingSection = true
+                                }
+                            }
+                            .padding(.top, 4)
+//                            .animation(.easeOut(duration: 0.1), value: isEditingSection)
+                    } else {
+                        SelectedSectionItemView(data: $item, selected: $data.selectedItems, updateText: data.updateText, updateCompletedState: data.updateCompletedState)
+                            .contentShape(Rectangle())
+                            .onDrag {
+                                draggedItem = item
+                                return NSItemProvider(object: "\(item.hashValue)" as NSString)
+                            }
+                            .onDrop(of: [.text], delegate: DropSectionItemViewDelegate(item: item, data: $data.items, draggedItem: $draggedItem, saveNewOrder: data.saveOrder))
+                            .padding(.top, 4)
+//                            .animation(.easeOut(duration: 0.1), value: isEditingSection)
+                    }
                 }
+                .frame(maxWidth: .infinity)
             }
-            .frame(maxWidth: .infinity)
             AddItemView(isAddingItem: $isAddingItem, addItem: data.addItem)
+                .padding(.top, 8)
         }
         .animation(.easeOut(duration: 0.15), value: isAddingItem)
     }
@@ -159,12 +175,17 @@ struct SelectedSectionItemView: View {
     var body: some View {
         HStack(alignment: .firstTextBaseline) {
             Toggle(data.record.text, isOn: $data.record.isComplete)
-                .toggleStyle(CheckboxStyle(id: data.record.id, hasNote: hasNote, updateCompletedState: updateCompletedState))
+                .toggleStyle(CheckboxStyle(id: data.record.id, hasNote: hasNote, updateCompletedState: updateCompletedState, isSelected: isSelected))
+                .foregroundStyle(isSelected ? Color.white : Color.black)
             Spacer()
             Image(systemName: "line.3.horizontal")
+                .padding(.trailing, 4)
+                .foregroundStyle(isSelected ? Color.white : Color.black)
         }
         .contentShape(Rectangle())
-        .background(isSelected ? Color.blue : Color.white)
+        .padding(6)
+        .background(isSelected ? Color.blue.opacity(0.5): Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
         .onTapGesture {
             if !isSelected {
                 selected.insert(data.record.id)
@@ -172,6 +193,7 @@ struct SelectedSectionItemView: View {
                 selected.remove(data.record.id)
             }
         }
+        .animation(.easeOut(duration: 0.1), value: isSelected)
     }
 }
 

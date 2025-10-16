@@ -26,6 +26,10 @@ class Section {
         self.items = items
         self.id = id
     }
+    
+    var hasSelections: Bool {
+        !selectedItems.isEmpty
+    }
 
     func addItem(text: String, note: String?) throws {
         try db.getWriter().write { db in

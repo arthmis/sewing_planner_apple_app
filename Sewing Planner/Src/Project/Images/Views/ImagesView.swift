@@ -9,11 +9,11 @@ import GRDB
 import PhotosUI
 import SwiftUI
 
-struct ErrorToast {
+struct ErrorToast: Equatable {
     var show: Bool
     let message: String
 
-    init(show: Bool = false, message: String = "Something went wrong. Please try again") {
+    init(show: Bool = true, message: String = "Something went wrong. Please try again") {
         self.show = show
         self.message = message
     }
@@ -125,18 +125,18 @@ struct ImagesView: View {
                     .navigationTransition(.zoom(sourceID: item.id, in: transitionNamespace))
             }
         }
-        .overlay(alignment: .bottomTrailing) {
+        .overlay(alignment: .bottom) {
             if errorToast.show {
                 Toast(showToast: $errorToast.show, message: errorToast.message)
-                    .padding([.trailing], 30)
+                    .padding(.horizontal, 16)
             }
         }
         .frame(
             maxWidth: .infinity,
             maxHeight: .infinity,
         )
-        .animation(.easeOut(duration: 0.25), value: isInDeleteMode)
-        .animation(.easeOut(duration: 0.15), value: overlayedImage)
+        .animation(.easeOut(duration: 0.1), value: isInDeleteMode)
+        .animation(.easeOut(duration: 0.1), value: overlayedImage)
     }
 }
 
