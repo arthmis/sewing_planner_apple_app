@@ -13,12 +13,17 @@ import SwiftUI
 class ProjectDetailData {
     var project: ProjectMetadataViewModel
     var projectSections: ProjectSections = .init()
-    var projectImages: ProjectImages = .init(projectId: 0)
+    var projectImages: ProjectImages?
     var deletedImages: [ProjectImage] = []
     let db: AppDatabase = .db()
 
     init(project: ProjectMetadataViewModel) {
         self.project = project
+    }
+
+    init(project: ProjectMetadataViewModel, projectSections: ProjectSections) {
+        self.project = project
+        self.projectSections = projectSections
     }
 
     init(project: ProjectMetadataViewModel, projectSections: ProjectSections, projectImages: ProjectImages) {
@@ -36,19 +41,25 @@ class ProjectDetailData {
                 let sections = try db.getSections(projectId: id)
                 let projectSections = sections
                 print(sections.sections.count)
-                let images = try db.getProjectThumbnails(projectId: id)
-                print(images.images.count)
-                for image in images.images {
-                    print(image.record)
-                }
-                let projectImages = images
-                return (ProjectDetailData(project: project, projectSections: projectSections, projectImages: projectImages))
+                // let images = try db.getProjectThumbnails(projectId: id)
+                // print(images.images.count)
+                // for image in images.images {
+                //     print(image.record)
+                // }
+                // let projectImages = images
+                // return (ProjectDetailData(project: project, projectSections: projectSections, projectImages: projectImages))
+                return (ProjectDetailData(project: project, projectSections: projectSections))
             }
 
         } catch {
             print("error retrieving data: \(error)")
         }
         return nil
+    }
+
+    static func getImages(fromProject projectId: Int64, usingDatabase db: AppDatabase) throws -> ProjectImages {
+        try db.getProjectThumbnails(projectId: projectId)
+        // return (ProjectDetailData(project: project, projectSections: projectSections, projectImages: projectImages))
     }
 }
 

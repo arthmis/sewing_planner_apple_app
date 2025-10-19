@@ -51,7 +51,7 @@ struct ProjectView: View {
                 if let projectData = try! ProjectDetailData.getProject(with: id, from: appDatabase) {
                     self.model = projectData
                 } else {
-                    // navigate back to main screen because project loading was unsuccessful
+                    // TODO: navigate back to main screen because project loading was unsuccessful
                     // show an error
                 }
             } else {
@@ -76,14 +76,6 @@ struct Project: View {
     @State private var photosAppSelectedImage: Data?
     @State private var showPhotoPicker = false
 
-    private var isProjectValid: Bool {
-        !model.project.data.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-    }
-
-    private var isNewProjectEmpty: Bool {
-        model.project.data.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-    }
-
     var body: some View {
         VStack {
             TabView(selection: $currentView) {
@@ -91,7 +83,8 @@ struct Project: View {
                     ProjectDetails(project: $model.project, projectSections: $model.projectSections, projectsNavigation: $projectsNavigation)
                 }
                 Tab("Images", systemImage: "photo.artframe", value: .images) {
-                    ImagesView(projectImages: $model.projectImages)
+//                    ImagesView(projectImages: $model.projectImages)
+                    ImagesView(model: ImagesViewModel(projectImages: model.projectImages ?? ProjectImages(projectId: model.project.data.id)))
                 }
             }
             .navigationBarBackButtonHidden(true)
@@ -132,7 +125,7 @@ struct Project: View {
                                     // TODO: Performance problem here, scale the images in a background task
                                     let resizedImage = img.scaleToAppImageMaxDimension()
                                     let projectImage = ProjectImageInput(image: img)
-                                    try! model.projectImages.importImages([projectImage])
+                                    try! model.projectImages?.importImages([projectImage])
                                 case .none:
                                     // TODO: think about how to deal with path that couldn't become an image
                                     // I'm thinking display an error alert that lists every image that couldn't be uploaded

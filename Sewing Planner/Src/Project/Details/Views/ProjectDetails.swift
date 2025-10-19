@@ -19,7 +19,7 @@ struct ProjectDetails: View {
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                ProjectName(project: $project)
+                ProjectTitle(project: $project)
                 Spacer()
             }
             .frame(maxWidth: .infinity)

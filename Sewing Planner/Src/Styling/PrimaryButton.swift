@@ -62,14 +62,8 @@ extension View {
 struct ImageButton: View {
     @State var isHovering = false
     @Binding var image: ProjectImage
-    // TODO remove this binding, isn't used
-    @Binding var selectedImagesForDeletion: Set<String?>
     @Binding var selectedImage: OverlayedImage?
     @State var isPressed = false
-
-    var isSelectedForDeletion: Bool {
-        selectedImagesForDeletion.contains(image.path)
-    }
 
     var body: some View {
         Image(uiImage: image.image)

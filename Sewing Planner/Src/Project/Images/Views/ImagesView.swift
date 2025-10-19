@@ -13,7 +13,7 @@ struct ErrorToast: Equatable {
     var show: Bool
     let message: String
 
-    init(show: Bool = true, message: String = "Something went wrong. Please try again") {
+    init(show: Bool = false, message: String = "Something went wrong. Please try again") {
         self.show = show
         self.message = message
     }
@@ -28,27 +28,27 @@ struct OverlayedImage: Identifiable, Hashable {
 }
 
 struct ImagesView: View {
-    @Binding var projectImages: ProjectImages
-    @State var selectedImages: Set<String?> = []
-    @State var overlayedImage: OverlayedImage?
-    @State private var pickerItem: PhotosPickerItem?
-    @State private var photosAppSelectedImage: Data?
-    @State var errorToast = ErrorToast()
-    @State var isInDeleteMode = false
+    //    @Binding var projectImages: ProjectImages
+    //    @State var selectedImages: Set<String?> = []
+    //    @State var overlayedImage: OverlayedImage?
+    //    @State private var pickerItem: PhotosPickerItem?
+    //    @State private var photosAppSelectedImage: Data?
+    //    @State var errorToast = ErrorToast()
+    //    @State var isInDeleteMode = false
+    @Environment(\.appDatabase) private var appDatabase
+    @State var model: ImagesViewModel
     @Namespace var transitionNamespace
 
     var body: some View {
         VStack(alignment: .center) {
             HStack {
-                if isInDeleteMode {
+                if model.isInDeleteMode {
                     HStack(alignment: .center) {
-                        Button("Cancel") {
-                            selectedImages = Set()
-                            isInDeleteMode = false
-                        }
-                        .buttonStyle(SecondaryButtonStyle())
+                        Button("Cancel", action: model.cancelDeleteMode)
+                            .buttonStyle(SecondaryButtonStyle())
                         Spacer()
-                        Button {} label: {
+                        Button {
+                        } label: {
                             HStack {
                                 Text("Delete")
                                 Image(systemName: "trash")
@@ -56,56 +56,48 @@ struct ImagesView: View {
                                     .foregroundStyle(Color.white)
                             }
                         }
-                        .disabled(selectedImages.isEmpty)
+                        .disabled(model.selectedImagesIsEmpty)
                         .buttonStyle(DeleteButtonStyle())
-                        .simultaneousGesture(LongPressGesture(minimumDuration: 2).onEnded { _ in
-                            if selectedImages.isEmpty {
-                                return
-                            }
-
-                            for imagePath in selectedImages {
-                                if let index = self.projectImages.images.firstIndex(where: { $0.path == imagePath }) {
-                                    let image = self.projectImages.images.remove(at: index)
-                                    projectImages.deletedImages.append(image)
-                                }
-                            }
-                            try! projectImages.deleteImages()
-
-                            isInDeleteMode = false
-                            selectedImages = Set()
-                        })
+                        .simultaneousGesture(
+                            LongPressGesture(minimumDuration: 2).onEnded { val in
+                                print(val)
+                                model.deleteImages()
+                            })
                     }
                     .padding(.top, 16)
                 }
             }
-            .animation(.easeOut(duration: 0.12), value: isInDeleteMode)
+            .animation(.easeOut(duration: 0.12), value: model.isInDeleteMode)
             .frame(maxWidth: .infinity)
             ScrollView {
-                LazyVGrid(columns: [
-                    GridItem(.flexible(minimum: 100, maximum: 400), spacing: 4),
-                    GridItem(.flexible(minimum: 100, maximum: 400), spacing: 4),
-//                    GridItem(.adaptive(minimum: 100), spacing: 4),
-                ], spacing: 4) {
-                    ForEach($projectImages.images, id: \.self.path) { $image in
-                        if !isInDeleteMode {
-                            ImageButton(image: $image, selectedImagesForDeletion: $selectedImages, selectedImage: $overlayedImage)
+                LazyVGrid(
+                    columns: [
+                        GridItem(.flexible(minimum: 100, maximum: 400), spacing: 4),
+                        GridItem(.flexible(minimum: 100, maximum: 400), spacing: 4),
+                        //                    GridItem(.adaptive(minimum: 100), spacing: 4),
+                    ], spacing: 4
+                ) {
+                    ForEach($model.projectImages.images, id: \.self.path) { $image in
+                        if !model.isInDeleteMode {
+                            ImageButton(image: $image, selectedImage: $model.overlayedImage)
                                 .onLongPressGesture {
-                                    isInDeleteMode = true
+                                    model.didSetDeleteMode()
                                 }
                                 .matchedTransitionSource(id: image.path, in: transitionNamespace)
                         } else {
-                            SelectedImageButton(image: $image, selectedImagesForDeletion: $selectedImages)
+                            SelectedImageButton(
+                                image: $image, selectedImagesForDeletion: $model.selectedImages)
                         }
                     }
                 }
             }
         }
         .padding([.horizontal, .bottom], 8)
-        .sheet(item: $overlayedImage) { item in
+        .sheet(item: $model.overlayedImage) { item in
             VStack {
                 HStack(alignment: .firstTextBaseline) {
                     Button {
-                        overlayedImage = nil
+                        model.exitOverlayedImageView()
                     } label: {
                         Image(systemName: "xmark.circle")
                             .font(.system(size: 22, weight: Font.Weight.thin))
@@ -117,7 +109,7 @@ struct ImagesView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
                 // TODO: figure out what to do if image doesn't exist, some default image
-                Image(uiImage: AppFiles().getImage(for: item.id, fromProject: projectImages.projectId) ?? UIImage())
+                Image(uiImage: model.getImage(imageIdentifier: item.id))
                     .resizable()
                     .interpolation(.low)
                     .scaledToFit()
@@ -126,8 +118,8 @@ struct ImagesView: View {
             }
         }
         .overlay(alignment: .bottom) {
-            if errorToast.show {
-                Toast(showToast: $errorToast.show, message: errorToast.message)
+            if model.errorToast.show {
+                Toast(showToast: $model.errorToast.show, message: model.errorToast.message)
                     .padding(.horizontal, 16)
             }
         }
@@ -135,8 +127,17 @@ struct ImagesView: View {
             maxWidth: .infinity,
             maxHeight: .infinity,
         )
-        .animation(.easeOut(duration: 0.1), value: isInDeleteMode)
-        .animation(.easeOut(duration: 0.1), value: overlayedImage)
+        .animation(.easeOut(duration: 0.1), value: model.isInDeleteMode)
+        .animation(.easeOut(duration: 0.1), value: model.overlayedImage)
+        .onAppear {
+            if self.model.projectImages.images.isEmpty {
+                self.model.projectImages = try! ProjectDetailData.getImages(
+                    fromProject: model.projectImages.projectId, usingDatabase: appDatabase)
+            }
+            // TODO: navigate back to main screen because project loading was unsuccessful
+            // show an error
+            // isLoading = false
+        }
     }
 }
 
