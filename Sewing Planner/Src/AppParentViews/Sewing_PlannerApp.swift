@@ -6,8 +6,8 @@
 //
 
 import GRDB
-import SwiftUI
 import PhotosUI
+import SwiftUI
 
 @main
 struct Sewing_PlannerApp: App {
@@ -35,11 +35,22 @@ private struct StoreKey: EnvironmentKey {
 @Observable
 class Store {
     var projects: ProjectsViewModel
+    var navigation: [ProjectMetadata] = []
     var selectedProject: ProjectViewModel?
+    let db: AppDatabase = .db()
 
     init() {
         self.projects = ProjectsViewModel()
 
+    }
+
+    func addProject() throws {
+        try db.getWriter().write { db in
+            var newProjectInput = ProjectMetadataInput()
+            try newProjectInput.save(db)
+
+            navigation.append(ProjectMetadata(from: newProjectInput))
+        }
     }
 }
 
@@ -47,14 +58,6 @@ class ProjectViewModel {
     var model: ProjectDetailData
     var projectsNavigation: [ProjectMetadata]
     // let fetchProjects: () -> Void
-    var currentView = CurrentView.details
-    var name = ""
-    var showAddTextboxPopup = false
-    var doesProjectHaveName = false
-    var isLoading = true
-    private var pickerItem: PhotosPickerItem?
-    private var photosAppSelectedImage: Data?
-    private var showPhotoPicker = false
 
     init(data: ProjectDetailData, projectsNavigation: [ProjectMetadata]) {
         self.model = data

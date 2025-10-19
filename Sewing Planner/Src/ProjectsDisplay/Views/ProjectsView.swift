@@ -7,6 +7,11 @@
 
 import SwiftUI
 
+//enum Navigation {
+//    case allProjects
+//    case Project(ProjectViewModel)
+//}
+
 struct ProjectsView: View {
     @Environment(\.appDatabase) private var appDatabase
     @Environment(\.store) private var store
@@ -28,13 +33,13 @@ struct ProjectsView: View {
 
     var body: some View {
         @Bindable var storeBinding = store
-        NavigationStack(path: $storeBinding.projects.projects) {
+        NavigationStack(path: $storeBinding.navigation) {
             VStack {
                 ScrollView {
                     LazyVGrid(columns: columns, spacing: 12) {
                         ForEach($storeBinding.projects.projectsDisplay, id: \.self.project.id) { $project in
                             ProjectDisplayView(
-                                projectData: project, projects: $storeBinding.projects.projects
+                                projectData: project, projects: $storeBinding.navigation
                             )
                         }
                     }
@@ -44,11 +49,11 @@ struct ProjectsView: View {
                     .padding(.bottom, 12)
                 }
             }
-            // .navigationDestination(for: ProjectMetadata.self) { _ in
-            //     VStack {
-            //         ProjectView(projectsNavigation: $model.projects, fetchProjects: fetchProjects)
-            //     }
-            // }
+            .navigationDestination(for: ProjectMetadata.self) { _ in
+                VStack {
+                    ProjectView(projectsNavigation: $storeBinding.navigation, fetchProjects: fetchProjects)
+                }
+            }
             .padding(.horizontal, 8)
             .padding(.bottom, 12)
             .padding(.top, 16)
@@ -57,7 +62,7 @@ struct ProjectsView: View {
                     HStack {
                         Button("New Project") {
                             do {
-                                try store.projects.addProject()
+                                try store.addProject()
                             } catch {
                                 fatalError("\(error)")
                             }
@@ -77,6 +82,7 @@ struct ProjectsView: View {
 struct ProjectDisplayView: View {
     var projectData: ProjectDisplay
     @Binding var projects: [ProjectMetadata]
+    @Environment(\.store) private var store
 
     var body: some View {
         VStack {

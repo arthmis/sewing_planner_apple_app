@@ -14,21 +14,15 @@ enum CurrentView {
     case images
 }
 
+
 struct ProjectView: View {
     // used for dismissing a view(basically the back button)
     @Environment(\.dismiss) private var dismiss
     @Environment(\.appDatabase) private var appDatabase
-    @State var model: ProjectDetailData?
+    @Environment(\.store) private var store
     @Binding var projectsNavigation: [ProjectMetadata]
     let fetchProjects: () -> Void
-    @State var currentView = CurrentView.details
-    @State var name = ""
-    @State var showAddTextboxPopup = false
-    @State var doesProjectHaveName = false
     @State var isLoading = true
-    @State private var pickerItem: PhotosPickerItem?
-    @State private var photosAppSelectedImage: Data?
-    @State private var showPhotoPicker = false
 
     var body: some View {
         VStack {
@@ -36,7 +30,7 @@ struct ProjectView: View {
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
-                Project(model: model!, projectsNavigation: $projectsNavigation, fetchProjects: fetchProjects)
+                Project(model: store.selectedProject!.model, projectsNavigation: $projectsNavigation, fetchProjects: fetchProjects)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -49,7 +43,7 @@ struct ProjectView: View {
         .onAppear {
             if let id = projectsNavigation.last?.id {
                 if let projectData = try! ProjectDetailData.getProject(with: id, from: appDatabase) {
-                    self.model = projectData
+                    store.selectedProject = ProjectViewModel(data: projectData, projectsNavigation: projectsNavigation)
                 } else {
                     // TODO: navigate back to main screen because project loading was unsuccessful
                     // show an error
@@ -82,10 +76,10 @@ struct Project: View {
                 Tab("Details", systemImage: "tray.and.arrow.down.fill", value: .details) {
                     ProjectDetails(project: $model.project, projectSections: $model.projectSections, projectsNavigation: $projectsNavigation)
                 }
-                Tab("Images", systemImage: "photo.artframe", value: .images) {
-//                    ImagesView(projectImages: $model.projectImages)
-                    ImagesView(model: ImagesViewModel(projectImages: model.projectImages ?? ProjectImages(projectId: model.project.data.id)))
-                }
+//                 Tab("Images", systemImage: "photo.artframe", value: .images) {
+// //                    ImagesView(projectImages: $model.projectImages)
+//                     ImagesView(model: ImagesViewModel(projectImages: model.projectImages ?? ProjectImages(projectId: model.project.data.id)))
+//                 }
             }
             .navigationBarBackButtonHidden(true)
             .toolbar {
