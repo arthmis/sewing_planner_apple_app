@@ -54,21 +54,6 @@ class Store {
     }
 }
 
-class ProjectViewModel {
-    var model: ProjectDetailData
-    var projectsNavigation: [ProjectMetadata]
-    // let fetchProjects: () -> Void
-
-    init(data: ProjectDetailData, projectsNavigation: [ProjectMetadata]) {
-        self.model = data
-        self.projectsNavigation = projectsNavigation
-    }
-
-    static func getProject(projectId: Int64, db: AppDatabase) throws -> ProjectViewModel {
-        let projectData = try! ProjectDetailData.getProject(with: projectId, from: db)
-        return ProjectViewModel(data: projectData!, projectsNavigation: [])
-    }
-}
 
 private struct AppDatabaseKey: EnvironmentKey {
     static var defaultValue: AppDatabase { .db() }

@@ -7,10 +7,9 @@
 
 import SwiftUI
 
-struct ProjectDetails: View {
+struct ProjectDetailsView: View {
     @Binding var project: ProjectMetadataViewModel
     @Binding var projectSections: ProjectSections
-    @Binding var projectsNavigation: [ProjectMetadata]
 
     private var isProjectValid: Bool {
         !project.data.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty

@@ -67,7 +67,6 @@ struct ImagesView: View {
                     .padding(.top, 16)
                 }
             }
-            .animation(.easeOut(duration: 0.12), value: model.isInDeleteMode)
             .frame(maxWidth: .infinity)
             ScrollView {
                 LazyVGrid(
@@ -129,11 +128,8 @@ struct ImagesView: View {
         )
         .animation(.easeOut(duration: 0.1), value: model.isInDeleteMode)
         .animation(.easeOut(duration: 0.1), value: model.overlayedImage)
-        .onAppear {
-            if self.model.projectImages.images.isEmpty {
-                self.model.projectImages = try! ProjectDetailData.getImages(
-                    fromProject: model.projectImages.projectId, usingDatabase: appDatabase)
-            }
+        .task {
+            model.loadProjectImages(appDatabase: appDatabase)
             // TODO: navigate back to main screen because project loading was unsuccessful
             // show an error
             // isLoading = false

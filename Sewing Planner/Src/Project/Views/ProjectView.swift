@@ -14,8 +14,7 @@ enum CurrentView {
     case images
 }
 
-
-struct ProjectView: View {
+struct LoadProjectView: View {
     // used for dismissing a view(basically the back button)
     @Environment(\.dismiss) private var dismiss
     @Environment(\.appDatabase) private var appDatabase
@@ -30,25 +29,34 @@ struct ProjectView: View {
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
-                Project(model: store.selectedProject!.model, projectsNavigation: $projectsNavigation, fetchProjects: fetchProjects)
+                ProjectView(
+                    // safe to unwrap because this view isn't presented until isLoading is false
+                    // if loading the project fails then the view navigates back to all the projects
+                    // meaning this project view won't be displayed
+                    model: store.selectedProject!, projectsNavigation: $projectsNavigation,
+                    fetchProjects: fetchProjects)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         // clicking anywhere will remove focus from whatever may have focus
         // mostly using this to remove focus from textfields when you click outside of them
         // using a frame using all the available space to make it more effective
-//        .onTapGesture {
-//            NSApplication.shared.keyWindow?.makeFirstResponder(nil)
-//        }
+        //        .onTapGesture {
+        //            NSApplication.shared.keyWindow?.makeFirstResponder(nil)
+        //        }
         .onAppear {
             if let id = projectsNavigation.last?.id {
-                if let projectData = try! ProjectDetailData.getProject(with: id, from: appDatabase) {
-                    store.selectedProject = ProjectViewModel(data: projectData, projectsNavigation: projectsNavigation)
+                if let projectData = try! ProjectDetailData.getProject(with: id, from: appDatabase)
+                {
+                    store.selectedProject = ProjectViewModel(
+                        data: projectData, projectsNavigation: projectsNavigation)
                 } else {
+                    dismiss()
                     // TODO: navigate back to main screen because project loading was unsuccessful
                     // show an error
                 }
             } else {
+                dismiss()
                 // navigate back to main view and show an error
             }
             isLoading = false
@@ -56,30 +64,28 @@ struct ProjectView: View {
     }
 }
 
-struct Project: View {
+struct ProjectView: View {
     // used for dismissing a view(basically the back button)
     @Environment(\.dismiss) private var dismiss
-    @State var model: ProjectDetailData
+    @State var model: ProjectViewModel
     @Binding var projectsNavigation: [ProjectMetadata]
     let fetchProjects: () -> Void
-    @State var currentView = CurrentView.details
-    @State var name = ""
-    @State var showAddTextboxPopup = false
-    @State var doesProjectHaveName = false
-    @State private var pickerItem: PhotosPickerItem?
-    @State private var photosAppSelectedImage: Data?
-    @State private var showPhotoPicker = false
 
     var body: some View {
         VStack {
-            TabView(selection: $currentView) {
-                Tab("Details", systemImage: "tray.and.arrow.down.fill", value: .details) {
-                    ProjectDetails(project: $model.project, projectSections: $model.projectSections, projectsNavigation: $projectsNavigation)
+            TabView(selection: $model.currentView) {
+                Tab("Details", systemImage: "list.bullet.rectangle.portrait", value: .details) {
+                    ProjectDetailsView(
+                        project: $model.projectDetails.project,
+                        projectSections: $model.projectDetails.projectSections
+                    )
                 }
-//                 Tab("Images", systemImage: "photo.artframe", value: .images) {
-// //                    ImagesView(projectImages: $model.projectImages)
-//                     ImagesView(model: ImagesViewModel(projectImages: model.projectImages ?? ProjectImages(projectId: model.project.data.id)))
-//                 }
+                Tab("Images", systemImage: "photo.artframe", value: .images) {
+                    ImagesView(
+                        model: ImagesViewModel(
+                            projectImages: model.projectImages
+                                ?? ProjectImages(projectId: model.projectDetails.project.data.id)))
+                }
             }
             .navigationBarBackButtonHidden(true)
             .toolbar {
@@ -91,43 +97,27 @@ struct Project: View {
                 }
             }.toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    if currentView == CurrentView.details {
+                    if model.currentView == CurrentView.details {
                         Button {
-                            do {
-                                try model.projectSections.addSection(projectId: model.project.data.id)
-                            } catch {
-                                fatalError("\(error)")
-                            }
+                            model.addSection()
                         } label: {
                             Image(systemName: "plus")
                         }
                         .buttonStyle(AddNewSectionButtonStyle())
                         .accessibilityIdentifier("AddNewSectionButton")
-                    } else if currentView == CurrentView.images {
-                        Button { showPhotoPicker = true } label: {
+                    } else if model.currentView == CurrentView.images {
+                        Button {
+                            model.showPhotoPickerView()
+                        } label: {
                             Image(systemName: "photo.badge.plus")
                         }
                         .buttonStyle(AddImageButtonStyle())
-                        .photosPicker(isPresented: $showPhotoPicker, selection: $pickerItem, matching: .images)
-                        .onChange(of: pickerItem) {
-                            Task {
-                                let result = try await pickerItem?.loadTransferable(type: Data.self)
-
-                                switch result {
-                                case let .some(files):
-                                    let img = UIImage(data: files)!
-                                    // TODO: Performance problem here, scale the images in a background task
-                                    let resizedImage = img.scaleToAppImageMaxDimension()
-                                    let projectImage = ProjectImageInput(image: img)
-                                    try! model.projectImages?.importImages([projectImage])
-                                case .none:
-                                    // TODO: think about how to deal with path that couldn't become an image
-                                    // I'm thinking display an error alert that lists every image that couldn't be uploaded
-                                    print("couldn't load image")
-                                    //                                        errorToast = ErrorToast(show: true, message: "Error importing images. Please try again later")
-                                    // log error
-                                }
-                            }
+                        .photosPicker(
+                            isPresented: $model.showPhotoPicker, selection: $model.pickerItem,
+                            matching: .images
+                        )
+                        .onChange(of: model.pickerItem) {
+                            model.handleOnChangePickerItem()
                         }
                     }
                 }
@@ -137,9 +127,69 @@ struct Project: View {
         // clicking anywhere will remove focus from whatever may have focus
         // mostly using this to remove focus from textfields when you click outside of them
         // using a frame using all the available space to make it more effective
-//        .onTapGesture {
-//            NSApplication.shared.keyWindow?.makeFirstResponder(nil)
-//        }
+        //        .onTapGesture {
+        //            NSApplication.shared.keyWindow?.makeFirstResponder(nil)
+        //        }
+    }
+}
+
+@Observable
+class ProjectViewModel {
+    var projectDetails: ProjectDetailData
+    var projectsNavigation: [ProjectMetadata]
+    var projectImages: ProjectImages?
+    var deletedImages: [ProjectImage] = []
+    // let fetchProjects: () -> Void
+    var currentView = CurrentView.details
+    var name = ""
+    var showAddTextboxPopup = false
+    var doesProjectHaveName = false
+    var pickerItem: PhotosPickerItem?
+    private var photosAppSelectedImage: Data?
+    var showPhotoPicker = false
+
+    init(data: ProjectDetailData, projectsNavigation: [ProjectMetadata]) {
+        self.projectDetails = data
+        self.projectsNavigation = projectsNavigation
+    }
+
+    static func getProject(projectId: Int64, db: AppDatabase) throws -> ProjectViewModel {
+        let projectData = try! ProjectDetailData.getProject(with: projectId, from: db)
+        return ProjectViewModel(data: projectData!, projectsNavigation: [])
+    }
+
+    func addSection() {
+        do {
+            try projectDetails.projectSections.addSection(
+                projectId: projectDetails.project.data.id)
+        } catch {
+            fatalError("\(error)")
+        }
+    }
+
+    func showPhotoPickerView() {
+        showPhotoPicker = true
+    }
+
+    func handleOnChangePickerItem() {
+        Task {
+            let result = try await pickerItem?.loadTransferable(type: Data.self)
+
+            switch result {
+            case .some(let files):
+                let img = UIImage(data: files)!
+                // TODO: Performance problem here, scale the images in a background task
+                let resizedImage = img.scaleToAppImageMaxDimension()
+                let projectImage = ProjectImageInput(image: resizedImage)
+                try! projectImages?.importImages([projectImage])
+            case .none:
+                // TODO: think about how to deal with path that couldn't become an image
+                // I'm thinking display an error alert that lists every image that couldn't be uploaded
+                print("couldn't load image")
+            //                                        errorToast = ErrorToast(show: true, message: "Error importing images. Please try again later")
+            // log error
+            }
+        }
     }
 }
 

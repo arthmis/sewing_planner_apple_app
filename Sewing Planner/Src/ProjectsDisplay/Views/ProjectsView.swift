@@ -51,7 +51,7 @@ struct ProjectsView: View {
             }
             .navigationDestination(for: ProjectMetadata.self) { _ in
                 VStack {
-                    ProjectView(projectsNavigation: $storeBinding.navigation, fetchProjects: fetchProjects)
+                    LoadProjectView(projectsNavigation: $storeBinding.navigation, fetchProjects: fetchProjects)
                 }
             }
             .padding(.horizontal, 8)

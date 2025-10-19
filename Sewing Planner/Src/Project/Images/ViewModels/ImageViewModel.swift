@@ -9,6 +9,7 @@ import SwiftUI
 import GRDB
 import PhotosUI
 
+@Observable
 class ImagesViewModel {
     var projectImages: ProjectImages
     var selectedImages: Set<String?> = []
@@ -17,11 +18,11 @@ class ImagesViewModel {
     var photosAppSelectedImage: Data?
     var errorToast = ErrorToast()
     private var inDeleteMode = false
-    
+
     init(projectImages: ProjectImages) {
         self.projectImages = projectImages
     }
-    
+
     init(projectImages: ProjectImages, selectedImages: Set<String?>, overlayedImage: OverlayedImage? = nil, pickerItem: PhotosPickerItem? = nil, photosAppSelectedImage: Data? = nil, errorToast: ErrorToast = ErrorToast(), isInDeleteMode: Bool = false) {
         self.projectImages = projectImages
         self.selectedImages = selectedImages
@@ -31,20 +32,20 @@ class ImagesViewModel {
         self.errorToast = errorToast
         self.inDeleteMode = isInDeleteMode
     }
-    
+
     var isInDeleteMode: Bool {
         inDeleteMode
     }
-    
+
     var selectedImagesIsEmpty: Bool {
         selectedImages.isEmpty
     }
-    
+
     func cancelDeleteMode() {
         selectedImages = Set()
         inDeleteMode = false
     }
-    
+
     func deleteImages() {
         if selectedImagesIsEmpty {
             return
@@ -61,19 +62,25 @@ class ImagesViewModel {
         inDeleteMode = false
         selectedImages = Set()
     }
-    
+
     func didSetDeleteMode() {
         inDeleteMode = true
     }
-    
+
     func exitOverlayedImageView() {
         overlayedImage = nil
     }
-    
+
     func getImage(imageIdentifier: String) -> UIImage {
         AppFiles().getImage(for: imageIdentifier, fromProject: projectImages.projectId) ?? UIImage()
     }
-    
+
+    func loadProjectImages(appDatabase: AppDatabase) {
+        if projectImages.images.isEmpty {
+            projectImages = try! appDatabase.getProjectThumbnails(projectId: projectImages.projectId)
+        }
+    }
+
 }
 
 // TODO: make this a class since storing data like an image is too expensive to be copying

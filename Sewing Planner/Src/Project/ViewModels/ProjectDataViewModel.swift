@@ -13,8 +13,6 @@ import SwiftUI
 class ProjectDetailData {
     var project: ProjectMetadataViewModel
     var projectSections: ProjectSections = .init()
-    var projectImages: ProjectImages?
-    var deletedImages: [ProjectImage] = []
     let db: AppDatabase = .db()
 
     init(project: ProjectMetadataViewModel) {
@@ -29,7 +27,6 @@ class ProjectDetailData {
     init(project: ProjectMetadataViewModel, projectSections: ProjectSections, projectImages: ProjectImages) {
         self.project = project
         self.projectSections = projectSections
-        self.projectImages = projectImages
     }
 
     static func getProject(with id: Int64, from db: AppDatabase) throws -> ProjectDetailData? {
@@ -57,10 +54,6 @@ class ProjectDetailData {
         return nil
     }
 
-    static func getImages(fromProject projectId: Int64, usingDatabase db: AppDatabase) throws -> ProjectImages {
-        try db.getProjectThumbnails(projectId: projectId)
-        // return (ProjectDetailData(project: project, projectSections: projectSections, projectImages: projectImages))
-    }
 }
 
 @Observable
@@ -86,7 +79,7 @@ class ProjectSections {
     }
 }
 
-@Observable
+// @Observable
 class ProjectImages {
     let projectId: Int64
     var images: [ProjectImage] = []
