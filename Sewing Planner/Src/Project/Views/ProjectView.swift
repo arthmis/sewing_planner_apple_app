@@ -49,7 +49,8 @@ struct LoadProjectView: View {
                 if let projectData = try! ProjectDetailData.getProject(with: id, from: appDatabase)
                 {
                     store.selectedProject = ProjectViewModel(
-                        data: projectData, projectsNavigation: projectsNavigation)
+                        data: projectData, projectsNavigation: projectsNavigation,
+                        projectImages: ProjectImages(projectId: projectData.project.data.id))
                 } else {
                     dismiss()
                     // TODO: navigate back to main screen because project loading was unsuccessful
@@ -82,9 +83,9 @@ struct ProjectView: View {
                 }
                 Tab("Images", systemImage: "photo.artframe", value: .images) {
                     ImagesView(
-                        model: ImagesViewModel(
-                            projectImages: model.projectImages
-                                ?? ProjectImages(projectId: model.projectDetails.project.data.id)))
+                        model:
+                            $model.projectImages
+                        )
                 }
             }
             .navigationBarBackButtonHidden(true)
@@ -117,7 +118,9 @@ struct ProjectView: View {
                             matching: .images
                         )
                         .onChange(of: model.pickerItem) {
-                            model.handleOnChangePickerItem()
+                            Task {
+                                try await model.handleOnChangePickerItem()
+                            }
                         }
                     }
                 }
@@ -137,7 +140,7 @@ struct ProjectView: View {
 class ProjectViewModel {
     var projectDetails: ProjectDetailData
     var projectsNavigation: [ProjectMetadata]
-    var projectImages: ProjectImages?
+    var projectImages: ProjectImages
     var deletedImages: [ProjectImage] = []
     // let fetchProjects: () -> Void
     var currentView = CurrentView.details
@@ -148,14 +151,19 @@ class ProjectViewModel {
     private var photosAppSelectedImage: Data?
     var showPhotoPicker = false
 
-    init(data: ProjectDetailData, projectsNavigation: [ProjectMetadata]) {
+    init(
+        data: ProjectDetailData, projectsNavigation: [ProjectMetadata], projectImages: ProjectImages
+    ) {
         self.projectDetails = data
         self.projectsNavigation = projectsNavigation
+        self.projectImages = projectImages
     }
 
     static func getProject(projectId: Int64, db: AppDatabase) throws -> ProjectViewModel {
         let projectData = try! ProjectDetailData.getProject(with: projectId, from: db)
-        return ProjectViewModel(data: projectData!, projectsNavigation: [])
+        return ProjectViewModel(
+            data: projectData!, projectsNavigation: [],
+            projectImages: ProjectImages(projectId: projectId))
     }
 
     func addSection() {
@@ -171,25 +179,25 @@ class ProjectViewModel {
         showPhotoPicker = true
     }
 
-    func handleOnChangePickerItem() {
-        Task {
-            let result = try await pickerItem?.loadTransferable(type: Data.self)
+    func handleOnChangePickerItem() async throws {
+        // Task {
+        let result = try await pickerItem?.loadTransferable(type: Data.self)
 
-            switch result {
-            case .some(let files):
-                let img = UIImage(data: files)!
-                // TODO: Performance problem here, scale the images in a background task
-                let resizedImage = img.scaleToAppImageMaxDimension()
-                let projectImage = ProjectImageInput(image: resizedImage)
-                try! projectImages?.importImages([projectImage])
-            case .none:
-                // TODO: think about how to deal with path that couldn't become an image
-                // I'm thinking display an error alert that lists every image that couldn't be uploaded
-                print("couldn't load image")
-            //                                        errorToast = ErrorToast(show: true, message: "Error importing images. Please try again later")
-            // log error
-            }
+        switch result {
+        case .some(let files):
+            let img = UIImage(data: files)!
+            // TODO: Performance problem here, scale the images in a background task
+            let resizedImage = img.scaleToAppImageMaxDimension()
+            let projectImage = ProjectImageInput(image: resizedImage)
+            try! projectImages.importImages([projectImage])
+        case .none:
+            // TODO: think about how to deal with path that couldn't become an image
+            // I'm thinking display an error alert that lists every image that couldn't be uploaded
+            print("couldn't load image")
+        //                                        errorToast = ErrorToast(show: true, message: "Error importing images. Please try again later")
+        // log error
         }
+        // }
     }
 }
 

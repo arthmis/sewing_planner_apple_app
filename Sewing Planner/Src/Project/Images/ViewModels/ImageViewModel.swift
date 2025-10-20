@@ -10,27 +10,70 @@ import GRDB
 import PhotosUI
 
 @Observable
-class ImagesViewModel {
-    var projectImages: ProjectImages
+class ProjectImages {
+    let projectId: Int64
+    var images: [ProjectImage] = []
+    var deletedImages: [ProjectImage] = []
+
     var selectedImages: Set<String?> = []
     var overlayedImage: OverlayedImage?
     var pickerItem: PhotosPickerItem?
     var photosAppSelectedImage: Data?
     var errorToast = ErrorToast()
-    private var inDeleteMode = false
+    var inDeleteMode = false
 
-    init(projectImages: ProjectImages) {
-        self.projectImages = projectImages
+    let appDatabase: AppDatabase = .db()
+
+    init(projectId: Int64) {
+        self.projectId = projectId
     }
 
-    init(projectImages: ProjectImages, selectedImages: Set<String?>, overlayedImage: OverlayedImage? = nil, pickerItem: PhotosPickerItem? = nil, photosAppSelectedImage: Data? = nil, errorToast: ErrorToast = ErrorToast(), isInDeleteMode: Bool = false) {
-        self.projectImages = projectImages
-        self.selectedImages = selectedImages
-        self.overlayedImage = overlayedImage
-        self.pickerItem = pickerItem
-        self.photosAppSelectedImage = photosAppSelectedImage
-        self.errorToast = errorToast
-        self.inDeleteMode = isInDeleteMode
+    init(projectId: Int64, images: [ProjectImage]) {
+        self.projectId = projectId
+        self.images = images
+    }
+
+    func importImages(_ newImages: [ProjectImageInput]) throws {
+        try saveImages(images: newImages)
+    }
+
+    func addImage(_ image: ProjectImage) {
+        images.append(image)
+    }
+
+    func saveImages(images: [ProjectImageInput]) throws {
+        try appDatabase.getWriter().write { db in
+            for image in images {
+                do {
+                    if image.record == nil {
+                        let (imagePath, thumbnailPath) = try AppFiles().saveProjectImage(projectId: projectId, image: image)!
+                        let now = Date.now
+                        var input = ProjectImageRecordInput(id: nil, projectId: projectId, filePath: imagePath, thumbnail: thumbnailPath, isDeleted: false, createDate: now, updateDate: now)
+                        try input.save(db)
+                        let record = ProjectImageRecord(from: consume input)
+                        let projectImage = ProjectImage(record: consume record, path: imagePath, image: image.image)
+                        addImage(projectImage)
+                    }
+                } catch {
+                    fatalError("error saving record or saving image to filesystem: \(error)")
+                }
+            }
+        }
+    }
+
+    func deleteImages() throws {
+        try appDatabase.getWriter().write { db in
+            for image in deletedImages {
+                do {
+                    try AppFiles().deleteImage(projectId: projectId, image: image)
+                    try image.record.delete(db)
+                } catch {
+                    throw AppFilesError.deleteError("problem deleting the image")
+                }
+            }
+        }
+
+        deletedImages.removeAll()
     }
 
     var isInDeleteMode: Bool {
@@ -46,18 +89,18 @@ class ImagesViewModel {
         inDeleteMode = false
     }
 
-    func deleteImages() {
+    func handleDeleteImage() {
         if selectedImagesIsEmpty {
             return
         }
 
         for imagePath in selectedImages {
-            if let index = self.projectImages.images.firstIndex(where: { $0.path == imagePath }) {
-                let image = self.projectImages.images.remove(at: index)
-                projectImages.deletedImages.append(image)
+            if let index = images.firstIndex(where: { $0.path == imagePath }) {
+                let image = images.remove(at: index)
+                deletedImages.append(image)
             }
         }
-        try! projectImages.deleteImages()
+        try! deleteImages()
 
         inDeleteMode = false
         selectedImages = Set()
@@ -72,17 +115,15 @@ class ImagesViewModel {
     }
 
     func getImage(imageIdentifier: String) -> UIImage {
-        AppFiles().getImage(for: imageIdentifier, fromProject: projectImages.projectId) ?? UIImage()
+        AppFiles().getImage(for: imageIdentifier, fromProject: projectId) ?? UIImage()
     }
 
     func loadProjectImages(appDatabase: AppDatabase) {
-        if projectImages.images.isEmpty {
-            projectImages = try! appDatabase.getProjectThumbnails(projectId: projectImages.projectId)
+        if images.isEmpty {
+            images = try! appDatabase.getProjectThumbnails(projectId: projectId)
         }
     }
-
 }
-
 // TODO: make this a class since storing data like an image is too expensive to be copying
 struct ProjectImage {
     var record: ProjectImageRecord

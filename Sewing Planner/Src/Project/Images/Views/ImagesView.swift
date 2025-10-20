@@ -28,15 +28,8 @@ struct OverlayedImage: Identifiable, Hashable {
 }
 
 struct ImagesView: View {
-    //    @Binding var projectImages: ProjectImages
-    //    @State var selectedImages: Set<String?> = []
-    //    @State var overlayedImage: OverlayedImage?
-    //    @State private var pickerItem: PhotosPickerItem?
-    //    @State private var photosAppSelectedImage: Data?
-    //    @State var errorToast = ErrorToast()
-    //    @State var isInDeleteMode = false
     @Environment(\.appDatabase) private var appDatabase
-    @State var model: ImagesViewModel
+    @Binding var model: ProjectImages
     @Namespace var transitionNamespace
 
     var body: some View {
@@ -61,7 +54,7 @@ struct ImagesView: View {
                         .simultaneousGesture(
                             LongPressGesture(minimumDuration: 2).onEnded { val in
                                 print(val)
-                                model.deleteImages()
+                                model.handleDeleteImage()
                             })
                     }
                     .padding(.top, 16)
@@ -76,7 +69,7 @@ struct ImagesView: View {
                         //                    GridItem(.adaptive(minimum: 100), spacing: 4),
                     ], spacing: 4
                 ) {
-                    ForEach($model.projectImages.images, id: \.self.path) { $image in
+                    ForEach($model.images, id: \.self.path) { $image in
                         if !model.isInDeleteMode {
                             ImageButton(image: $image, selectedImage: $model.overlayedImage)
                                 .onLongPressGesture {
