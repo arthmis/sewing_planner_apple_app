@@ -41,7 +41,11 @@ struct ItemView: View {
                     if !isEditing {
                         isEditing = true
                         newText = data.record.text
-                        newNoteText = data.note != nil ? data.note!.text : ""
+                        newNoteText = if let note = data.note {
+                            note.text
+                        } else {
+                            ""
+                        }
                     }
                 }
             }

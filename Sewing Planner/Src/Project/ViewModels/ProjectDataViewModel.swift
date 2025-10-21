@@ -60,7 +60,3 @@ class ProjectData {
         return nil
     }
 }
-
-enum AppFilesError: Error {
-    case deleteError(String)
-}

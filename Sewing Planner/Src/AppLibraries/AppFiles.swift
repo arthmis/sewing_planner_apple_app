@@ -10,6 +10,10 @@ import Foundation
 import SwiftUI
 import System
 
+enum AppFilesError {
+    case fileSaveError
+}
+
 struct AppFiles {
     // only used when the schema is changed during development
     // ensures the images don't conflict with new images
@@ -151,7 +155,7 @@ extension AppFiles {
     }
 
     private func getAppPhotosThumbnailDirectoryPath() -> URL {
-        let cacheUrl = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        let cacheUrl = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
         return cacheUrl.appendingPathComponent("ProjectPhotosThumbnails")
     }
 

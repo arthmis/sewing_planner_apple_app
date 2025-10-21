@@ -21,21 +21,18 @@ struct LoadProjectView: View {
     @Environment(\.store) private var store
     @Binding var projectsNavigation: [ProjectMetadata]
     let fetchProjects: () -> Void
-    @State var isLoading = true
+    // @State var isLoading = true
 
     var body: some View {
         VStack {
-            if isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
+            if let project = store.selectedProject {
                 ProjectView(
-                    // safe to unwrap because this view isn't presented until isLoading is false
-                    // if loading the project fails then the view navigates back to all the projects
-                    // meaning this project view won't be displayed
-                    model: store.selectedProject!, projectsNavigation: $projectsNavigation,
+                    model: project, projectsNavigation: $projectsNavigation,
                     fetchProjects: fetchProjects
                 )
+            } else {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -61,7 +58,6 @@ struct LoadProjectView: View {
                 dismiss()
                 // navigate back to main view and show an error
             }
-            isLoading = false
         }
     }
 }
@@ -160,6 +156,7 @@ class ProjectViewModel {
     static func getProject(projectId: Int64, db: AppDatabase) throws -> ProjectViewModel {
         let projectData = try! ProjectData.getProject(with: projectId, from: db)
         return ProjectViewModel(
+            // TODO: handle this error instead of returning nil
             data: projectData!, projectsNavigation: [],
             projectImages: ProjectImages(projectId: projectId)
         )
@@ -183,6 +180,7 @@ class ProjectViewModel {
 
         switch result {
         case let .some(files):
+            // fix this unwrap by throwing an error, display to user
             let img = UIImage(data: files)!
             // TODO: Performance problem here, scale the images in a background task
             let resizedImage = img.scaleToAppImageMaxDimension()
