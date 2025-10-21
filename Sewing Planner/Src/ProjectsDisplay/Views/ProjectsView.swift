@@ -1,5 +1,5 @@
 //
-//  SwiftUIView.swift
+//  ProjectsView.swift
 //  Sewing Planner
 //
 //  Created by Art on 7/9/24.
@@ -7,10 +7,10 @@
 
 import SwiftUI
 
-//enum Navigation {
+// enum Navigation {
 //    case allProjects
 //    case Project(ProjectViewModel)
-//}
+// }
 
 struct ProjectsView: View {
     @Environment(\.appDatabase) private var appDatabase
@@ -70,7 +70,6 @@ struct ProjectsView: View {
                         .accessibilityIdentifier("AddNewProjectButton")
                     }
                 }
-
             }
         }
         .navigationTitle("Projects")

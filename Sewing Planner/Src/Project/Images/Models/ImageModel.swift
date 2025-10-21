@@ -17,7 +17,7 @@ struct ProjectImageRecord: Identifiable, Codable, EncodableRecord, FetchableReco
     var createDate: Date
     var updateDate: Date
     static let databaseTableName = "projectImage"
-    
+
     init(from input: ProjectImageRecordInput) {
         id = input.id!
         projectId = input.projectId
@@ -38,7 +38,7 @@ struct ProjectImageRecordInput: Identifiable, Codable, EncodableRecord, MutableP
     var createDate: Date
     var updateDate: Date
     static let databaseTableName = "projectImage"
-    
+
     mutating func didInsert(_ inserted: InsertionSuccess) {
         id = inserted.rowID
     }

@@ -41,7 +41,6 @@ struct DeleteButtonStyle: ButtonStyle {
     }
 }
 
-
 struct SaveProjectButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         let isPressed = configuration.isPressed

@@ -1,5 +1,5 @@
 //
-//  ProjectDetails.swift
+//  ProjectDetailsView.swift
 //  Sewing Planner
 //
 //  Created by Art on 9/12/24.
@@ -33,8 +33,7 @@ struct ProjectDataView: View {
             .frame(maxHeight: .infinity)
         }
         .padding([.leading, .trailing], 8)
-        .toolbar {
-        }
+        .toolbar {}
     }
 }
 

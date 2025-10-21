@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  SectionItemViewModel.swift
 //  Sewing Planner
 //
 //  Created by Art on 9/29/25.

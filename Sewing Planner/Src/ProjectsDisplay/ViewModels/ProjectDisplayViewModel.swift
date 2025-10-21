@@ -29,7 +29,7 @@ class ProjectsViewModel {
     let db: AppDatabase = .db()
 
     init(projects: [ProjectDisplay]) {
-        self.projectsDisplay = projects
+        projectsDisplay = projects
     }
 
     init() {}

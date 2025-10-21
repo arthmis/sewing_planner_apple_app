@@ -34,7 +34,8 @@ struct LoadProjectView: View {
                     // if loading the project fails then the view navigates back to all the projects
                     // meaning this project view won't be displayed
                     model: store.selectedProject!, projectsNavigation: $projectsNavigation,
-                    fetchProjects: fetchProjects)
+                    fetchProjects: fetchProjects
+                )
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -46,11 +47,11 @@ struct LoadProjectView: View {
         //        }
         .onAppear {
             if let id = projectsNavigation.last?.id {
-                if let projectData = try! ProjectData.getProject(with: id, from: appDatabase)
-                {
+                if let projectData = try! ProjectData.getProject(with: id, from: appDatabase) {
                     store.selectedProject = ProjectViewModel(
                         data: projectData, projectsNavigation: projectsNavigation,
-                        projectImages: ProjectImages(projectId: projectData.data.id))
+                        projectImages: ProjectImages(projectId: projectData.data.id)
+                    )
                 } else {
                     dismiss()
                     // TODO: navigate back to main screen because project loading was unsuccessful
@@ -83,8 +84,8 @@ struct ProjectView: View {
                 Tab("Images", systemImage: "photo.artframe", value: .images) {
                     ImagesView(
                         model:
-                            $model.projectImages
-                        )
+                        $model.projectImages
+                    )
                 }
             }
             .navigationBarBackButtonHidden(true)
@@ -154,7 +155,7 @@ class ProjectViewModel {
     init(
         data: ProjectData, projectsNavigation: [ProjectMetadata], projectImages: ProjectImages
     ) {
-        self.projectData = data
+        projectData = data
         self.projectsNavigation = projectsNavigation
         self.projectImages = projectImages
     }
@@ -163,7 +164,8 @@ class ProjectViewModel {
         let projectData = try! ProjectData.getProject(with: projectId, from: db)
         return ProjectViewModel(
             data: projectData!, projectsNavigation: [],
-            projectImages: ProjectImages(projectId: projectId))
+            projectImages: ProjectImages(projectId: projectId)
+        )
     }
 
     func addSection() {
@@ -183,7 +185,7 @@ class ProjectViewModel {
         let result = try await pickerItem?.loadTransferable(type: Data.self)
 
         switch result {
-        case .some(let files):
+        case let .some(files):
             let img = UIImage(data: files)!
             // TODO: Performance problem here, scale the images in a background task
             let resizedImage = img.scaleToAppImageMaxDimension()
@@ -193,8 +195,8 @@ class ProjectViewModel {
             // TODO: think about how to deal with path that couldn't become an image
             // I'm thinking display an error alert that lists every image that couldn't be uploaded
             print("couldn't load image")
-        //                                        errorToast = ErrorToast(show: true, message: "Error importing images. Please try again later")
-        // log error
+            //                                        errorToast = ErrorToast(show: true, message: "Error importing images. Please try again later")
+            // log error
         }
         // }
     }

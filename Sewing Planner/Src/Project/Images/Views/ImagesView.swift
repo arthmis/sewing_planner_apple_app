@@ -1,5 +1,5 @@
 //
-//  ImageSketchesView.swift
+//  ImagesView.swift
 //  Sewing Planner
 //
 //  Created by Art on 9/12/24.
@@ -40,8 +40,7 @@ struct ImagesView: View {
                         Button("Cancel", action: model.cancelDeleteMode)
                             .buttonStyle(SecondaryButtonStyle())
                         Spacer()
-                        Button {
-                        } label: {
+                        Button {} label: {
                             HStack {
                                 Text("Delete")
                                 Image(systemName: "trash")
@@ -78,7 +77,8 @@ struct ImagesView: View {
                                 .matchedTransitionSource(id: image.path, in: transitionNamespace)
                         } else {
                             SelectedImageButton(
-                                image: $image, selectedImagesForDeletion: $model.selectedImages)
+                                image: $image, selectedImagesForDeletion: $model.selectedImages
+                            )
                         }
                     }
                 }
@@ -117,7 +117,7 @@ struct ImagesView: View {
         }
         .frame(
             maxWidth: .infinity,
-            maxHeight: .infinity,
+            maxHeight: .infinity
         )
         .animation(.easeOut(duration: 0.1), value: model.isInDeleteMode)
         .animation(.easeOut(duration: 0.1), value: model.overlayedImage)

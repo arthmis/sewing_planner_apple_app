@@ -29,7 +29,7 @@ extension EnvironmentValues {
 }
 
 private struct StoreKey: EnvironmentKey {
-    static let defaultValue: Store = Store()
+    static let defaultValue: Store = .init()
 }
 
 @Observable
@@ -40,8 +40,7 @@ class Store {
     let db: AppDatabase = .db()
 
     init() {
-        self.projects = ProjectsViewModel()
-
+        projects = ProjectsViewModel()
     }
 
     func addProject() throws {
@@ -53,7 +52,6 @@ class Store {
         }
     }
 }
-
 
 private struct AppDatabaseKey: EnvironmentKey {
     static var defaultValue: AppDatabase { .db() }

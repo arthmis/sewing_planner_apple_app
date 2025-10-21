@@ -18,12 +18,12 @@ struct SectionRecord: Hashable, Identifiable, Codable, EncodableRecord, Fetchabl
     static let databaseTableName = "section"
 
     init(from record: SectionInputRecord) {
-        self.id = record.id!
-        self.projectId = record.projectId
-        self.name = record.name
-        self.isDeleted = record.isDeleted
-        self.createDate = record.createDate
-        self.updateDate = record.updateDate
+        id = record.id!
+        projectId = record.projectId
+        name = record.name
+        isDeleted = record.isDeleted
+        createDate = record.createDate
+        updateDate = record.updateDate
     }
 }
 
@@ -63,14 +63,14 @@ struct SectionItemRecord: Hashable, Identifiable, Codable, EncodableRecord, Fetc
     }
 
     init(from record: SectionItemInputRecord) {
-        self.id = record.id!
-        self.sectionId = record.sectionId
-        self.text = record.text
-        self.isComplete = record.isComplete
-        self.isDeleted = record.isDeleted
-        self.order = record.order
-        self.createDate = record.createDate
-        self.updateDate = record.updateDate
+        id = record.id!
+        sectionId = record.sectionId
+        text = record.text
+        isComplete = record.isComplete
+        isDeleted = record.isDeleted
+        order = record.order
+        createDate = record.createDate
+        updateDate = record.updateDate
     }
 }
 
@@ -119,7 +119,6 @@ struct SectionItemNoteRecord: Hashable, Identifiable, Codable, EncodableRecord, 
     var updateDate: Date = .init()
     static let databaseTableName = "sectionItemNote"
 
-
     mutating func didInsert(_ inserted: InsertionSuccess) {
         id = inserted.rowID
     }
@@ -132,15 +131,14 @@ struct SectionItemNoteRecord: Hashable, Identifiable, Codable, EncodableRecord, 
         createDate = now
         updateDate = now
     }
-    
+
     init(from record: SectionItemNoteInputRecord) {
-        self.id = record.id!
-        self.text = record.text
-        self.sectionItemId = record.sectionItemId
+        id = record.id!
+        text = record.text
+        sectionItemId = record.sectionItemId
         createDate = record.createDate
         updateDate = record.updateDate
     }
-
 }
 
 struct SectionItemNoteInputRecord: Hashable, Identifiable, Codable, EncodableRecord, FetchableRecord, MutablePersistableRecord, TableRecord {
@@ -150,7 +148,6 @@ struct SectionItemNoteInputRecord: Hashable, Identifiable, Codable, EncodableRec
     var createDate: Date = .init()
     var updateDate: Date = .init()
     static let databaseTableName = "sectionItemNote"
-
 
     mutating func didInsert(_ inserted: InsertionSuccess) {
         id = inserted.rowID
@@ -163,5 +160,4 @@ struct SectionItemNoteInputRecord: Hashable, Identifiable, Codable, EncodableRec
         createDate = now
         updateDate = now
     }
-
 }

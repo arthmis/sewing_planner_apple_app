@@ -37,7 +37,6 @@ struct RevealFrom: Transition {
     }
 }
 
-
 struct Example: View {
     @State var text: String
     @State var note: String
@@ -63,7 +62,7 @@ struct Example: View {
                 .padding(12)
                 .background(Color.gray.opacity(0.2))
                 .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .transition(.revealFrom(edge: .leading))
+                .transition(.revealFrom(edge: .leading))
             }
             Spacer()
         }

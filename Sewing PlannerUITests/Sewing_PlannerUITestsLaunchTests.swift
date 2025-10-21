@@ -8,7 +8,6 @@
 import XCTest
 
 final class Sewing_PlannerUITestsLaunchTests: XCTestCase {
-
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
     }

@@ -1,5 +1,5 @@
 //
-//  TimestampRecord.swift
+//  TimestampedRecord.swift
 //  Sewing Planner
 //
 //  Created by Art on 9/10/24.

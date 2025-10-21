@@ -73,7 +73,6 @@ struct ImageButton: View {
             .clipped()
             // .scaleEffect(isPressed ? 0.95 : 1)
             .animation(.easeOut(duration: 0.1), value: isPressed)
-
             // .background(Color(hex: 0xDDDDDD, opacity: isPressed ? 1 : 0))
             // parts of the image that were clipped still respond to the mouse events so this constrains it to the correct area
             .contentShape(Rectangle())

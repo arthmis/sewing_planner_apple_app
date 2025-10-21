@@ -184,7 +184,7 @@ struct SelectedSectionItemView: View {
         }
         .contentShape(Rectangle())
         .padding(6)
-        .background(isSelected ? Color.blue.opacity(0.5): Color.white)
+        .background(isSelected ? Color.blue.opacity(0.5) : Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .onTapGesture {
             if !isSelected {
@@ -203,7 +203,7 @@ struct DropSectionItemViewDelegate: DropDelegate {
     @Binding var draggedItem: SectionItem?
     var saveNewOrder: () throws -> Void
 
-    func dropEntered(info: DropInfo) {
+    func dropEntered(info _: DropInfo) {
         guard item != draggedItem,
               let current = draggedItem,
               let from = data.firstIndex(of: current),
@@ -218,11 +218,11 @@ struct DropSectionItemViewDelegate: DropDelegate {
         }
     }
 
-    func dropUpdated(info: DropInfo) -> DropProposal? {
+    func dropUpdated(info _: DropInfo) -> DropProposal? {
         DropProposal(operation: .move)
     }
 
-    func performDrop(info: DropInfo) -> Bool {
+    func performDrop(info _: DropInfo) -> Bool {
         try! saveNewOrder()
         draggedItem = nil
         return true

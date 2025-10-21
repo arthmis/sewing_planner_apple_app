@@ -1,5 +1,5 @@
 //
-//  ProjectModel.swift
+//  ProjectMetadataModel.swift
 //  Sewing Planner
 //
 //  Created by Art on 10/30/24.
@@ -25,16 +25,15 @@ struct ProjectMetadata: Hashable, Codable, EncodableRecord, FetchableRecord, Mut
         self.updateDate = updateDate
         isDeleted = false
     }
-    
+
     init(from input: ProjectMetadataInput) {
-        self.id = input.id!
-        self.name = input.name
-        self.completed = input.completed
-        self.createDate = input.createDate
-        self.updateDate = input.updateDate
+        id = input.id!
+        name = input.name
+        completed = input.completed
+        createDate = input.createDate
+        updateDate = input.updateDate
         isDeleted = input.isDeleted
     }
-
 }
 
 struct ProjectMetadataInput: Hashable, Codable, EncodableRecord, MutablePersistableRecord, TableRecord {

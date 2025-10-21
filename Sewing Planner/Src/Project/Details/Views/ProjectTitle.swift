@@ -1,5 +1,5 @@
 //
-//  ProjectName.swift
+//  ProjectTitle.swift
 //  Sewing Planner
 //
 //  Created by Art on 7/23/24.
@@ -34,7 +34,7 @@ struct ProjectTitle: View {
                         isEditing = false
                     }
                     .focused($headerFocus)
-                    .onChange(of: headerFocus) { _, newFocus in
+                    .onChange(of: headerFocus) { _, _ in
                         // if !newFocus {
                         //     let sanitizedName = project.name.trimmingCharacters(in: .whitespacesAndNewlines)
                         //     guard !sanitizedName.isEmpty else { return }

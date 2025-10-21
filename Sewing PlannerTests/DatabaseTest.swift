@@ -5,20 +5,19 @@
 //  Created by Art on 9/9/24.
 //
 
-import XCTest
 import GRDB
 @testable import Sewing_Planner
+import XCTest
 
 final class DatabaseTest: XCTestCase {
-    
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
-    
+
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
-    
+
 //    func testSaveProject() throws {
 //        // This is an example of a functional test case.
 //        // Use XCTAssert and related functions to verify your tests produce the correct results.
@@ -34,14 +33,14 @@ final class DatabaseTest: XCTestCase {
 //        var steps = ProjectStep(text: "step 1", isComplete: false, isEditing: false)
 //        var projectImages: [ProjectImage] = []
 //        let projectId = try db.saveProject(project: &project, projectSteps: [], materialData: [material], projectImages: &projectImages)
-//        
+//
 //        let writer = db.getWriter()
 //        try writer.read { db in
 //            let projectOne = try Project.fetchOne(
 //                db,
 //                sql: "SELECT * FROM project WHERE id = ?",
 //                arguments: [projectId])!
-//            
+//
 //            XCTAssertEqual(project.id, Optional(1))
 //            XCTAssertEqual(project.name, projectOne.name)
 //            XCTAssertEqual(project.completed, projectOne.completed)
@@ -51,27 +50,26 @@ final class DatabaseTest: XCTestCase {
 //            // more info here: https://github.com/groue/GRDB.swift/issues/492
 //            XCTAssertTrue(Calendar.current.isDate(project.createDate, equalTo: projectOne.createDate, toGranularity: Calendar.Component.second))
 //            XCTAssertTrue(Calendar.current.isDate(project.updateDate, equalTo: projectOne.updateDate, toGranularity: Calendar.Component.second))
-//            
+//
 //            let materialOne = try MaterialRecord.fetchOne(
 //                db,
 //                sql: "SELECT * FROM projectMaterial WHERE id = ?",
 //                arguments: [1])!
-//            
+//
 //            XCTAssertEqual(materialOne.id, Optional(1))
 //            XCTAssertEqual(materialOne.text, material.text)
 //            XCTAssertEqual(materialOne.completed, material.completed)
 //            XCTAssertTrue(Calendar.current.isDate(materialOne.createDate, equalTo: material.createDate, toGranularity: Calendar.Component.second))
 //            XCTAssertTrue(Calendar.current.isDate(materialOne.updateDate, equalTo: material.updateDate, toGranularity: Calendar.Component.second))
 //        }
-//        
+//
 //        AppDatabase.deleteDb(name: dbName)
 //    }
-    
+
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
-        self.measure {
+        measure {
             // Put the code you want to measure the time of here.
         }
     }
-    
 }

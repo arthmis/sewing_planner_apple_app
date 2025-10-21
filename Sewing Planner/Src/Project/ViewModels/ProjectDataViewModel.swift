@@ -1,5 +1,5 @@
 //
-//  ProjectDetailData.swift
+//  ProjectDataViewModel.swift
 //  Sewing Planner
 //
 //  Created by Art on 10/11/24.
@@ -7,8 +7,8 @@
 
 import Foundation
 import GRDB
-import SwiftUI
 import PhotosUI
+import SwiftUI
 
 @Observable
 class ProjectData {
@@ -23,7 +23,7 @@ class ProjectData {
 
     init(data: ProjectMetadata, projectSections: [Section]) {
         self.data = data
-        self.sections = projectSections
+        sections = projectSections
     }
 
     func addSection() {
@@ -31,7 +31,8 @@ class ProjectData {
             let now = Date()
             var sectionInput = SectionInputRecord(
                 projectId: data.id, name: "Section \(sections.count + 1)", createDate: now,
-                updateDate: now)
+                updateDate: now
+            )
             try sectionInput.save(db)
             let sectionRecord = SectionRecord(from: sectionInput)
             let section = Section(id: UUID(), name: sectionRecord)
@@ -58,7 +59,6 @@ class ProjectData {
         }
         return nil
     }
-
 }
 
 enum AppFilesError: Error {

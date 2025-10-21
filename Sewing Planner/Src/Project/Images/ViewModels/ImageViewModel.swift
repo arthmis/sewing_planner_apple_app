@@ -5,9 +5,9 @@
 //  Created by Art on 10/30/24.
 //
 
-import SwiftUI
 import GRDB
 import PhotosUI
+import SwiftUI
 
 @Observable
 class ProjectImages {
@@ -124,6 +124,7 @@ class ProjectImages {
         }
     }
 }
+
 // TODO: make this a class since storing data like an image is too expensive to be copying
 struct ProjectImage {
     var record: ProjectImageRecord
@@ -146,7 +147,6 @@ extension ProjectImage: Hashable {
         hasher.combine(path)
     }
 }
-
 
 struct ProjectImageInput {
     var record: ProjectImageRecord?

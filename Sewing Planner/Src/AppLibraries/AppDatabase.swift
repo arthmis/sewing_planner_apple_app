@@ -178,7 +178,7 @@ extension AppDatabase {
         return sectionItems
     }
 
-        func getProjectThumbnails(projectId: Int64) throws -> [ProjectImage] {
+    func getProjectThumbnails(projectId: Int64) throws -> [ProjectImage] {
         return try dbWriter.read { db in
             let projectIdColumn = Column("projectId")
             let records: [ProjectImageRecord] = try ProjectImageRecord.all().filter(projectIdColumn == projectId).order(Column("id")).fetchAll(db)

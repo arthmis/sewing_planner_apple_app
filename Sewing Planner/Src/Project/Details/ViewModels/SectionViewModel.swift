@@ -108,7 +108,7 @@ class Section {
         try db.getWriter().write { db in
             for id in selectedItems {
                 let maybeIndex = items.firstIndex { val in
-                    return val.record.id == id
+                    val.record.id == id
                 }
                 if let index = maybeIndex {
                     var deletedItem = items.remove(at: index)
