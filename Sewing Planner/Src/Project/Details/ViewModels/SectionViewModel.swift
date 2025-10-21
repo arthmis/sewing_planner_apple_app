@@ -26,7 +26,7 @@ class Section {
         self.items = items
         self.id = id
     }
-    
+
     var hasSelections: Bool {
         !selectedItems.isEmpty
     }

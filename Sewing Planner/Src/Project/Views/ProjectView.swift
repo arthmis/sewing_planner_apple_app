@@ -46,11 +46,11 @@ struct LoadProjectView: View {
         //        }
         .onAppear {
             if let id = projectsNavigation.last?.id {
-                if let projectData = try! ProjectDetailData.getProject(with: id, from: appDatabase)
+                if let projectData = try! ProjectData.getProject(with: id, from: appDatabase)
                 {
                     store.selectedProject = ProjectViewModel(
                         data: projectData, projectsNavigation: projectsNavigation,
-                        projectImages: ProjectImages(projectId: projectData.project.data.id))
+                        projectImages: ProjectImages(projectId: projectData.data.id))
                 } else {
                     dismiss()
                     // TODO: navigate back to main screen because project loading was unsuccessful
@@ -76,9 +76,8 @@ struct ProjectView: View {
         VStack {
             TabView(selection: $model.currentView) {
                 Tab("Details", systemImage: "list.bullet.rectangle.portrait", value: .details) {
-                    ProjectDetailsView(
-                        project: $model.projectDetails.project,
-                        projectSections: $model.projectDetails.projectSections
+                    ProjectDataView(
+                        model: $model.projectData
                     )
                 }
                 Tab("Images", systemImage: "photo.artframe", value: .images) {
@@ -101,6 +100,7 @@ struct ProjectView: View {
                     if model.currentView == CurrentView.details {
                         Button {
                             model.addSection()
+                            print(model.projectData.sections.count)
                         } label: {
                             Image(systemName: "plus")
                         }
@@ -138,7 +138,7 @@ struct ProjectView: View {
 
 @Observable
 class ProjectViewModel {
-    var projectDetails: ProjectDetailData
+    var projectData: ProjectData
     var projectsNavigation: [ProjectMetadata]
     var projectImages: ProjectImages
     var deletedImages: [ProjectImage] = []
@@ -152,15 +152,15 @@ class ProjectViewModel {
     var showPhotoPicker = false
 
     init(
-        data: ProjectDetailData, projectsNavigation: [ProjectMetadata], projectImages: ProjectImages
+        data: ProjectData, projectsNavigation: [ProjectMetadata], projectImages: ProjectImages
     ) {
-        self.projectDetails = data
+        self.projectData = data
         self.projectsNavigation = projectsNavigation
         self.projectImages = projectImages
     }
 
     static func getProject(projectId: Int64, db: AppDatabase) throws -> ProjectViewModel {
-        let projectData = try! ProjectDetailData.getProject(with: projectId, from: db)
+        let projectData = try! ProjectData.getProject(with: projectId, from: db)
         return ProjectViewModel(
             data: projectData!, projectsNavigation: [],
             projectImages: ProjectImages(projectId: projectId))
@@ -168,8 +168,7 @@ class ProjectViewModel {
 
     func addSection() {
         do {
-            try projectDetails.projectSections.addSection(
-                projectId: projectDetails.project.data.id)
+            projectData.addSection()
         } catch {
             fatalError("\(error)")
         }

@@ -7,25 +7,24 @@
 
 import SwiftUI
 
-struct ProjectDetailsView: View {
-    @Binding var project: ProjectMetadataViewModel
-    @Binding var projectSections: ProjectSections
+struct ProjectDataView: View {
+    @Binding var model: ProjectData
 
     private var isProjectValid: Bool {
-        !project.data.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        !model.data.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                ProjectTitle(project: $project)
+                ProjectTitle(project: $model.data, bindedName: $model.bindedName, updateName: model.updateName)
                 Spacer()
             }
             .frame(maxWidth: .infinity)
             .padding(.bottom, 25)
             ScrollView {
                 VStack(alignment: .leading) {
-                    ForEach($projectSections.sections, id: \.id) { $section in
+                    ForEach($model.sections, id: \.id) { $section in
                         SectionView(data: $section)
                             .padding(.bottom, 16)
                     }

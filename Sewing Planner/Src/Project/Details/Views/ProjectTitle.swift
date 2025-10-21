@@ -9,7 +9,9 @@ import GRDB
 import SwiftUI
 
 struct ProjectTitle: View {
-    @Binding var project: ProjectMetadataViewModel
+    @Binding var project: ProjectMetadata
+    @Binding var bindedName: String
+    var updateName: (String) throws -> Void
     @State var isEditing = false
     @FocusState var headerFocus: Bool
     @State var isHovering = false
@@ -17,15 +19,15 @@ struct ProjectTitle: View {
     var body: some View {
         HStack {
             if isEditing {
-                TextField("", text: $project.bindedName)
+                TextField("", text: $bindedName)
                     .onSubmit {
                         // add a popup telling user that name can't be empty
 
-                        let sanitizedName = project.bindedName.trimmingCharacters(in: .whitespacesAndNewlines)
+                        let sanitizedName = bindedName.trimmingCharacters(in: .whitespacesAndNewlines)
                         guard !sanitizedName.isEmpty else { return }
 
                         do {
-                            try project.updateName(name: sanitizedName)
+                            try updateName(sanitizedName)
                         } catch {
                             fatalError("\(error)")
                         }
@@ -33,17 +35,17 @@ struct ProjectTitle: View {
                     }
                     .focused($headerFocus)
                     .onChange(of: headerFocus) { _, newFocus in
-                        if !newFocus {
-                            let sanitizedName = project.data.name.trimmingCharacters(in: .whitespacesAndNewlines)
-                            guard !sanitizedName.isEmpty else { return }
+                        // if !newFocus {
+                        //     let sanitizedName = project.name.trimmingCharacters(in: .whitespacesAndNewlines)
+                        //     guard !sanitizedName.isEmpty else { return }
 
-                            do {
-                                try project.updateName(name: sanitizedName)
-                            } catch {
-                                fatalError("\(error)")
-                            }
-                            isEditing = false
-                        }
+                        //     do {
+                        //         try project.updateName(name: sanitizedName)
+                        //     } catch {
+                        //         fatalError("\(error)")
+                        //     }
+                        //     isEditing = false
+                        // }
                     }
                     .textFieldStyle(.plain)
                     .padding(.bottom, 5)
@@ -54,17 +56,17 @@ struct ProjectTitle: View {
                     .font(.custom("SourceSans3-Medium", size: 14))
                     .accessibilityIdentifier("ProjectNameTextfield")
                 Button("Cancel") {
-                    project.data.name = project.bindedName
+                    project.name = bindedName
                     isEditing = false
                 }
             } else {
-                Text(project.data.name)
+                Text(project.name)
                     .font(.custom("SourceSans3-Medium", size: 14))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .contentShape(Rectangle())
                     .onTapGesture {
                         if !isEditing {
-                            project.bindedName = project.data.name
+                            bindedName = project.name
                             isEditing.toggle()
                             headerFocus = true
                         }
@@ -82,8 +84,8 @@ struct ProjectTitle: View {
         .frame(maxWidth: .infinity)
         .padding(.top, 16)
         .onAppear {
-            if project.data.name != "" {
-                project.bindedName = project.data.name
+            if project.name != "" {
+                bindedName = project.name
             }
         }
     }
