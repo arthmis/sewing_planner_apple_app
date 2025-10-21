@@ -41,6 +41,29 @@ class Section {
         !selectedItems.isEmpty
     }
 
+    func deleteItem(at offsets: IndexSet) {
+        for index in offsets {
+            let step = items.remove(at: index)
+            deletedItems.append(step.record)
+        }
+    }
+
+    private var isNewNameValid: Bool {
+        !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    func updateName() {
+        // TODO: add a popup telling user that instruction can't be empty
+        guard isNewNameValid else { return }
+
+        isRenamingSection = false
+        do {
+            try updateSectionName(with: name)
+        } catch {
+            fatalError("\(error)")
+        }
+    }
+
     func addItem(text: String, note: String?) throws {
         try db.getWriter().write { db in
             // TODO: do this in a transaction or see if the write is already a transaction

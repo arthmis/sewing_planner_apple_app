@@ -10,29 +10,6 @@ import SwiftUI
 struct SectionView: View {
     @Binding var model: Section
 
-    func deleteItem(at offsets: IndexSet) {
-        for index in offsets {
-            let step = model.items.remove(at: index)
-            model.deletedItems.append(step.record)
-        }
-    }
-
-    private var isNewNameValid: Bool {
-        !model.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-    }
-
-    func updateName() {
-        // TODO: add a popup telling user that instruction can't be empty
-        guard isNewNameValid else { return }
-
-        model.isRenamingSection = false
-        do {
-            try model.updateSectionName(with: model.name)
-        } catch {
-            fatalError("\(error)")
-        }
-    }
-
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             // TODO: this if else can become a view called SectionName
@@ -41,7 +18,7 @@ struct SectionView: View {
                     HStack {
                         TextField("", text: $model.name)
                             .onSubmit {
-                                updateName()
+                                model.updateName()
                             }
                             .textFieldStyle(.plain)
                             .padding(.bottom, 5)
@@ -55,7 +32,7 @@ struct SectionView: View {
                             model.isRenamingSection = false
                         }
                         Button("Set") {
-                            updateName()
+                            model.updateName()
                         }
                     }
                     .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
