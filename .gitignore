@@ -26,3 +26,7 @@ DerivedData
 
 # Pods - for those of you who use CocoaPods
 Pods
+
+# Zed integration with xcode build server
+# https://github.com/SolaWing/xcode-build-server - details here
+buildServer.json
