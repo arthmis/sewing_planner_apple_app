@@ -82,10 +82,7 @@ struct ProjectView: View {
                     )
                 }
                 Tab("Images", systemImage: "photo.artframe", value: .images) {
-                    ImagesView(
-                        model:
-                        $model.projectImages
-                    )
+                    ImagesView(model: $model.projectImages)
                 }
             }
             .navigationBarBackButtonHidden(true)

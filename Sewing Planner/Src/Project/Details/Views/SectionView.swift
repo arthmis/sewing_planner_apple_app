@@ -116,9 +116,10 @@ struct SectionView: View {
                         }
                     }
                 }
-//                SectionViewButton {} label: {
-//                    Image(systemName: "ellipsis")
-//                }
+                // Next add the popup for this, with a delete button
+                SectionViewButton {} label: {
+                    Image(systemName: "ellipsis")
+                }
             }
             .overlay(Divider()
                 .frame(maxWidth: .infinity, maxHeight: 1)
