@@ -103,7 +103,7 @@ struct SelectedImageButton: View {
             .aspectRatio(contentMode: .fill)
             .frame(minWidth: 100, maxWidth: .infinity, minHeight: 200, alignment: .center)
             .clipped()
-            .animation(.easeIn(duration: 0.05), value: isPressed)
+            .animation(.easeOut(duration: 0.08), value: isPressed)
             .background(Color(hex: 0xDDDDDD, opacity: isPressed ? 1 : 0))
             // parts of the image that were clipped still respond to the mouse events so this constrains it to the correct area
             .contentShape(Rectangle())

@@ -51,8 +51,7 @@ struct ImagesView: View {
                         .disabled(model.selectedImagesIsEmpty)
                         .buttonStyle(DeleteButtonStyle())
                         .simultaneousGesture(
-                            LongPressGesture(minimumDuration: 2).onEnded { val in
-                                print(val)
+                            LongPressGesture(minimumDuration: 2).onEnded { _ in
                                 model.handleDeleteImage()
                             })
                     }
@@ -123,9 +122,6 @@ struct ImagesView: View {
         .animation(.easeOut(duration: 0.1), value: model.overlayedImage)
         .task {
             model.loadProjectImages(appDatabase: appDatabase)
-            // TODO: navigate back to main screen because project loading was unsuccessful
-            // show an error
-            // isLoading = false
         }
     }
 }

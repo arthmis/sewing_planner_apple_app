@@ -7,6 +7,11 @@
 
 import SwiftUI
 
+enum FocusField {
+    case header
+    case addItem
+}
+
 @Observable
 class Section {
     var section: SectionRecord
@@ -14,6 +19,11 @@ class Section {
     var id: UUID
     var deletedItems: [SectionItemRecord] = []
     var selectedItems: Set<Int64> = []
+    var isRenamingSection = false
+    var name = ""
+    var isAddingItem = false
+    var draggedItem: SectionItem?
+    var isEditingSection = false
     private let db: AppDatabase = .db()
 
     init(id: UUID, name: SectionRecord) {

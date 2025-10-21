@@ -25,7 +25,7 @@ struct ProjectDataView: View {
             ScrollView {
                 VStack(alignment: .leading) {
                     ForEach($model.sections, id: \.id) { $section in
-                        SectionView(data: $section)
+                        SectionView(model: $section)
                             .padding(.bottom, 16)
                     }
                 }

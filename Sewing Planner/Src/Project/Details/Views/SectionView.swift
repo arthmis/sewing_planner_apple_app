@@ -7,38 +7,27 @@
 
 import SwiftUI
 
-enum FocusField {
-    case header
-    case addItem
-}
-
 struct SectionView: View {
-    @Binding var data: Section
-    @State var isRenamingSection = false
-    @State var name = ""
-    @State var isAddingItem = false
-    @FocusState var headerFocus: Bool
-    @State private var draggedItem: SectionItem?
-    @State var isEditingSection = false
+    @Binding var model: Section
 
     func deleteItem(at offsets: IndexSet) {
         for index in offsets {
-            let step = data.items.remove(at: index)
-            data.deletedItems.append(step.record)
+            let step = model.items.remove(at: index)
+            model.deletedItems.append(step.record)
         }
     }
 
     private var isNewNameValid: Bool {
-        !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        !model.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     func updateName() {
         // TODO: add a popup telling user that instruction can't be empty
         guard isNewNameValid else { return }
 
-        isRenamingSection = false
+        model.isRenamingSection = false
         do {
-            try data.updateSectionName(with: name)
+            try model.updateSectionName(with: model.name)
         } catch {
             fatalError("\(error)")
         }
@@ -48,23 +37,11 @@ struct SectionView: View {
         VStack(alignment: .leading, spacing: 4) {
             // TODO: this if else can become a view called SectionName
             HStack {
-                if isRenamingSection {
+                if model.isRenamingSection {
                     HStack {
-                        TextField("", text: $name)
+                        TextField("", text: $model.name)
                             .onSubmit {
                                 updateName()
-                            }
-                            .focused($headerFocus)
-                            .onChange(of: headerFocus) { _, newFocus in
-                                if !newFocus {
-                                    guard isNewNameValid else {
-                                        isRenamingSection = false
-                                        return
-                                    }
-
-                                    data.section.name = name
-                                    isRenamingSection = false
-                                }
                             }
                             .textFieldStyle(.plain)
                             .padding(.bottom, 5)
@@ -74,8 +51,8 @@ struct SectionView: View {
 //                                alignment: .bottom)
                             .font(.custom("SourceSans3-Medium", size: 16))
                         Button("Cancel") {
-                            name = data.section.name
-                            isRenamingSection = false
+                            model.name = model.section.name
+                            model.isRenamingSection = false
                         }
                         Button("Set") {
                             updateName()
@@ -83,36 +60,35 @@ struct SectionView: View {
                     }
                     .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
                 } else {
-                    Text(data.section.name)
+                    Text(model.section.name)
                         .font(.custom("SourceSans3-Medium", size: 16))
                         .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            isRenamingSection = true
-                            name = data.section.name
-                            headerFocus = true
+                            model.isRenamingSection = true
+                            model.name = model.section.name
                         }
 //                        .overlay(Rectangle()
 //                            .frame(maxWidth: .infinity, maxHeight: 3),
 //                            alignment: .bottom)
-                    if isEditingSection {
+                    if model.isEditingSection {
                         HStack {
                             Button("Cancel") {
                                 withAnimation(.smooth(duration: 0.2)) {
-                                    isEditingSection = false
+                                    model.isEditingSection = false
                                 }
                             }
                             Button {
-                                try! data.deleteSelection()
+                                try! model.deleteSelection()
                                 withAnimation(.smooth(duration: 0.2)) {
-                                    isEditingSection = false
+                                    model.isEditingSection = false
                                 }
                             } label: {
                                 Image(systemName: "trash")
                                     .foregroundStyle(Color.red)
                                     .padding(.horizontal, 8)
                             }
-                            .disabled(!data.hasSelections)
+                            .disabled(!model.hasSelections)
                         }
                     }
                 }
@@ -125,35 +101,33 @@ struct SectionView: View {
                 .frame(maxWidth: .infinity, maxHeight: 1)
                 .background(Color(red: 230, green: 230, blue: 230)), alignment: .bottom)
             VStack(spacing: 0) {
-                ForEach($data.items, id: \.self.record.id) { $item in
-                    if !isEditingSection {
-                        ItemView(data: $item, updateText: data.updateText, updateCompletedState: data.updateCompletedState)
+                ForEach($model.items, id: \.self.record.id) { $item in
+                    if !model.isEditingSection {
+                        ItemView(data: $item, updateText: model.updateText, updateCompletedState: model.updateCompletedState)
                             .contentShape(Rectangle())
                             .onLongPressGesture {
                                 withAnimation(.smooth(duration: 0.2)) {
-                                    isEditingSection = true
+                                    model.isEditingSection = true
                                 }
                             }
                             .padding(.top, 4)
-//                            .animation(.easeOut(duration: 0.1), value: isEditingSection)
                     } else {
-                        SelectedSectionItemView(data: $item, selected: $data.selectedItems, updateText: data.updateText, updateCompletedState: data.updateCompletedState)
+                        SelectedSectionItemView(data: $item, selected: $model.selectedItems, updateText: model.updateText, updateCompletedState: model.updateCompletedState)
                             .contentShape(Rectangle())
                             .onDrag {
-                                draggedItem = item
+                                model.draggedItem = item
                                 return NSItemProvider(object: "\(item.hashValue)" as NSString)
                             }
-                            .onDrop(of: [.text], delegate: DropSectionItemViewDelegate(item: item, data: $data.items, draggedItem: $draggedItem, saveNewOrder: data.saveOrder))
+                            .onDrop(of: [.text], delegate: DropSectionItemViewDelegate(item: item, data: $model.items, draggedItem: $model.draggedItem, saveNewOrder: model.saveOrder))
                             .padding(.top, 4)
-//                            .animation(.easeOut(duration: 0.1), value: isEditingSection)
                     }
                 }
                 .frame(maxWidth: .infinity)
             }
-            AddItemView(isAddingItem: $isAddingItem, addItem: data.addItem)
+            AddItemView(isAddingItem: $model.isAddingItem, addItem: model.addItem)
                 .padding(.top, 8)
         }
-        .animation(.easeOut(duration: 0.15), value: isAddingItem)
+        .animation(.easeOut(duration: 0.15), value: model.isAddingItem)
     }
 }
 
