@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ItemView: View {
     @Binding var data: SectionItem
+    @Environment(ProjectViewModel.self) var project
     @State var isEditing = false
     @State var newText = ""
     @State var newNoteText = ""
@@ -55,6 +56,7 @@ struct ItemView: View {
 }
 
 struct CheckboxStyle: ToggleStyle {
+    @Environment(ProjectViewModel.self) var project
     var id: Int64?
     var hasNote: Bool
     var updateCompletedState: (Int64) throws -> Void
@@ -63,7 +65,14 @@ struct CheckboxStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
             Button {
-                try! updateCompletedState(id!)
+                // TODO: move this side effect out of the checkbox
+                // doesn't make sense for it to be here
+                // might even need to make my own checkbox view
+                do {
+                    try updateCompletedState(id!)
+                } catch {
+                    project.handleError(error: .updateSectionItemCompletion)
+                }
                 configuration.isOn.toggle()
             } label: {
                 Image(systemName: configuration.isOn ? "checkmark.square" : "square")

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct AddItemView: View {
+    @Environment(ProjectViewModel.self) var project
     @Binding var isAddingItem: Bool
     @State var newItem = ""
     let addItem: (_ text: String, _ note: String?) throws -> Void
@@ -31,8 +32,7 @@ struct AddItemView: View {
         do {
             try addItem(validText, noteText)
         } catch {
-            // add some kind of toast if failure
-            fatalError("\(error)")
+            project.handleError(error: .addSectionItem)
         }
         showErrorText = false
         isAddingItem = false
@@ -100,7 +100,6 @@ struct AddItemView: View {
                 withAnimation(.easeOut(duration: 0.3)) {
                     isAddingItem = true
                 }
-//                addItemFocus = true
             }
             label: {
                 HStack {

@@ -75,6 +75,7 @@ struct LoadProjectView: View {
 struct ProjectView: View {
     // used for dismissing a view(basically the back button)
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.store) private var store
     @State var project: ProjectViewModel
     @Binding var projectsNavigation: [ProjectMetadata]
     let fetchProjects: () -> Void
@@ -84,7 +85,6 @@ struct ProjectView: View {
             TabView(selection: $project.currentView) {
                 Tab("Details", systemImage: "list.bullet.rectangle.portrait", value: .details) {
                     ProjectDataView(
-                        model: $project.projectData
                     )
                 }
                 Tab("Images", systemImage: "photo.artframe", value: .images) {
@@ -96,6 +96,7 @@ struct ProjectView: View {
                 ToolbarItem(placement: .navigation) {
                     BackButton {
                         dismiss()
+                        store.selectedProject = nil
                         fetchProjects()
                     }
                 }
@@ -104,7 +105,6 @@ struct ProjectView: View {
                     if project.currentView == CurrentView.details {
                         Button {
                             project.addSection()
-                            print(project.projectData.sections.count)
                         } label: {
                             Image(systemName: "plus")
                         }
@@ -130,6 +130,16 @@ struct ProjectView: View {
                 }
             }
         }
+        .overlay(alignment: .top) {
+            Toast(showToast: $project.projectError)
+                .padding(.horizontal, 16)
+                .transition(.move(edge: .top))
+                .animation(.easeOut(duration: 0.15), value: project.projectError)
+        }
+        .frame(
+            maxWidth: .infinity,
+            maxHeight: .infinity
+        )
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .environment(project)
         // clicking anywhere will remove focus from whatever may have focus
@@ -141,14 +151,29 @@ struct ProjectView: View {
     }
 }
 
-enum ProjectError: Error {
+enum ProjectError: Error, Equatable {
     case addSection
     case addSectionItem
+    case updateSectionItemText
+    case updateSectionItemCompletion
     case importImage
     case deleteSection
+    case deleteSectionItems
     case reOrderSectionItems
     case renameProject
-    case deleteImage
+    case deleteImages
+    case loadImages
+    case genericError
+}
+
+struct ErrorToast: Equatable {
+    var show: Bool
+    let message: String
+
+    init(show: Bool = false, message: String = "Something went wrong. Please try again") {
+        self.show = show
+        self.message = message
+    }
 }
 
 @Observable
@@ -181,6 +206,10 @@ class ProjectViewModel {
         } catch {
             projectError = .addSection
         }
+    }
+
+    func handleError(error: ProjectError) {
+        projectError = error
     }
 
     func showPhotoPickerView() {

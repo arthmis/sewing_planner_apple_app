@@ -19,7 +19,6 @@ class ProjectImages {
     var overlayedImage: OverlayedImage?
     var pickerItem: PhotosPickerItem?
     var photosAppSelectedImage: Data?
-    var errorToast = ErrorToast()
     var inDeleteMode = false
 
     let appDatabase: AppDatabase = .db()
@@ -89,7 +88,7 @@ class ProjectImages {
         inDeleteMode = false
     }
 
-    func handleDeleteImage() {
+    func handleDeleteImage() throws {
         if selectedImagesIsEmpty {
             return
         }
@@ -100,7 +99,7 @@ class ProjectImages {
                 deletedImages.append(image)
             }
         }
-        try! deleteImages()
+        try deleteImages()
 
         inDeleteMode = false
         selectedImages = Set()
@@ -118,9 +117,9 @@ class ProjectImages {
         AppFiles().getImage(for: imageIdentifier, fromProject: projectId) ?? UIImage()
     }
 
-    func loadProjectImages(appDatabase: AppDatabase) {
+    func loadProjectImages(appDatabase: AppDatabase) throws {
         if images.isEmpty {
-            images = try! appDatabase.getProjectThumbnails(projectId: projectId)
+            images = try appDatabase.getProjectThumbnails(projectId: projectId)
         }
     }
 }

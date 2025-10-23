@@ -27,7 +27,7 @@ struct ProjectTitle: View {
                         do {
                             try updateName(sanitizedName)
                         } catch {
-                            project.projectError = .renameProject
+                            project.handleError(error: .renameProject)
                         }
                         isEditing = false
                     }

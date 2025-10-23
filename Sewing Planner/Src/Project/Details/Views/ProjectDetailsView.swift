@@ -8,19 +8,20 @@
 import SwiftUI
 
 struct ProjectDataView: View {
-    @Binding var model: ProjectData
+    @Environment(ProjectViewModel.self) var project
 
     var body: some View {
+        @Bindable var projectBinding = project
         VStack(alignment: .leading) {
             HStack {
-                ProjectTitle(projectData: $model.data, bindedName: $model.bindedName, updateName: model.updateName)
+                ProjectTitle(projectData: $projectBinding.projectData.data, bindedName: $projectBinding.projectData.bindedName, updateName: project.projectData.updateName)
                 Spacer()
             }
             .frame(maxWidth: .infinity)
             .padding(.bottom, 25)
             ScrollView {
                 VStack(alignment: .leading) {
-                    ForEach($model.sections, id: \.id) { $section in
+                    ForEach($projectBinding.projectData.sections, id: \.id) { $section in
                         SectionView(model: $section)
                             .padding(.bottom, 16)
                     }

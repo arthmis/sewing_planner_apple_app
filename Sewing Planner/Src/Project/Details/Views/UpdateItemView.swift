@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct UpdateItemView: View {
+    @Environment(ProjectViewModel.self) var project
     @Binding var data: SectionItem
     @Binding var isEditing: Bool
     @Binding var newText: String
@@ -34,8 +35,9 @@ struct UpdateItemView: View {
         do {
             try updateText(data.record.id, validText, noteText)
         } catch {
-            fatalError("\(error)")
+            project.handleError(error: .updateSectionItemText)
         }
+
         showErrorText = false
         isEditing = false
     }
@@ -65,7 +67,6 @@ struct UpdateItemView: View {
                     .padding([.trailing], 8)
                 }
                 TextField("Note", text: $newNoteText, axis: .vertical)
-                    .onSubmit {}
                     .padding(.vertical, 4)
             }
             .padding(4)

@@ -9,16 +9,6 @@ import GRDB
 import PhotosUI
 import SwiftUI
 
-struct ErrorToast: Equatable {
-    var show: Bool
-    let message: String
-
-    init(show: Bool = false, message: String = "Something went wrong. Please try again") {
-        self.show = show
-        self.message = message
-    }
-}
-
 struct OverlayedImage: Identifiable, Hashable {
     var id: String {
         return body
@@ -29,6 +19,7 @@ struct OverlayedImage: Identifiable, Hashable {
 
 struct ImagesView: View {
     @Environment(\.appDatabase) private var appDatabase
+    @Environment(ProjectViewModel.self) private var project
     @Binding var model: ProjectImages
     @Namespace var transitionNamespace
 
@@ -52,7 +43,11 @@ struct ImagesView: View {
                         .buttonStyle(DeleteButtonStyle())
                         .simultaneousGesture(
                             LongPressGesture(minimumDuration: 2).onEnded { _ in
-                                model.handleDeleteImage()
+                                do {
+                                    try model.handleDeleteImage()
+                                } catch {
+                                    project.handleError(error: .deleteImages)
+                                }
                             })
                     }
                     .padding(.top, 16)
@@ -108,20 +103,14 @@ struct ImagesView: View {
                     .navigationTransition(.zoom(sourceID: item.id, in: transitionNamespace))
             }
         }
-        .overlay(alignment: .bottom) {
-            if model.errorToast.show {
-                Toast(showToast: $model.errorToast.show, message: model.errorToast.message)
-                    .padding(.horizontal, 16)
-            }
-        }
-        .frame(
-            maxWidth: .infinity,
-            maxHeight: .infinity
-        )
         .animation(.easeOut(duration: 0.1), value: model.isInDeleteMode)
         .animation(.easeOut(duration: 0.1), value: model.overlayedImage)
         .task {
-            model.loadProjectImages(appDatabase: appDatabase)
+            do {
+                try model.loadProjectImages(appDatabase: appDatabase)
+            } catch {
+                project.handleError(error: .loadImages)
+            }
         }
     }
 }

@@ -57,9 +57,13 @@ struct SectionView: View {
                                 }
                             }
                             Button {
-                                try! model.deleteSelection()
-                                withAnimation(.smooth(duration: 0.2)) {
-                                    model.isEditingSection = false
+                                do {
+                                    try model.deleteSelection()
+                                    withAnimation(.smooth(duration: 0.2)) {
+                                        model.isEditingSection = false
+                                    }
+                                } catch {
+                                    project.handleError(error: .deleteSectionItems)
                                 }
                             } label: {
                                 Image(systemName: "trash")
@@ -70,7 +74,7 @@ struct SectionView: View {
                         }
                     }
                 }
-                // Next add the popup for this, with a delete button
+                // TODO: Next add the popup for this, with a delete button
                 SectionViewButton {} label: {
                     Image(systemName: "ellipsis")
                 }
