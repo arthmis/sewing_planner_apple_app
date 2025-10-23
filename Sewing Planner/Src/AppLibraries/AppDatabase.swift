@@ -118,24 +118,28 @@ extension AppDatabase {
 }
 
 extension AppDatabase {
-    func fetchProjectsAndProjectImage() throws -> [ProjectDisplay] {
-        var projectDisplayData: [ProjectDisplay] = []
+    func fetchProjectsAndProjectImage() throws -> [ProjectCardViewModel] {
+        var projectDisplayData: [ProjectCardViewModel] = []
 
-        print(dbWriter.configuration)
-        // get projects
         try dbWriter.read { db in
             let projects: [ProjectMetadata] = try ProjectMetadata.all().order(ProjectColumns.id)
                 .fetchAll(db)
 
             for project in projects {
                 let projectIdColumn = Column("projectId")
-                // can unwrap project.id because an image can't be stored without having a project id
                 if let record = try ProjectImageRecord.all().filter(projectIdColumn == project.id).order(Column("id")).fetchOne(db) {
-                    let image = AppFiles().getThumbnailImage(for: record.thumbnail, fromProject: project.id)
-                    let projectImage = ProjectDisplayImage(record: record, path: record.filePath, image: image)
-                    projectDisplayData.append(ProjectDisplay(project: project, image: projectImage))
+                    var hadError = false
+                    var projectImage: ProjectDisplayImage
+                    do {
+                        let image = try AppFiles().getThumbnailImage(for: record.thumbnail, fromProject: project.id)
+                        projectImage = ProjectDisplayImage(record: record, path: record.filePath, image: image)
+                    } catch {
+                        hadError = true
+                        projectImage = ProjectDisplayImage(record: record, path: record.filePath, image: nil)
+                    }
+                    projectDisplayData.append(ProjectCardViewModel(project: project, image: projectImage, error: hadError))
                 } else {
-                    projectDisplayData.append(ProjectDisplay(project: project))
+                    projectDisplayData.append(ProjectCardViewModel(project: project, error: false))
                 }
             }
         }
@@ -185,13 +189,19 @@ extension AppDatabase {
 
             var projectImages: [ProjectImage] = []
             for record in records {
-                let thumbnailData = AppFiles().getThumbnailImage(for: record.thumbnail, fromProject: projectId)
-                guard let thumbnail = thumbnailData else {
-                    NSLog("couldn't get image thumbnail \(record.thumbnail) for project: \(projectId)")
-                    continue
+                do {
+                    let thumbnailData = try AppFiles().getThumbnailImage(for: record.thumbnail, fromProject: projectId)
+                    // TODO: show a placeholder image or view instead of ignoring the image that failed to load
+                    // inform the user of this error
+                    guard let thumbnail = thumbnailData else {
+                        NSLog("couldn't get image thumbnail \(record.thumbnail) for project: \(projectId)")
+                        continue
+                    }
+                    let projectImage = ProjectImage(record: record, path: record.filePath, image: thumbnail)
+                    projectImages.append(projectImage)
+                } catch {
+                    // add error handling but don't exit the function
                 }
-                let projectImage = ProjectImage(record: record, path: record.filePath, image: thumbnail)
-                projectImages.append(projectImage)
             }
 
             return projectImages

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SectionView: View {
     @Binding var model: Section
+    @Environment(ProjectViewModel.self) var project
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {

@@ -27,7 +27,7 @@ struct LoadProjectView: View {
         VStack {
             if let project = store.selectedProject {
                 ProjectView(
-                    model: project, projectsNavigation: $projectsNavigation,
+                    project: project, projectsNavigation: $projectsNavigation,
                     fetchProjects: fetchProjects
                 )
             } else {
@@ -44,19 +44,29 @@ struct LoadProjectView: View {
         //        }
         .onAppear {
             if let id = projectsNavigation.last?.id {
-                if let projectData = try! ProjectData.getProject(with: id, from: appDatabase) {
-                    store.selectedProject = ProjectViewModel(
-                        data: projectData, projectsNavigation: projectsNavigation,
-                        projectImages: ProjectImages(projectId: projectData.data.id)
-                    )
-                } else {
+                do {
+                    let maybeProjectData = try ProjectData.getProject(with: id, from: appDatabase)
+                    if let projectData = maybeProjectData {
+                        store.selectedProject = ProjectViewModel(
+                            data: projectData, projectsNavigation: projectsNavigation,
+                            projectImages: ProjectImages(projectId: projectData.data.id)
+                        )
+                    } else {
+                        dismiss()
+                        store.appError = .loadProject
+                        // TODO: show an error
+                    }
+                } catch {
                     dismiss()
-                    // TODO: navigate back to main screen because project loading was unsuccessful
-                    // show an error
+                    store.appError = .loadProject
+                    // TODO: show an error
                 }
             } else {
                 dismiss()
+                store.appError = .loadProject
                 // navigate back to main view and show an error
+                // this basically shouldn't happen because there must be a project in projects navigation at this point, which means
+                // there is an id
             }
         }
     }
@@ -65,20 +75,20 @@ struct LoadProjectView: View {
 struct ProjectView: View {
     // used for dismissing a view(basically the back button)
     @Environment(\.dismiss) private var dismiss
-    @State var model: ProjectViewModel
+    @State var project: ProjectViewModel
     @Binding var projectsNavigation: [ProjectMetadata]
     let fetchProjects: () -> Void
 
     var body: some View {
         VStack {
-            TabView(selection: $model.currentView) {
+            TabView(selection: $project.currentView) {
                 Tab("Details", systemImage: "list.bullet.rectangle.portrait", value: .details) {
                     ProjectDataView(
-                        model: $model.projectData
+                        model: $project.projectData
                     )
                 }
                 Tab("Images", systemImage: "photo.artframe", value: .images) {
-                    ImagesView(model: $model.projectImages)
+                    ImagesView(model: $project.projectImages)
                 }
             }
             .navigationBarBackButtonHidden(true)
@@ -91,29 +101,29 @@ struct ProjectView: View {
                 }
             }.toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    if model.currentView == CurrentView.details {
+                    if project.currentView == CurrentView.details {
                         Button {
-                            model.addSection()
-                            print(model.projectData.sections.count)
+                            project.addSection()
+                            print(project.projectData.sections.count)
                         } label: {
                             Image(systemName: "plus")
                         }
                         .buttonStyle(AddNewSectionButtonStyle())
                         .accessibilityIdentifier("AddNewSectionButton")
-                    } else if model.currentView == CurrentView.images {
+                    } else if project.currentView == CurrentView.images {
                         Button {
-                            model.showPhotoPickerView()
+                            project.showPhotoPickerView()
                         } label: {
                             Image(systemName: "photo.badge.plus")
                         }
                         .buttonStyle(AddImageButtonStyle())
                         .photosPicker(
-                            isPresented: $model.showPhotoPicker, selection: $model.pickerItem,
+                            isPresented: $project.showPhotoPicker, selection: $project.pickerItem,
                             matching: .images
                         )
-                        .onChange(of: model.pickerItem) {
+                        .onChange(of: project.pickerItem) {
                             Task {
-                                try await model.handleOnChangePickerItem()
+                                await project.handleOnChangePickerItem()
                             }
                         }
                     }
@@ -121,6 +131,7 @@ struct ProjectView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .environment(project)
         // clicking anywhere will remove focus from whatever may have focus
         // mostly using this to remove focus from textfields when you click outside of them
         // using a frame using all the available space to make it more effective
@@ -128,6 +139,16 @@ struct ProjectView: View {
         //            NSApplication.shared.keyWindow?.makeFirstResponder(nil)
         //        }
     }
+}
+
+enum ProjectError: Error {
+    case addSection
+    case addSectionItem
+    case importImage
+    case deleteSection
+    case reOrderSectionItems
+    case renameProject
+    case deleteImage
 }
 
 @Observable
@@ -144,6 +165,7 @@ class ProjectViewModel {
     var pickerItem: PhotosPickerItem?
     private var photosAppSelectedImage: Data?
     var showPhotoPicker = false
+    var projectError: ProjectError?
 
     init(
         data: ProjectData, projectsNavigation: [ProjectMetadata], projectImages: ProjectImages
@@ -153,20 +175,11 @@ class ProjectViewModel {
         self.projectImages = projectImages
     }
 
-    static func getProject(projectId: Int64, db: AppDatabase) throws -> ProjectViewModel {
-        let projectData = try! ProjectData.getProject(with: projectId, from: db)
-        return ProjectViewModel(
-            // TODO: handle this error instead of returning nil
-            data: projectData!, projectsNavigation: [],
-            projectImages: ProjectImages(projectId: projectId)
-        )
-    }
-
     func addSection() {
         do {
-            projectData.addSection()
+            try projectData.addSection()
         } catch {
-            fatalError("\(error)")
+            projectError = .addSection
         }
     }
 
@@ -174,26 +187,34 @@ class ProjectViewModel {
         showPhotoPicker = true
     }
 
-    func handleOnChangePickerItem() async throws {
-        // Task {
+    func handleOnChangePickerItem() async {
+        do {
+            try await handleOnChangePickerItemInner()
+        } catch {
+            projectError = .importImage
+        }
+    }
+
+    private func handleOnChangePickerItemInner() async throws {
         let result = try await pickerItem?.loadTransferable(type: Data.self)
 
         switch result {
         case let .some(files):
             // fix this unwrap by throwing an error, display to user
-            let img = UIImage(data: files)!
+            guard let img = UIImage(data: files) else {
+                throw ProjectError.importImage
+            }
             // TODO: Performance problem here, scale the images in a background task
             let resizedImage = img.scaleToAppImageMaxDimension()
             let projectImage = ProjectImageInput(image: resizedImage)
-            try! projectImages.importImages([projectImage])
+            try projectImages.importImages([projectImage])
         case .none:
             // TODO: think about how to deal with path that couldn't become an image
             // I'm thinking display an error alert that lists every image that couldn't be uploaded
-            print("couldn't load image")
-            //                                        errorToast = ErrorToast(show: true, message: "Error importing images. Please try again later")
+            projectError = .importImage
+            // errorToast = ErrorToast(show: true, message: "Error importing images. Please try again later")
             // log error
         }
-        // }
     }
 }
 

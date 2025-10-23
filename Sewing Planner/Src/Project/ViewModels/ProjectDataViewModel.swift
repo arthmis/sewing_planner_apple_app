@@ -26,8 +26,8 @@ class ProjectData {
         sections = projectSections
     }
 
-    func addSection() {
-        try! db.getWriter().write { db in
+    func addSection() throws {
+        try db.getWriter().write { db in
             let now = Date()
             var sectionInput = SectionInputRecord(
                 projectId: data.id, name: "Section \(sections.count + 1)", createDate: now,

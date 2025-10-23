@@ -7,9 +7,10 @@
 
 import SwiftUI
 
-struct ProjectDisplay {
+struct ProjectCardViewModel {
     var project: ProjectMetadata
     var image: ProjectDisplayImage?
+    var error = false
 }
 
 class ProjectDisplayImage {
@@ -25,10 +26,10 @@ class ProjectDisplayImage {
 }
 
 class ProjectsViewModel {
-    var projectsDisplay: [ProjectDisplay] = []
+    var projectsDisplay: [ProjectCardViewModel] = []
     let db: AppDatabase = .db()
 
-    init(projects: [ProjectDisplay]) {
+    init(projects: [ProjectCardViewModel]) {
         projectsDisplay = projects
     }
 

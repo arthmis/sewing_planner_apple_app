@@ -10,8 +10,10 @@ import Foundation
 import SwiftUI
 import System
 
-enum AppFilesError {
-    case fileSaveError
+enum AppFilesError: Error {
+    case fileSave(String)
+    case fileRead(String)
+    case genericError(String)
 }
 
 struct AppFiles {
@@ -102,9 +104,9 @@ struct AppFiles {
         return nil
     }
 
-    func getThumbnailImage(for file: String, fromProject projectId: Int64) -> UIImage? {
+    func getThumbnailImage(for file: String, fromProject projectId: Int64) throws(AppFilesError) -> UIImage? {
         let fileManager = FileManager.default
-        let filePath = getPathForThumbnail(withIdentifier: file, forProject: projectId)
+        let filePath = try getPathForThumbnail(withIdentifier: file, forProject: projectId)
 
         if let data = fileManager.contents(atPath: filePath.path()) {
             let image = UIImage(data: data)
@@ -146,35 +148,46 @@ extension AppFiles {
 }
 
 extension AppFiles {
-    private func appPhotoThumbnailsDirectoryExists() -> Bool {
-        FileManager.default.fileExists(atPath: getAppPhotosThumbnailDirectoryPath().path())
+    private func getAppPhotosThumbnailDirectoryPath() throws(AppFilesError) -> URL {
+        do {
+            let cacheUrl = try FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+            return cacheUrl.appendingPathComponent("ProjectPhotosThumbnails")
+        } catch let error as NSError {
+            switch error.code {
+            case NSFileReadNoPermissionError:
+                throw AppFilesError.fileRead(error.localizedDescription)
+            default:
+                throw AppFilesError.genericError(error.localizedDescription)
+            }
+        } catch {
+            throw AppFilesError.genericError(error.localizedDescription)
+        }
     }
 
-    private func projectPhotosThumbnailsDirectoryExists(id: Int64) -> Bool {
-        FileManager.default.fileExists(atPath: getProjectPhotosThumbnailsPath(projectId: id).path())
+    private func appPhotoThumbnailsDirectoryExists() throws(AppFilesError) -> Bool {
+        try FileManager.default.fileExists(atPath: getAppPhotosThumbnailDirectoryPath().path())
     }
 
-    private func getAppPhotosThumbnailDirectoryPath() -> URL {
-        let cacheUrl = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
-        return cacheUrl.appendingPathComponent("ProjectPhotosThumbnails")
+    private func projectPhotosThumbnailsDirectoryExists(id: Int64) throws(AppFilesError) -> Bool {
+        try FileManager.default.fileExists(atPath: getProjectPhotosThumbnailsPath(projectId: id).path())
     }
 
-    private func getProjectPhotosThumbnailsPath(projectId: Int64) -> URL {
-        let thumbnailsDirectory = getAppPhotosThumbnailDirectoryPath()
+    private func getProjectPhotosThumbnailsPath(projectId: Int64) throws(AppFilesError) -> URL {
+        let thumbnailsDirectory = try getAppPhotosThumbnailDirectoryPath()
 
         return thumbnailsDirectory.appendingPathComponent(String(projectId))
     }
 
-    func getPathForThumbnail(withIdentifier fileIdentifier: String, forProject project: Int64) -> URL {
-        let projectPhotosPath = getProjectPhotosThumbnailsPath(projectId: project)
+    func getPathForThumbnail(withIdentifier fileIdentifier: String, forProject project: Int64) throws(AppFilesError) -> URL {
+        let projectPhotosPath = try getProjectPhotosThumbnailsPath(projectId: project)
         return projectPhotosPath.appendingPathComponent(fileIdentifier).appendingPathExtension(for: .png)
     }
 
-    private func createThumbnailForImage(withIdentifier thumbnailIdentifier: String, forProject projectId: Int64, withContents data: Data?) throws {
+    private func createThumbnailForImage(withIdentifier thumbnailIdentifier: String, forProject projectId: Int64, withContents data: Data?) throws(AppFilesError) {
         let fileManager = FileManager.default
 
-        let thumbnailsFolderForProject = getProjectPhotosThumbnailsPath(projectId: projectId)
-        if !projectPhotosThumbnailsDirectoryExists(id: projectId) {
+        let thumbnailsFolderForProject = try getProjectPhotosThumbnailsPath(projectId: projectId)
+        if try !projectPhotosThumbnailsDirectoryExists(id: projectId) {
             do {
                 try fileManager.createDirectory(at: thumbnailsFolderForProject, withIntermediateDirectories: true, attributes: nil)
             } catch {
@@ -182,8 +195,11 @@ extension AppFiles {
             }
         }
 
-        let thumbnailPath = getPathForThumbnail(withIdentifier: thumbnailIdentifier, forProject: projectId)
+        let thumbnailPath = try getPathForThumbnail(withIdentifier: thumbnailIdentifier, forProject: projectId)
         // TODO: deal with createFileSuccess
         let createFileSuccess = fileManager.createFile(atPath: thumbnailPath.path(), contents: data)
+        if !createFileSuccess {
+            throw .fileSave("Couldn't create thumbnail for imported image")
+        }
     }
 }

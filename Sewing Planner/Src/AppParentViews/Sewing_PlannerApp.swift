@@ -37,6 +37,7 @@ class Store {
     var projects: ProjectsViewModel
     var navigation: [ProjectMetadata] = []
     var selectedProject: ProjectViewModel?
+    var appError: AppError?
     let db: AppDatabase = .db()
 
     init() {
@@ -62,4 +63,9 @@ extension EnvironmentValues {
         get { self[AppDatabaseKey.self] }
         set { self[AppDatabaseKey.self] = newValue }
     }
+}
+
+enum AppError: Error {
+    case projectCards
+    case loadProject
 }
