@@ -6,14 +6,18 @@
 //
 
 import SwiftUI
+//import Sewing_Planner
+//import GRDB
 
 struct ReceiveImageView: View {
-    var text: String
+//    @Environment(\.appDatabase) var appDatabase
+//    let db = AppDatabase.db()
+    let image: UIImage
     var body: some View {
         Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
     }
 }
 
 #Preview {
-    ReceiveImageView(text: "hello")
+    ReceiveImageView(image: UIImage(named: "black_dress_sketch")!)
 }

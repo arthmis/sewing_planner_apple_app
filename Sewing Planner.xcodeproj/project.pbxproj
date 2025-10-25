@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		6E2126E82EAC6AD600A7DC68 /* ReceiveImage.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6E2126DE2EAC6AD400A7DC68 /* ReceiveImage.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		6E490FBB2EAD46130077C63D /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 6E490FBA2EAD46130077C63D /* GRDB */; };
 		6E572DC82C497C63008BCF24 /* AllProjectsScreenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DC72C497C63008BCF24 /* AllProjectsScreenTests.swift */; };
 		6E572DCB2C49E03F008BCF24 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 6E572DCA2C49E03F008BCF24 /* GRDB */; };
 		6E572DD32C5DB2A0008BCF24 /* NewProjectViewTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DD22C5DB2A0008BCF24 /* NewProjectViewTest.swift */; };
@@ -47,14 +48,14 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		6E2126ED2EAC6AD600A7DC68 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 8;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
 				6E2126E82EAC6AD600A7DC68 /* ReceiveImage.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
+			runOnlyForDeploymentPostprocessing = 1;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -99,6 +100,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E490FBB2EAD46130077C63D /* GRDB in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,6 +129,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6E490FB92EAD46130077C63D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		6EF0C8302BED3CE200E7576F = {
 			isa = PBXGroup;
 			children = (
@@ -135,6 +144,7 @@
 				6EF0C84D2BED3CE400E7576F /* Sewing PlannerTests */,
 				6EF0C8572BED3CE400E7576F /* Sewing PlannerUITests */,
 				6E2126DF2EAC6AD400A7DC68 /* ReceiveImage */,
+				6E490FB92EAD46130077C63D /* Frameworks */,
 				6EF0C83A2BED3CE200E7576F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -213,6 +223,7 @@
 			);
 			name = ReceiveImage;
 			packageProductDependencies = (
+				6E490FBA2EAD46130077C63D /* GRDB */,
 			);
 			productName = ReceiveImage;
 			productReference = 6E2126DE2EAC6AD400A7DC68 /* ReceiveImage.appex */;
@@ -431,7 +442,7 @@
 				INFOPLIST_FILE = ReceiveImage/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ReceiveImage;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -460,7 +471,7 @@
 				INFOPLIST_FILE = ReceiveImage/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ReceiveImage;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -794,6 +805,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		6E490FBA2EAD46130077C63D /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6E572DC92C49E03F008BCF24 /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			productName = GRDB;
+		};
 		6E572DCA2C49E03F008BCF24 /* GRDB */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 6E572DC92C49E03F008BCF24 /* XCRemoteSwiftPackageReference "GRDB.swift" */;

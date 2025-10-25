@@ -20,24 +20,31 @@ class ShareViewController: UIViewController {
             let itemProvider = extensionItem.attachments?.first
         else {
             // TODO: do some error handling
+            close()
             return
         }
         // Check type identifier
-        let imageDataType = UTType.image.identifier
+//        let imageDataType = UTType.image.identifier
+//        let imageDataType = UTType.data.identifier
+        let imageDataType = UTType.jpeg.identifier
         if itemProvider.hasItemConformingToTypeIdentifier(imageDataType) {
             // Load the item from itemProvider
             itemProvider.loadItem(forTypeIdentifier: imageDataType, options: nil) { providedImage, error in
-                if let error = error {
+                if let importError = error {
+                    print(importError.localizedDescription)
                     return
                 }
 
-                if let image = providedImage as? UIImage {
+                if let url = providedImage as? NSURL {
+                    let data = try! Data(contentsOf: url as URL)
+                    let image = UIImage(data: data)!
                     DispatchQueue.main.async {
                         // host the SwiftU view
-                        let text = "hello"
-                        let contentView = UIHostingController(rootView: ReceiveImageView(text: text))
+                        let contentView = UIHostingController(rootView: ReceiveImageView(image: image))
                         self.addChild(contentView)
                         self.view.addSubview(contentView.view)
+                        contentView.view.backgroundColor = UIColor.white
+                        contentView.view.isOpaque = true
 
                         // set up constraints
                         contentView.view.translatesAutoresizingMaskIntoConstraints = false
