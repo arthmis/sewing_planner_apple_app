@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6E2126E82EAC6AD600A7DC68 /* ReceiveImage.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6E2126DE2EAC6AD400A7DC68 /* ReceiveImage.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6E572DC82C497C63008BCF24 /* AllProjectsScreenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DC72C497C63008BCF24 /* AllProjectsScreenTests.swift */; };
 		6E572DCB2C49E03F008BCF24 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 6E572DCA2C49E03F008BCF24 /* GRDB */; };
 		6E572DD32C5DB2A0008BCF24 /* NewProjectViewTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DD22C5DB2A0008BCF24 /* NewProjectViewTest.swift */; };
@@ -20,6 +21,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		6E2126E62EAC6AD600A7DC68 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6EF0C8312BED3CE200E7576F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E2126DD2EAC6AD400A7DC68;
+			remoteInfo = ReceiveImage;
+		};
 		6EF0C84B2BED3CE400E7576F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6EF0C8312BED3CE200E7576F /* Project object */;
@@ -36,7 +44,23 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		6E2126ED2EAC6AD600A7DC68 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				6E2126E82EAC6AD600A7DC68 /* ReceiveImage.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		6E2126DE2EAC6AD400A7DC68 /* ReceiveImage.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ReceiveImage.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E2126F02EAC6E1000A7DC68 /* Sewing PlannerDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Sewing PlannerDebug.entitlements"; sourceTree = "<group>"; };
 		6E572DC72C497C63008BCF24 /* AllProjectsScreenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllProjectsScreenTests.swift; sourceTree = "<group>"; };
 		6E572DD22C5DB2A0008BCF24 /* NewProjectViewTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewProjectViewTest.swift; sourceTree = "<group>"; };
 		6E9724532C8F7CEE0027C487 /* DatabaseTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseTest.swift; sourceTree = "<group>"; };
@@ -54,12 +78,30 @@
 		6EF0C85A2BED3CE400E7576F /* Sewing_PlannerUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sewing_PlannerUITestsLaunchTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		6E2126E92EAC6AD600A7DC68 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 6E2126DD2EAC6AD400A7DC68 /* ReceiveImage */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		6E2126DF2EAC6AD400A7DC68 /* ReceiveImage */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (6E2126E92EAC6AD600A7DC68 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ReceiveImage; sourceTree = "<group>"; };
 		6E748F932CD2CAA90076F1B4 /* Src */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Src; sourceTree = "<group>"; };
 		6E748FC92CD2D6110076F1B4 /* Fonts */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Fonts; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		6E2126DB2EAC6AD400A7DC68 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6EF0C8362BED3CE200E7576F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -92,6 +134,7 @@
 				6EF0C83B2BED3CE200E7576F /* Sewing Planner */,
 				6EF0C84D2BED3CE400E7576F /* Sewing PlannerTests */,
 				6EF0C8572BED3CE400E7576F /* Sewing PlannerUITests */,
+				6E2126DF2EAC6AD400A7DC68 /* ReceiveImage */,
 				6EF0C83A2BED3CE200E7576F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -102,6 +145,7 @@
 				6EF0C8392BED3CE200E7576F /* Sewing Planner.app */,
 				6EF0C84A2BED3CE400E7576F /* Sewing PlannerTests.xctest */,
 				6EF0C8542BED3CE400E7576F /* Sewing PlannerUITests.xctest */,
+				6E2126DE2EAC6AD400A7DC68 /* ReceiveImage.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -109,6 +153,7 @@
 		6EF0C83B2BED3CE200E7576F /* Sewing Planner */ = {
 			isa = PBXGroup;
 			children = (
+				6E2126F02EAC6E1000A7DC68 /* Sewing PlannerDebug.entitlements */,
 				6E748FC92CD2D6110076F1B4 /* Fonts */,
 				6E748F932CD2CAA90076F1B4 /* Src */,
 				6E9725102CC6EA4B0027C487 /* Sewing-Planner-Info.plist */,
@@ -151,6 +196,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		6E2126DD2EAC6AD400A7DC68 /* ReceiveImage */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6E2126EA2EAC6AD600A7DC68 /* Build configuration list for PBXNativeTarget "ReceiveImage" */;
+			buildPhases = (
+				6E2126DA2EAC6AD400A7DC68 /* Sources */,
+				6E2126DB2EAC6AD400A7DC68 /* Frameworks */,
+				6E2126DC2EAC6AD400A7DC68 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				6E2126DF2EAC6AD400A7DC68 /* ReceiveImage */,
+			);
+			name = ReceiveImage;
+			packageProductDependencies = (
+			);
+			productName = ReceiveImage;
+			productReference = 6E2126DE2EAC6AD400A7DC68 /* ReceiveImage.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		6EF0C8382BED3CE200E7576F /* Sewing Planner */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6EF0C85E2BED3CE400E7576F /* Build configuration list for PBXNativeTarget "Sewing Planner" */;
@@ -158,10 +225,12 @@
 				6EF0C8352BED3CE200E7576F /* Sources */,
 				6EF0C8362BED3CE200E7576F /* Frameworks */,
 				6EF0C8372BED3CE200E7576F /* Resources */,
+				6E2126ED2EAC6AD600A7DC68 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				6E2126E72EAC6AD600A7DC68 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				6E748F932CD2CAA90076F1B4 /* Src */,
@@ -218,9 +287,12 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1530;
+				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
+					6E2126DD2EAC6AD400A7DC68 = {
+						CreatedOnToolsVersion = 26.0.1;
+					};
 					6EF0C8382BED3CE200E7576F = {
 						CreatedOnToolsVersion = 15.3;
 					};
@@ -253,11 +325,19 @@
 				6EF0C8382BED3CE200E7576F /* Sewing Planner */,
 				6EF0C8492BED3CE400E7576F /* Sewing PlannerTests */,
 				6EF0C8532BED3CE400E7576F /* Sewing PlannerUITests */,
+				6E2126DD2EAC6AD400A7DC68 /* ReceiveImage */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		6E2126DC2EAC6AD400A7DC68 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6EF0C8372BED3CE200E7576F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -284,6 +364,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		6E2126DA2EAC6AD400A7DC68 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6EF0C8352BED3CE200E7576F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -315,6 +402,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		6E2126E72EAC6AD600A7DC68 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6E2126DD2EAC6AD400A7DC68 /* ReceiveImage */;
+			targetProxy = 6E2126E62EAC6AD600A7DC68 /* PBXContainerItemProxy */;
+		};
 		6EF0C84C2BED3CE400E7576F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 6EF0C8382BED3CE200E7576F /* Sewing Planner */;
@@ -328,6 +420,66 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		6E2126EB2EAC6AD600A7DC68 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ReceiveImage/ReceiveImageDebug.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NPC4W8575Q;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ReceiveImage/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ReceiveImage;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.Sewing-Planner.ReceiveImage";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6E2126EC2EAC6AD600A7DC68 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NPC4W8575Q;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ReceiveImage/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ReceiveImage;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.Sewing-Planner.ReceiveImage";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		6EF0C85C2BED3CE400E7576F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -453,7 +605,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "Sewing Planner/Sewing_Planner.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "Sewing Planner/Sewing PlannerDebug.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -583,6 +735,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		6E2126EA2EAC6AD600A7DC68 /* Build configuration list for PBXNativeTarget "ReceiveImage" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6E2126EB2EAC6AD600A7DC68 /* Debug */,
+				6E2126EC2EAC6AD600A7DC68 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		6EF0C8342BED3CE200E7576F /* Build configuration list for PBXProject "Sewing Planner" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
