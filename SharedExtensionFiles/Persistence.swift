@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UniformTypeIdentifiers
 
 struct Project: Identifiable, Codable {
     let id: Int64
@@ -33,10 +34,10 @@ struct SharedPersistence {
             location: sharedLocation,
             fileName: fileName
         )
-        let data = try? Data(contentsOf: fileUrl)
+        let data = fileManager.contents(atPath: fileUrl.path())
         return data
     }
-    
+
     func writeFile(data: Data, fileName: String) throws {
         let fileManager = FileManager.default
         let sharedLocation = try getPersistenceLocation()!

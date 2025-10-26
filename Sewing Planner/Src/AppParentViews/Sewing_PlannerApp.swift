@@ -53,17 +53,26 @@ class Store {
             navigation.append(newProject)
             
             try updateShareExtensionProjectList(project: newProject)
-            
         }
         
     }
     
     private func updateShareExtensionProjectList(project: ProjectMetadata) throws {
-        let data = try SharedPersistence().getFile(fileName: "projects")
+        let fileData = try SharedPersistence().getFile(fileName: "projects")
+        guard let data = fileData else {
+            let projectsList = [Project(id: project.id, name: project.name)]
+            let encoder = JSONEncoder()
+            let updatedProjectsList = try encoder.encode(projectsList)
+            try SharedPersistence().writeFile(data: updatedProjectsList, fileName: "projects")
+            
+            return
+        }
+        
         let decoder = JSONDecoder()
-        guard var projectsList = try? decoder.decode([Project].self, from: data!) else {
+        guard var projectsList = try? decoder.decode([Project].self, from: data) else {
             throw ShareError.emptyFile("Couldn't get shared projects list file")
         }
+        
         projectsList.append(Project(id: project.id, name: project.name))
         let encoder = JSONEncoder()
         let updatedProjectsList = try encoder.encode(projectsList)

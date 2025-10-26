@@ -10,36 +10,51 @@ import SwiftUI
 struct ReceiveImageView: View {
     let image: UIImage
     @State var projects: [Project] = []
-    @State var selection: Int64? = 0
+    @State var selection: Int64 = 0
+
+    private var hasNoProject: Bool {
+        projects.isEmpty
+    }
 
     var body: some View {
         VStack {
-            Picker("Project", selection: $selection) {
-                ForEach(projects, id: \.self.id) { project in
-                    Text(project.name)
+            if hasNoProject {
+                Text(
+                    "Please create one project in the main app before trying to share."
+                )
+                Image(uiImage: image)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+            } else {
+                Picker("Project", selection: $selection) {
+                    ForEach(projects, id: \.self.id) { project in
+                        Text(project.name)
+                    }
                 }
-            }
-            .pickerStyle(.menu)
-            Image(uiImage: image)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
+                .pickerStyle(.menu)
+                Image(uiImage: image)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
 
-            Button("Save to selected project") {
-                do {
-                    // safe to unwrap because button can't be tapped if there is no selection
-                    try saveImageToProject(projectId: selection!, image: image)
-                } catch {
-                    // TODO: handle error
+                Button("Save to selected project") {
+                    do {
+                        // safe to unwrap because button can't be tapped if there is no selection
+                        //                    try saveImageToProject(projectId: selection!, image: image)
+                    } catch {
+                        // TODO: handle error
+                    }
                 }
             }
-            .disabled(selection == nil)
         }
         .task {
             do {
                 projects = try getProjects()
-                selection = projects[0].id
+                if let first = projects.first {
+                    selection = first.id
+                }
             } catch {
                 // TODO: show some kind of error and offer retry or something
+                print(error.localizedDescription)
             }
         }
     }
