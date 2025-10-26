@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ReceiveImageView: View {
     let image: UIImage
-    @State var projects: [Project] = []
+    @State var projects: [SharedProject] = []
     @State var selection: Int64 = 0
 
     private var hasNoProject: Bool {
@@ -60,7 +60,7 @@ struct ReceiveImageView: View {
     }
 }
 
-func getProjects() throws -> [Project] {
+func getProjects() throws -> [SharedProject] {
     guard let data = try? SharedPersistence().getFile(fileName: "projects")
     else {
         // throw an error
@@ -69,7 +69,7 @@ func getProjects() throws -> [Project] {
         )
     }
     let decoder = JSONDecoder()
-    guard let projects = try? decoder.decode([Project].self, from: data) else {
+    guard let projects = try? decoder.decode([SharedProject].self, from: data) else {
         // throw an error
         //        throw Error
         throw ShareError.emptyFile(

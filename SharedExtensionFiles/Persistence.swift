@@ -8,7 +8,7 @@
 import Foundation
 import UniformTypeIdentifiers
 
-struct Project: Identifiable, Codable {
+struct SharedProject: Identifiable, Codable {
     let id: Int64
     let name: String
 }
