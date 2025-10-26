@@ -6,15 +6,69 @@
 //
 
 import SwiftUI
-//import Sewing_Planner
-//import GRDB
 
 struct ReceiveImageView: View {
-//    @Environment(\.appDatabase) var appDatabase
-//    let db = AppDatabase.db()
     let image: UIImage
+    @State var projects: [Project] = []
+    @State var selection: Int64 = 0
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            Picker("Project", selection: $selection) {
+                ForEach(projects, id: \.self.id) { project in
+                    Text(project.name)
+                }
+            }
+            .pickerStyle(.menu)
+            Image(uiImage: image)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+
+            Button("Save To Project") {}
+        }
+        .task {
+            projects = try! SharedPersistence().getProjects()
+            selection = projects[0].id
+        }
+    }
+}
+
+struct Project: Identifiable {
+    let id: Int64
+    let name: String
+}
+
+// TODO: write the image file out to the app group with some json to describe where
+// it can be found
+// 1. also update add projects logic in main project to output a list of all the projects
+// and when removing all the projects
+// the extension will use this list to populate the view for project selection
+// 2. update logic on project selection to read the shared container and get any image
+// shared to the project if any
+// then delete the image if importing it from the shared container is successful
+struct SharedPersistence {
+    func getProjects() throws -> [Project] {
+        return []
+    }
+
+    func getImagesDirectory() -> URL {
+        let container = getPersistenceLocation()
+        return container!
+    }
+
+    func getPersistenceLocation() -> URL? {
+        // get the shared container for the app group
+        guard
+            let fileContainer = FileManager.default.containerURL(
+                forSecurityApplicationGroupIdentifier: "group.SewingPlanner"
+            )
+        else {
+            fatalError("Shared file container could not be created.")
+        }
+        print(fileContainer)
+        //                return fileContainer.appendingPathComponent("\(databaseName).sqlite")
+
+        return fileContainer
     }
 }
 

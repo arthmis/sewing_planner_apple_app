@@ -42,12 +42,7 @@ struct AppFiles {
 
         let imagesFolderForProject = getProjectPhotoDirectoryPath(projectId: projectId)
         if !projectPhotoDirectoryExists(id: projectId) {
-            do {
-                try fileManager.createDirectory(at: imagesFolderForProject, withIntermediateDirectories: true, attributes: nil)
-            } catch {
-                fatalError("Error \(error)")
-                return nil
-            }
+            try fileManager.createDirectory(at: imagesFolderForProject, withIntermediateDirectories: true, attributes: nil)
         }
 
         // get image's new file path

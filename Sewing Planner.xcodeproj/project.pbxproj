@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6E2126E82EAC6AD600A7DC68 /* ReceiveImage.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6E2126DE2EAC6AD400A7DC68 /* ReceiveImage.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6E490FBB2EAD46130077C63D /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 6E490FBA2EAD46130077C63D /* GRDB */; };
+		6E4912002EADCB910077C63D /* ReceiveImage.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6E2126DE2EAC6AD400A7DC68 /* ReceiveImage.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6E572DC82C497C63008BCF24 /* AllProjectsScreenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DC72C497C63008BCF24 /* AllProjectsScreenTests.swift */; };
 		6E572DCB2C49E03F008BCF24 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 6E572DCA2C49E03F008BCF24 /* GRDB */; };
 		6E572DD32C5DB2A0008BCF24 /* NewProjectViewTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DD22C5DB2A0008BCF24 /* NewProjectViewTest.swift */; };
@@ -22,7 +22,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		6E2126E62EAC6AD600A7DC68 /* PBXContainerItemProxy */ = {
+		6E4912012EADCB910077C63D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6EF0C8312BED3CE200E7576F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E2126DD2EAC6AD400A7DC68;
+			remoteInfo = ReceiveImage;
+		};
+		6E4912042EADCB970077C63D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6EF0C8312BED3CE200E7576F /* Project object */;
 			proxyType = 1;
@@ -46,16 +53,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		6E2126ED2EAC6AD600A7DC68 /* Embed Foundation Extensions */ = {
+		6E4912032EADCB910077C63D /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 8;
+			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				6E2126E82EAC6AD600A7DC68 /* ReceiveImage.appex in Embed Foundation Extensions */,
+				6E4912002EADCB910077C63D /* ReceiveImage.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -236,12 +243,13 @@
 				6EF0C8352BED3CE200E7576F /* Sources */,
 				6EF0C8362BED3CE200E7576F /* Frameworks */,
 				6EF0C8372BED3CE200E7576F /* Resources */,
-				6E2126ED2EAC6AD600A7DC68 /* Embed Foundation Extensions */,
+				6E4912032EADCB910077C63D /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				6E2126E72EAC6AD600A7DC68 /* PBXTargetDependency */,
+				6E4912022EADCB910077C63D /* PBXTargetDependency */,
+				6E4912052EADCB970077C63D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				6E748F932CD2CAA90076F1B4 /* Src */,
@@ -413,10 +421,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		6E2126E72EAC6AD600A7DC68 /* PBXTargetDependency */ = {
+		6E4912022EADCB910077C63D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 6E2126DD2EAC6AD400A7DC68 /* ReceiveImage */;
-			targetProxy = 6E2126E62EAC6AD600A7DC68 /* PBXContainerItemProxy */;
+			targetProxy = 6E4912012EADCB910077C63D /* PBXContainerItemProxy */;
+		};
+		6E4912052EADCB970077C63D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6E2126DD2EAC6AD400A7DC68 /* ReceiveImage */;
+			targetProxy = 6E4912042EADCB970077C63D /* PBXContainerItemProxy */;
 		};
 		6EF0C84C2BED3CE400E7576F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -453,17 +466,22 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
 		6E2126EC2EAC6AD600A7DC68 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ReceiveImage/ReceiveImageRelease.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = NPC4W8575Q;
@@ -482,11 +500,15 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

@@ -6,11 +6,11 @@
 //
 
 import SwiftUI
-//import GRDB
+import GRDB
 
 struct ReceiveImageViewApp: View {
 //    @Environment(\.appDatabase) var appDatabase
-//    let db = AppDatabase.db()
+    let db = AppDatabase.db()
     let image: UIImage
     let selections = ["hello", "hi", "bye"]
     @State var selection = 0
