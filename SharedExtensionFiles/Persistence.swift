@@ -29,18 +29,38 @@ struct SharedPersistence {
     func getFile(fileName: String) throws -> Data? {
         let fileManager = FileManager.default
         let sharedLocation = try getPersistenceLocation()!
-        let fileUrl = constructFileLocation(location: sharedLocation, fileName: fileName)
+        let fileUrl = constructFileLocation(
+            location: sharedLocation,
+            fileName: fileName
+        )
         let data = try? Data(contentsOf: fileUrl)
         return data
     }
+    
+    func writeFile(data: Data, fileName: String) throws {
+        let fileManager = FileManager.default
+        let sharedLocation = try getPersistenceLocation()!
+        let fileUrl = constructFileLocation(
+            location: sharedLocation,
+            fileName: fileName
+        )
+        //        try data.write(to: fileUrl, options: [.atomic, .completeFileProtection])
+        let success = fileManager.createFile(
+            atPath: fileUrl.path(),
+            contents: data
+        )
+        //        let data = try? Data(contentsOf: fileUrl)
+        //        return data
+    }
 
-//    func getImagesDirectory() -> URL {
-//        let container = getPersistenceLocation()
-//        return container!
-//    }
+    //    func getImagesDirectory() -> URL {
+    //        let container = getPersistenceLocation()
+    //        return container!
+    //    }
 
     func constructFileLocation(location: URL, fileName: String) -> URL {
-        let fileLocation = location.appending(path: fileName).appendingPathExtension(for: .json)
+        let fileLocation = location.appending(path: fileName)
+            .appendingPathExtension(for: .json)
 
         return fileLocation
     }
