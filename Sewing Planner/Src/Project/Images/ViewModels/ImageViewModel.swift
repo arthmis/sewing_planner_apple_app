@@ -33,15 +33,14 @@ class ProjectImages {
     }
 
     func importImages(_ newImages: [ProjectImageInput]) throws {
-        try saveImages(images: newImages)
+        let savedImages = try saveImages(images: newImages)
+        images.append(contentsOf: savedImages)
     }
 
-    func addImage(_ image: ProjectImage) {
-        images.append(image)
-    }
-
-    func saveImages(images: [ProjectImageInput]) throws {
+    private func saveImages(images: [ProjectImageInput]) throws -> [ProjectImage] {
+        var savedImages: [ProjectImage] = []
         try appDatabase.getWriter().write { db in
+            // TODO: convert this loop into a map call or consider it
             for image in images {
                 do {
                     if image.record == nil {
@@ -51,13 +50,16 @@ class ProjectImages {
                         try input.save(db)
                         let record = ProjectImageRecord(from: consume input)
                         let projectImage = ProjectImage(record: consume record, path: imagePath, image: image.image)
-                        addImage(projectImage)
+                        savedImages.append(projectImage)
                     }
                 } catch {
-                    fatalError("error saving record or saving image to filesystem: \(error)")
+                    // TODO: turn this into an error for the toast
+                    print("error saving image")
                 }
             }
         }
+
+        return savedImages
     }
 
     func deleteImages() throws {
@@ -121,6 +123,7 @@ class ProjectImages {
         do {
             try loadSharedImages()
         } catch {
+            print("failed to load shared image")
             // TODO: decide what I want to do here
         }
 
@@ -133,7 +136,7 @@ class ProjectImages {
         let sharedImagesFileName = "sharedImages"
         let sharedPersistence = SharedPersistence()
         guard let fileData = try sharedPersistence.getFile(fileName: sharedImagesFileName) else {
-            // return or throw
+            // TODO: return or throw
             return
         }
         let decoder = JSONDecoder()
@@ -149,7 +152,7 @@ class ProjectImages {
             if sharedImage.projectId == projectId {
                 let data = try sharedPersistence.getImage(withIdentifier: sharedImage.fileIdentifier)
                 let image = UIImage(data: data)!
-                try saveImages(images: [ProjectImageInput(image: image)])
+                _ = try saveImages(images: [ProjectImageInput(image: image)])
                 try sharedPersistence.deleteImage(withIdentifier: sharedImage.fileIdentifier)
             }
         }
