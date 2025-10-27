@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct ReceiveImageView: View {
-    let image: UIImage
+    // let image: UIImage
+    let image: Data
     @State var projects: [SharedProject] = []
     @State var selection: Int64 = 0
 
@@ -22,7 +23,7 @@ struct ReceiveImageView: View {
                 Text(
                     "Please create one project in the main app before trying to share."
                 )
-                Image(uiImage: image)
+                Image(uiImage: UIImage(data: image)!)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
             } else {
@@ -32,7 +33,7 @@ struct ReceiveImageView: View {
                     }
                 }
                 .pickerStyle(.menu)
-                Image(uiImage: image)
+                Image(uiImage: UIImage(data: image)!)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
 
@@ -40,12 +41,14 @@ struct ReceiveImageView: View {
                     do {
                         // safe to unwrap because button can't be tapped if there is no selection
                         //                    try saveImageToProject(projectId: selection!, image: image)
+                        try saveImageForProject(projectId: selection, image: image)
                     } catch {
                         // TODO: handle error
                     }
                 }
             }
         }
+        .padding(.horizontal, 10)
         .task {
             do {
                 projects = try getProjects()
@@ -80,8 +83,38 @@ func getProjects() throws -> [SharedProject] {
     return projects
 }
 
-func saveImageToProject(projectId _: Int64, image _: UIImage) throws {}
+let sharedImagesFileName = "sharedImages"
 
-#Preview {
-    ReceiveImageView(image: UIImage(named: "black_dress_sketch")!)
+// func saveImageForProject(projectId: Int64, image: UIImage) throws {
+func saveImageForProject(projectId: Int64, image: Data) throws {
+    let fileIdentifier = UUID().uuidString
+    let sharedImageIdentification = SharedImage(projectId: projectId, fileIdentifier: fileIdentifier)
+
+    try SharedPersistence().saveImage(fileIdentifier: sharedImageIdentification.fileIdentifier, image: image)
+
+    let fileData = try SharedPersistence().getFile(fileName: sharedImagesFileName)
+    guard let data = fileData else {
+        // TODO: create the file if it isn't there
+        let sharedImages = [sharedImageIdentification]
+        let encoder = JSONEncoder()
+        let updatedSharedImagesList = try encoder.encode(sharedImages)
+        try SharedPersistence().writeFile(data: updatedSharedImagesList, fileName: sharedImagesFileName)
+        return
+    }
+
+    let decoder = JSONDecoder()
+    guard var sharedImages = try? decoder.decode([SharedImage].self, from: data) else {
+        throw ShareError.emptyFile("Couldn't get shared images list file")
+    }
+
+    sharedImages.append(sharedImageIdentification)
+
+    // projectsList.append(Project(id: project.id, name: project.name))
+    let encoder = JSONEncoder()
+    let updatedSharedImagesList = try encoder.encode(sharedImages)
+    try SharedPersistence().writeFile(data: updatedSharedImagesList, fileName: sharedImagesFileName)
 }
+
+// #Preview {
+//     ReceiveImageView(image: UIImage(named: "black_dress_sketch")!)
+// }

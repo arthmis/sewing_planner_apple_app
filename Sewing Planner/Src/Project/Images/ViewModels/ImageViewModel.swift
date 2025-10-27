@@ -118,9 +118,46 @@ class ProjectImages {
     }
 
     func loadProjectImages(appDatabase: AppDatabase) throws {
+        do {
+            try loadSharedImages()
+        } catch {
+            // TODO: decide what I want to do here
+        }
+
         if images.isEmpty {
             images = try appDatabase.getProjectThumbnails(projectId: projectId)
         }
+    }
+
+    private func loadSharedImages() throws {
+        let sharedImagesFileName = "sharedImages"
+        let sharedPersistence = SharedPersistence()
+        guard let fileData = try sharedPersistence.getFile(fileName: sharedImagesFileName) else {
+            // return or throw
+            return
+        }
+        let decoder = JSONDecoder()
+        guard let sharedImages = try? decoder.decode([SharedImage].self, from: fileData) else {
+            throw ShareError.emptyFile("Couldn't get shared images list file")
+        }
+
+        if sharedImages.isEmpty {
+            return
+        }
+
+        for sharedImage in sharedImages {
+            if sharedImage.projectId == projectId {
+                let data = try sharedPersistence.getImage(withIdentifier: sharedImage.fileIdentifier)
+                let image = UIImage(data: data)!
+                try saveImages(images: [ProjectImageInput(image: image)])
+                try sharedPersistence.deleteImage(withIdentifier: sharedImage.fileIdentifier)
+            }
+        }
+
+        let updatedSharedImages = sharedImages.filter { $0.projectId != projectId }
+        let encoder = JSONEncoder()
+        let data = try encoder.encode(updatedSharedImages)
+        try sharedPersistence.writeFile(data: data, fileName: sharedImagesFileName)
     }
 }
 

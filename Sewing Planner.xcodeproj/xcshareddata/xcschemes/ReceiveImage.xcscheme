@@ -59,8 +59,8 @@
       launchAutomaticallySubstyle = "2">
       <RemoteRunnable
          runnableDebuggingMode = "0"
-         BundleIdentifier = "com.Sewing-Planner"
-         RemotePath = "/var/containers/Bundle/Application/0B0E08FB-BB67-4B93-9F1D-B332D5540D15/Sewing Planner.app">
+         BundleIdentifier = "com.apple.mobileslideshow"
+         RemotePath = "/var/containers/Bundle/Application/0BDBDBA0-1B2E-4D9E-9478-CADAE5D9C6D7/Photos.app">
       </RemoteRunnable>
       <MacroExpansion>
          <BuildableReference

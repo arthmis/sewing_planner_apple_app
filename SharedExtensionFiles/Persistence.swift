@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 import UniformTypeIdentifiers
 
 struct SharedProject: Identifiable, Codable {
@@ -13,19 +14,16 @@ struct SharedProject: Identifiable, Codable {
     let name: String
 }
 
+struct SharedImage: Codable {
+    let projectId: Int64
+    let fileIdentifier: String
+}
+
 enum ShareError: Error {
     case getFile(String)
     case emptyFile(String)
 }
 
-// TODO: write the image file out to the app group with some json to describe where
-// it can be found
-// 1. also update add projects logic in main project to output a list of all the projects
-// and when removing all the projects
-// the extension will use this list to populate the view for project selection
-// 2. update logic on project selection to read the shared container and get any image
-// shared to the project if any
-// then delete the image if importing it from the shared container is successful
 struct SharedPersistence {
     func getFile(fileName: String) throws -> Data? {
         let fileManager = FileManager.default
@@ -54,19 +52,70 @@ struct SharedPersistence {
         //        return data
     }
 
+    // func saveImage(fileIdentifier: String, image: UIImage) throws {
+    func saveImage(fileIdentifier: String, image: Data) throws {
+        let fileManager = FileManager.default
+
+        let imagesDirectory = try createImagesDirectory(at: "SharedImages")
+        let imagePath = imagesDirectory.appending(path: fileIdentifier).appendingPathExtension(for: .png)
+        // let data = image.pngData()
+        let success = fileManager.createFile(atPath: imagePath.path(), contents: image)
+
+        if !success {
+            // TODO: throw an error or do something
+        }
+    }
+
+    func getImage(withIdentifier fileIdentifier: String) throws -> Data {
+        let fileManager = FileManager.default
+
+        let imagesDirectory = try createImagesDirectory(at: "SharedImages")
+        let imagePath = imagesDirectory.appending(path: fileIdentifier).appendingPathExtension(for: .png)
+        guard let data = fileManager.contents(atPath: imagePath.path()) else {
+            throw ShareError.getFile("Couldn't get shared image")
+        }
+
+        return data
+    }
+
+    func deleteImage(withIdentifier fileIdentifier: String) throws {
+        let fileManager = FileManager.default
+
+        let imagesDirectory = try createImagesDirectory(at: "SharedImages")
+        let imagePath = imagesDirectory.appending(path: fileIdentifier).appendingPathExtension(for: .png)
+        try fileManager.removeItem(atPath: imagePath.path())
+    }
+
+    func fileExists(withIdentifier fileIdentifier: String) -> Bool {
+        let fileManager = FileManager.default
+
+        let imagesDirectory = try! createImagesDirectory(at: "SharedImages")
+        let imagePath = imagesDirectory.appending(path: fileIdentifier).appendingPathExtension(for: .png)
+        return fileManager.fileExists(atPath: imagePath.path())
+    }
+
+    private func createImagesDirectory(at directory: String) throws -> URL {
+        let fileManager = FileManager.default
+        let sharedLocation = try getPersistenceLocation()!
+        let imagesDirectory = sharedLocation.appending(path: directory)
+        try fileManager.createDirectory(at: imagesDirectory, withIntermediateDirectories: true, attributes: nil)
+
+        return imagesDirectory
+    }
+
     //    func getImagesDirectory() -> URL {
     //        let container = getPersistenceLocation()
     //        return container!
     //    }
 
-    func constructFileLocation(location: URL, fileName: String) -> URL {
+    private func constructFileLocation(location: URL, fileName: String) -> URL {
         let fileLocation = location.appending(path: fileName)
             .appendingPathExtension(for: .json)
 
         return fileLocation
     }
 
-    func getPersistenceLocation() throws -> URL? {
+    private func getPersistenceLocation() throws -> URL? {
         // get the shared container for the app group
         guard
             let fileContainer = FileManager.default.containerURL(

@@ -37,10 +37,10 @@ class ShareViewController: UIViewController {
 
                 if let url = providedImage as? NSURL {
                     let data = try! Data(contentsOf: url as URL)
-                    let image = UIImage(data: data)!
+                    // let image = UIImage(data: data)!
                     DispatchQueue.main.async {
                         // host the SwiftU view
-                        let contentView = UIHostingController(rootView: ReceiveImageView(image: image))
+                        let contentView = UIHostingController(rootView: ReceiveImageView(image: data))
                         self.addChild(contentView)
                         self.view.addSubview(contentView.view)
                         contentView.view.backgroundColor = UIColor.white
