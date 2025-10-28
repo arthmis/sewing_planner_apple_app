@@ -10,6 +10,7 @@ import SwiftUI
 struct ReceiveImageView: View {
     // let image: UIImage
     let image: Data
+    let dismiss: () -> Void
     @State var projects: [SharedProject] = []
     @State var selection: Int64 = 0
 
@@ -51,6 +52,7 @@ struct ReceiveImageView: View {
                         // safe to unwrap because button can't be tapped if there is no selection
                         //                    try saveImageToProject(projectId: selection!, image: image)
                         try saveImageForProject(projectId: selection, image: image)
+                        dismiss()
                     } catch {
                         // TODO: handle error
                     }
