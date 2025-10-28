@@ -24,11 +24,8 @@ class ShareViewController: UIViewController {
             return
         }
         // Check type identifier
-//        let imageDataType = UTType.image.identifier
-//        let imageDataType = UTType.data.identifier
-        let imageDataType = UTType.jpeg.identifier
+        let imageDataType = UTType.data.identifier
         if itemProvider.hasItemConformingToTypeIdentifier(imageDataType) {
-            // Load the item from itemProvider
             itemProvider.loadItem(forTypeIdentifier: imageDataType, options: nil) { providedImage, error in
                 if let importError = error {
                     print(importError.localizedDescription)
@@ -36,22 +33,26 @@ class ShareViewController: UIViewController {
                 }
 
                 if let url = providedImage as? NSURL {
-                    let data = try! Data(contentsOf: url as URL)
-                    // let image = UIImage(data: data)!
-                    DispatchQueue.main.async {
-                        // host the SwiftU view
-                        let contentView = UIHostingController(rootView: ReceiveImageView(image: data))
-                        self.addChild(contentView)
-                        self.view.addSubview(contentView.view)
-                        contentView.view.backgroundColor = UIColor.white
-                        contentView.view.isOpaque = true
+                    do {
+                        let data = try Data(contentsOf: url as URL)
+                        // let image = UIImage(data: data)!
+                        DispatchQueue.main.async {
+                            // host the SwiftU view
+                            let contentView = UIHostingController(rootView: ReceiveImageView(image: data))
+                            self.addChild(contentView)
+                            self.view.addSubview(contentView.view)
+                            contentView.view.backgroundColor = UIColor.white
+                            contentView.view.isOpaque = true
 
-                        // set up constraints
-                        contentView.view.translatesAutoresizingMaskIntoConstraints = false
-                        contentView.view.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
-                        contentView.view.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
-                        contentView.view.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
-                        contentView.view.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
+                            // set up constraints
+                            contentView.view.translatesAutoresizingMaskIntoConstraints = false
+                            contentView.view.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
+                            contentView.view.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
+                            contentView.view.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
+                            contentView.view.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
+                        }
+                    } catch {
+                        // TODO: show an error view that says couldn't load image
                     }
                 }
             }

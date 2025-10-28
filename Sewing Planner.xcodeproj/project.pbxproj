@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		6E490FBB2EAD46130077C63D /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 6E490FBA2EAD46130077C63D /* GRDB */; };
-		6E4912D42EAF1C230077C63D /* ReceiveImage.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6E2126DE2EAC6AD400A7DC68 /* ReceiveImage.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		6E4913462EB0688B0077C63D /* ReceiveImage.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6E2126DE2EAC6AD400A7DC68 /* ReceiveImage.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6E572DC82C497C63008BCF24 /* AllProjectsScreenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DC72C497C63008BCF24 /* AllProjectsScreenTests.swift */; };
 		6E572DCB2C49E03F008BCF24 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 6E572DCA2C49E03F008BCF24 /* GRDB */; };
 		6E572DD32C5DB2A0008BCF24 /* NewProjectViewTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DD22C5DB2A0008BCF24 /* NewProjectViewTest.swift */; };
@@ -22,14 +22,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		6E4912042EADCB970077C63D /* PBXContainerItemProxy */ = {
+		6E4913432EAFE71E0077C63D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6EF0C8312BED3CE200E7576F /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 6E2126DD2EAC6AD400A7DC68;
 			remoteInfo = ReceiveImage;
 		};
-		6E4912D52EAF1C230077C63D /* PBXContainerItemProxy */ = {
+		6E4913472EB0688B0077C63D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6EF0C8312BED3CE200E7576F /* Project object */;
 			proxyType = 1;
@@ -53,13 +53,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		6E4912D72EAF1C230077C63D /* Embed Foundation Extensions */ = {
+		6E4913492EB0688B0077C63D /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				6E4912D42EAF1C230077C63D /* ReceiveImage.appex in Embed Foundation Extensions */,
+				6E4913462EB0688B0077C63D /* ReceiveImage.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -253,13 +253,13 @@
 				6EF0C8352BED3CE200E7576F /* Sources */,
 				6EF0C8362BED3CE200E7576F /* Frameworks */,
 				6EF0C8372BED3CE200E7576F /* Resources */,
-				6E4912D72EAF1C230077C63D /* Embed Foundation Extensions */,
+				6E4913492EB0688B0077C63D /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				6E4912052EADCB970077C63D /* PBXTargetDependency */,
-				6E4912D62EAF1C230077C63D /* PBXTargetDependency */,
+				6E4913442EAFE71E0077C63D /* PBXTargetDependency */,
+				6E4913482EB0688B0077C63D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				6E748F932CD2CAA90076F1B4 /* Src */,
@@ -431,15 +431,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		6E4912052EADCB970077C63D /* PBXTargetDependency */ = {
+		6E4913442EAFE71E0077C63D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 6E2126DD2EAC6AD400A7DC68 /* ReceiveImage */;
-			targetProxy = 6E4912042EADCB970077C63D /* PBXContainerItemProxy */;
+			targetProxy = 6E4913432EAFE71E0077C63D /* PBXContainerItemProxy */;
 		};
-		6E4912D62EAF1C230077C63D /* PBXTargetDependency */ = {
+		6E4913482EB0688B0077C63D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 6E2126DD2EAC6AD400A7DC68 /* ReceiveImage */;
-			targetProxy = 6E4912D52EAF1C230077C63D /* PBXContainerItemProxy */;
+			targetProxy = 6E4913472EB0688B0077C63D /* PBXContainerItemProxy */;
 		};
 		6EF0C84C2BED3CE400E7576F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

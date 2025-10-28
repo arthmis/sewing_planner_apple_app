@@ -23,9 +23,14 @@ struct ReceiveImageView: View {
                 Text(
                     "Please create one project in the main app before trying to share."
                 )
-                Image(uiImage: UIImage(data: image)!)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
+                if let sharedImage = UIImage(data: image) {
+                    Image(uiImage: sharedImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                } else {
+                    Text("Couldn't load image")
+                }
+
             } else {
                 Picker("Project", selection: $selection) {
                     ForEach(projects, id: \.self.id) { project in
@@ -33,9 +38,13 @@ struct ReceiveImageView: View {
                     }
                 }
                 .pickerStyle(.menu)
-                Image(uiImage: UIImage(data: image)!)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
+                if let sharedImage = UIImage(data: image) {
+                    Image(uiImage: sharedImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                } else {
+                    Text("Couldn't load image")
+                }
 
                 Button("Save to selected project") {
                     do {
