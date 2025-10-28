@@ -20,6 +20,16 @@ struct ReceiveImageView: View {
 
     var body: some View {
         VStack {
+            HStack {
+                Spacer()
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark.circle")
+                        .font(.system(size: 28))
+                        .fontWeight(.light)
+                        .foregroundStyle(Color.black.opacity(0.8))
+                }
+                .padding(.trailing, 8)
+            }
             if hasNoProject {
                 Text(
                     "Please create one project in the main app before trying to share."
@@ -49,8 +59,6 @@ struct ReceiveImageView: View {
 
                 Button("Save to selected project") {
                     do {
-                        // safe to unwrap because button can't be tapped if there is no selection
-                        //                    try saveImageToProject(projectId: selection!, image: image)
                         try saveImageForProject(projectId: selection, image: image)
                         dismiss()
                     } catch {
