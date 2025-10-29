@@ -15,6 +15,8 @@ class ProjectData {
     var data: ProjectMetadata
     var sections: [Section] = .init()
     var bindedName = ""
+    var selectedSectionForDeletion: SectionRecord?
+    var showDeleteSectionDialog = false
     let db: AppDatabase = .db()
 
     init(data: ProjectMetadata) {

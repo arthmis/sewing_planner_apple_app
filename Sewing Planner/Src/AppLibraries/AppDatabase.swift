@@ -84,7 +84,7 @@ extension AppDatabase {
 
             try db.create(table: "sectionItem", options: [.ifNotExists]) { table in
                 table.autoIncrementedPrimaryKey("id")
-                table.belongsTo("section").notNull()
+                table.belongsTo("section", onDelete: .cascade).notNull()
                 table.column("text", .text).notNull().indexed()
                 table.column("isComplete", .boolean).notNull().indexed()
                 table.column("isDeleted", .boolean).notNull()
@@ -95,7 +95,7 @@ extension AppDatabase {
 
             try db.create(table: "sectionItemNote", options: [.ifNotExists]) { table in
                 table.autoIncrementedPrimaryKey("id")
-                table.belongsTo("sectionItem").notNull()
+                table.belongsTo("sectionItem", onDelete: .cascade).notNull()
                     .unique()
                 table.column("text", .text).notNull().indexed()
                 table.column("createDate", .datetime).notNull()
@@ -205,6 +205,14 @@ extension AppDatabase {
             }
 
             return projectImages
+        }
+    }
+}
+
+extension AppDatabase {
+    func deleteProjectSection(section: SectionRecord) async throws {
+        _ = try await dbWriter.write { db in
+            try section.delete(db)
         }
     }
 }

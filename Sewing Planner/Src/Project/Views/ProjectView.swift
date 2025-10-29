@@ -191,6 +191,7 @@ class ProjectViewModel {
     private var photosAppSelectedImage: Data?
     var showPhotoPicker = false
     var projectError: ProjectError?
+    let db: AppDatabase = .db()
 
     init(
         data: ProjectData, projectsNavigation: [ProjectMetadata], projectImages: ProjectImages
@@ -206,6 +207,23 @@ class ProjectViewModel {
         } catch {
             projectError = .addSection
         }
+    }
+
+    func initiateDeleteSection(section: SectionRecord) {
+        projectData.selectedSectionForDeletion = section
+        projectData.showDeleteSectionDialog = true
+    }
+
+    func deleteSection(selectedSection: SectionRecord?) -> Effect {
+        guard let sectionToDelete = selectedSection else {
+            return .doNothing
+        }
+
+        let updatedSections = projectData.sections.filter { projectSection in
+            sectionToDelete.id != projectSection.section.id
+        }
+        projectData.sections = updatedSections
+        return .deleteSection(section: sectionToDelete)
     }
 
     func handleError(error: ProjectError) {
@@ -245,6 +263,25 @@ class ProjectViewModel {
             // log error
         }
     }
+}
+
+extension ProjectViewModel {
+    func handleEffect(effect: Effect) {
+        switch effect {
+        case let .deleteSection(section):
+            Task {
+                try await db.deleteProjectSection(section: section)
+            }
+            return
+        case .doNothing:
+            return
+        }
+    }
+}
+
+enum Effect {
+    case deleteSection(section: SectionRecord)
+    case doNothing
 }
 
 struct BackButton: View {

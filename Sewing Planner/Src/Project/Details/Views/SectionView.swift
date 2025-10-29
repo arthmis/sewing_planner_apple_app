@@ -75,9 +75,16 @@ struct SectionView: View {
                     }
                 }
                 // TODO: Next add the popup for this, with a delete button
-                SectionViewButton {} label: {
+                Menu {
+                    Button("Delete") {
+                        project.initiateDeleteSection(section: model.section)
+                    }
+                } label: {
                     Image(systemName: "ellipsis")
+                        .font(.system(size: 24))
                 }
+                .padding(.trailing, 16)
+                .padding(.vertical, 8)
             }
             .overlay(Divider()
                 .frame(maxWidth: .infinity, maxHeight: 1)
