@@ -42,6 +42,11 @@ class ProjectData {
         }
     }
 
+    func cancelDeleteSection() {
+        selectedSectionForDeletion = nil
+        showDeleteSectionDialog = false
+    }
+
     func updateName(name: String) throws {
         try db.getWriter().write { db in
             data.name = name

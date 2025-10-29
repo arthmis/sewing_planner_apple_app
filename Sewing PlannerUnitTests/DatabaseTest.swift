@@ -8,6 +8,7 @@
 import GRDB
 @testable import Sewing_Planner
 import XCTest
+import Testing
 
 final class DatabaseTest: XCTestCase {
     override func setUpWithError() throws {

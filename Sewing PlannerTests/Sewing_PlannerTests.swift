@@ -7,9 +7,10 @@
 
 @testable import Sewing_Planner
 import XCTest
+import Testing
 
 final class Sewing_PlannerTests: XCTestCase {
-    override func setUpWithError() throws {
+    @MainActor override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
 
@@ -24,6 +25,7 @@ final class Sewing_PlannerTests: XCTestCase {
         // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
         // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
     }
+
 
     func testPerformanceExample() throws {
         // This is an example of a performance test case.

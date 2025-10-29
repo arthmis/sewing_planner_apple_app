@@ -12,11 +12,9 @@
 		6E572DC82C497C63008BCF24 /* AllProjectsScreenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DC72C497C63008BCF24 /* AllProjectsScreenTests.swift */; };
 		6E572DCB2C49E03F008BCF24 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 6E572DCA2C49E03F008BCF24 /* GRDB */; };
 		6E572DD32C5DB2A0008BCF24 /* NewProjectViewTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DD22C5DB2A0008BCF24 /* NewProjectViewTest.swift */; };
-		6E9724542C8F7CEE0027C487 /* DatabaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9724532C8F7CEE0027C487 /* DatabaseTest.swift */; };
 		6E9724562C90EAFF0027C487 /* TimestampedRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9724552C90EAFF0027C487 /* TimestampedRecord.swift */; };
 		6EF0C8412BED3CE400E7576F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EF0C8402BED3CE400E7576F /* Assets.xcassets */; };
 		6EF0C8442BED3CE400E7576F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EF0C8432BED3CE400E7576F /* Preview Assets.xcassets */; };
-		6EF0C84F2BED3CE400E7576F /* Sewing_PlannerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF0C84E2BED3CE400E7576F /* Sewing_PlannerTests.swift */; };
 		6EF0C8592BED3CE400E7576F /* Sewing_PlannerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF0C8582BED3CE400E7576F /* Sewing_PlannerUITests.swift */; };
 		6EF0C85B2BED3CE400E7576F /* Sewing_PlannerUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF0C85A2BED3CE400E7576F /* Sewing_PlannerUITestsLaunchTests.swift */; };
 /* End PBXBuildFile section */
@@ -36,7 +34,7 @@
 			remoteGlobalIDString = 6E2126DD2EAC6AD400A7DC68;
 			remoteInfo = ReceiveImage;
 		};
-		6EF0C84B2BED3CE400E7576F /* PBXContainerItemProxy */ = {
+		6E49141E2EB2A0B30077C63D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6EF0C8312BED3CE200E7576F /* Project object */;
 			proxyType = 1;
@@ -69,9 +67,9 @@
 /* Begin PBXFileReference section */
 		6E2126DE2EAC6AD400A7DC68 /* ReceiveImage.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ReceiveImage.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E2126F02EAC6E1000A7DC68 /* Sewing PlannerDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Sewing PlannerDebug.entitlements"; sourceTree = "<group>"; };
+		6E49141A2EB2A0B30077C63D /* Sewing PlannerUnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Sewing PlannerUnitTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E572DC72C497C63008BCF24 /* AllProjectsScreenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllProjectsScreenTests.swift; sourceTree = "<group>"; };
 		6E572DD22C5DB2A0008BCF24 /* NewProjectViewTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewProjectViewTest.swift; sourceTree = "<group>"; };
-		6E9724532C8F7CEE0027C487 /* DatabaseTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseTest.swift; sourceTree = "<group>"; };
 		6E9724552C90EAFF0027C487 /* TimestampedRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimestampedRecord.swift; sourceTree = "<group>"; };
 		6E9725102CC6EA4B0027C487 /* Sewing-Planner-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Sewing-Planner-Info.plist"; sourceTree = SOURCE_ROOT; };
 		6EBA5ECE2E83212D00DFCD3E /* Sewing Planner.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Sewing Planner.xctestplan"; sourceTree = "<group>"; };
@@ -79,7 +77,6 @@
 		6EF0C8402BED3CE400E7576F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6EF0C8432BED3CE400E7576F /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		6EF0C8452BED3CE400E7576F /* Sewing_Planner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Sewing_Planner.entitlements; sourceTree = "<group>"; };
-		6EF0C84A2BED3CE400E7576F /* Sewing PlannerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Sewing PlannerTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EF0C84E2BED3CE400E7576F /* Sewing_PlannerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sewing_PlannerTests.swift; sourceTree = "<group>"; };
 		6EF0C8542BED3CE400E7576F /* Sewing PlannerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Sewing PlannerUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EF0C8582BED3CE400E7576F /* Sewing_PlannerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sewing_PlannerUITests.swift; sourceTree = "<group>"; };
@@ -101,11 +98,19 @@
 			);
 			target = 6EF0C8382BED3CE200E7576F /* Sewing Planner */;
 		};
+		6E4914242EB2A1CC0077C63D /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				DatabaseTest.swift,
+			);
+			target = 6E4914192EB2A0B30077C63D /* Sewing PlannerUnitTests */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		6E2126DF2EAC6AD400A7DC68 /* ReceiveImage */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (6E2126E92EAC6AD600A7DC68 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ReceiveImage; sourceTree = "<group>"; };
 		6E4912692EAE62700077C63D /* SharedExtensionFiles */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (6E49126D2EAE62BD0077C63D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = SharedExtensionFiles; sourceTree = "<group>"; };
+		6E49141B2EB2A0B30077C63D /* Sewing PlannerUnitTests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (6E4914242EB2A1CC0077C63D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Sewing PlannerUnitTests"; sourceTree = "<group>"; };
 		6E748F932CD2CAA90076F1B4 /* Src */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Src; sourceTree = "<group>"; };
 		6E748FC92CD2D6110076F1B4 /* Fonts */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Fonts; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -119,18 +124,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6E4914172EB2A0B30077C63D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6EF0C8362BED3CE200E7576F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				6E572DCB2C49E03F008BCF24 /* GRDB in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		6EF0C8472BED3CE400E7576F /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -160,6 +165,7 @@
 				6EF0C84D2BED3CE400E7576F /* Sewing PlannerTests */,
 				6EF0C8572BED3CE400E7576F /* Sewing PlannerUITests */,
 				6E2126DF2EAC6AD400A7DC68 /* ReceiveImage */,
+				6E49141B2EB2A0B30077C63D /* Sewing PlannerUnitTests */,
 				6E490FB92EAD46130077C63D /* Frameworks */,
 				6EF0C83A2BED3CE200E7576F /* Products */,
 			);
@@ -169,9 +175,9 @@
 			isa = PBXGroup;
 			children = (
 				6EF0C8392BED3CE200E7576F /* Sewing Planner.app */,
-				6EF0C84A2BED3CE400E7576F /* Sewing PlannerTests.xctest */,
 				6EF0C8542BED3CE400E7576F /* Sewing PlannerUITests.xctest */,
 				6E2126DE2EAC6AD400A7DC68 /* ReceiveImage.appex */,
+				6E49141A2EB2A0B30077C63D /* Sewing PlannerUnitTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -203,7 +209,6 @@
 			isa = PBXGroup;
 			children = (
 				6EF0C84E2BED3CE400E7576F /* Sewing_PlannerTests.swift */,
-				6E9724532C8F7CEE0027C487 /* DatabaseTest.swift */,
 			);
 			path = "Sewing PlannerTests";
 			sourceTree = "<group>";
@@ -246,6 +251,29 @@
 			productReference = 6E2126DE2EAC6AD400A7DC68 /* ReceiveImage.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		6E4914192EB2A0B30077C63D /* Sewing PlannerUnitTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6E4914202EB2A0B30077C63D /* Build configuration list for PBXNativeTarget "Sewing PlannerUnitTests" */;
+			buildPhases = (
+				6E4914162EB2A0B30077C63D /* Sources */,
+				6E4914172EB2A0B30077C63D /* Frameworks */,
+				6E4914182EB2A0B30077C63D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6E49141F2EB2A0B30077C63D /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				6E49141B2EB2A0B30077C63D /* Sewing PlannerUnitTests */,
+			);
+			name = "Sewing PlannerUnitTests";
+			packageProductDependencies = (
+			);
+			productName = "Sewing PlannerUnitTests";
+			productReference = 6E49141A2EB2A0B30077C63D /* Sewing PlannerUnitTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		6EF0C8382BED3CE200E7576F /* Sewing Planner */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6EF0C85E2BED3CE400E7576F /* Build configuration list for PBXNativeTarget "Sewing Planner" */;
@@ -272,24 +300,6 @@
 			productName = "Sewing Planner";
 			productReference = 6EF0C8392BED3CE200E7576F /* Sewing Planner.app */;
 			productType = "com.apple.product-type.application";
-		};
-		6EF0C8492BED3CE400E7576F /* Sewing PlannerTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 6EF0C8612BED3CE400E7576F /* Build configuration list for PBXNativeTarget "Sewing PlannerTests" */;
-			buildPhases = (
-				6EF0C8462BED3CE400E7576F /* Sources */,
-				6EF0C8472BED3CE400E7576F /* Frameworks */,
-				6EF0C8482BED3CE400E7576F /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				6EF0C84C2BED3CE400E7576F /* PBXTargetDependency */,
-			);
-			name = "Sewing PlannerTests";
-			productName = "Sewing PlannerTests";
-			productReference = 6EF0C84A2BED3CE400E7576F /* Sewing PlannerTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		6EF0C8532BED3CE400E7576F /* Sewing PlannerUITests */ = {
 			isa = PBXNativeTarget;
@@ -322,12 +332,12 @@
 					6E2126DD2EAC6AD400A7DC68 = {
 						CreatedOnToolsVersion = 26.0.1;
 					};
+					6E4914192EB2A0B30077C63D = {
+						CreatedOnToolsVersion = 26.0.1;
+						TestTargetID = 6EF0C8382BED3CE200E7576F;
+					};
 					6EF0C8382BED3CE200E7576F = {
 						CreatedOnToolsVersion = 15.3;
-					};
-					6EF0C8492BED3CE400E7576F = {
-						CreatedOnToolsVersion = 15.3;
-						TestTargetID = 6EF0C8382BED3CE200E7576F;
 					};
 					6EF0C8532BED3CE400E7576F = {
 						CreatedOnToolsVersion = 15.3;
@@ -352,9 +362,9 @@
 			projectRoot = "";
 			targets = (
 				6EF0C8382BED3CE200E7576F /* Sewing Planner */,
-				6EF0C8492BED3CE400E7576F /* Sewing PlannerTests */,
 				6EF0C8532BED3CE400E7576F /* Sewing PlannerUITests */,
 				6E2126DD2EAC6AD400A7DC68 /* ReceiveImage */,
+				6E4914192EB2A0B30077C63D /* Sewing PlannerUnitTests */,
 			);
 		};
 /* End PBXProject section */
@@ -367,19 +377,19 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6E4914182EB2A0B30077C63D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6EF0C8372BED3CE200E7576F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				6EF0C8442BED3CE400E7576F /* Preview Assets.xcassets in Resources */,
 				6EF0C8412BED3CE400E7576F /* Assets.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		6EF0C8482BED3CE400E7576F /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -400,20 +410,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6E4914162EB2A0B30077C63D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6EF0C8352BED3CE200E7576F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				6E9724562C90EAFF0027C487 /* TimestampedRecord.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		6EF0C8462BED3CE400E7576F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				6E9724542C8F7CEE0027C487 /* DatabaseTest.swift in Sources */,
-				6EF0C84F2BED3CE400E7576F /* Sewing_PlannerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -441,10 +449,10 @@
 			target = 6E2126DD2EAC6AD400A7DC68 /* ReceiveImage */;
 			targetProxy = 6E4913472EB0688B0077C63D /* PBXContainerItemProxy */;
 		};
-		6EF0C84C2BED3CE400E7576F /* PBXTargetDependency */ = {
+		6E49141F2EB2A0B30077C63D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 6EF0C8382BED3CE200E7576F /* Sewing Planner */;
-			targetProxy = 6EF0C84B2BED3CE400E7576F /* PBXContainerItemProxy */;
+			targetProxy = 6E49141E2EB2A0B30077C63D /* PBXContainerItemProxy */;
 		};
 		6EF0C8562BED3CE400E7576F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -519,6 +527,58 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		6E4914212EB2A0B30077C63D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NPC4W8575Q;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.Sewing-PlannerUnitTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Sewing Planner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Sewing Planner";
+			};
+			name = Debug;
+		};
+		6E4914222EB2A0B30077C63D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.Sewing-PlannerUnitTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Sewing Planner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Sewing Planner";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -711,51 +771,24 @@
 			};
 			name = Release;
 		};
-		6EF0C8622BED3CE400E7576F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.4;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.Sewing-PlannerTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Sewing Planner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Sewing Planner";
-			};
-			name = Debug;
-		};
-		6EF0C8632BED3CE400E7576F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.4;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.Sewing-PlannerTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Sewing Planner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Sewing Planner";
-			};
-			name = Release;
-		};
 		6EF0C8652BED3CE400E7576F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NPC4W8575Q;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Sewing-PlannerUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
 				TEST_TARGET_NAME = "Sewing Planner";
 			};
 			name = Debug;
@@ -766,11 +799,17 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Sewing-PlannerUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
 				TEST_TARGET_NAME = "Sewing Planner";
 			};
 			name = Release;
@@ -783,6 +822,15 @@
 			buildConfigurations = (
 				6E2126EB2EAC6AD600A7DC68 /* Debug */,
 				6E2126EC2EAC6AD600A7DC68 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6E4914202EB2A0B30077C63D /* Build configuration list for PBXNativeTarget "Sewing PlannerUnitTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6E4914212EB2A0B30077C63D /* Debug */,
+				6E4914222EB2A0B30077C63D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -801,15 +849,6 @@
 			buildConfigurations = (
 				6EF0C85F2BED3CE400E7576F /* Debug */,
 				6EF0C8602BED3CE400E7576F /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		6EF0C8612BED3CE400E7576F /* Build configuration list for PBXNativeTarget "Sewing PlannerTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				6EF0C8622BED3CE400E7576F /* Debug */,
-				6EF0C8632BED3CE400E7576F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

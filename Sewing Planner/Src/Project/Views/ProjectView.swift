@@ -49,7 +49,7 @@ struct LoadProjectView: View {
                     if let projectData = maybeProjectData {
                         store.selectedProject = ProjectViewModel(
                             data: projectData, projectsNavigation: projectsNavigation,
-                            projectImages: ProjectImages(projectId: projectData.data.id)
+                            projectImages: ProjectImages(projectId: projectData.data.id), db: appDatabase
                         )
                     } else {
                         dismiss()
@@ -177,7 +177,7 @@ struct ErrorToast: Equatable {
 }
 
 @Observable
-class ProjectViewModel {
+@MainActor final class ProjectViewModel: Sendable {
     var projectData: ProjectData
     var projectsNavigation: [ProjectMetadata]
     var projectImages: ProjectImages
@@ -191,14 +191,15 @@ class ProjectViewModel {
     private var photosAppSelectedImage: Data?
     var showPhotoPicker = false
     var projectError: ProjectError?
-    let db: AppDatabase = .db()
+    let db: AppDatabase
 
     init(
-        data: ProjectData, projectsNavigation: [ProjectMetadata], projectImages: ProjectImages
+        data: ProjectData, projectsNavigation: [ProjectMetadata], projectImages: ProjectImages, db: AppDatabase
     ) {
         projectData = data
         self.projectsNavigation = projectsNavigation
         self.projectImages = projectImages
+        self.db = db
     }
 
     func addSection() {
@@ -219,10 +220,6 @@ class ProjectViewModel {
             return .doNothing
         }
 
-        let updatedSections = projectData.sections.filter { projectSection in
-            sectionToDelete.id != projectSection.section.id
-        }
-        projectData.sections = updatedSections
         return .deleteSection(section: sectionToDelete)
     }
 
@@ -270,8 +267,23 @@ extension ProjectViewModel {
         switch effect {
         case let .deleteSection(section):
             Task {
-                try await db.deleteProjectSection(section: section)
+                do {
+                    try await db.deleteProjectSection(section: section)
+                    DispatchQueue.main.async {
+                        let updatedSections = self.projectData.sections.filter { projectSection in
+                            section.id != projectSection.section.id
+                        }
+                        self.projectData.sections = updatedSections
+                        self.projectData.cancelDeleteSection()
+                    }
+                } catch {
+                    DispatchQueue.main.async {
+                        self.projectError = .deleteSection
+                        self.projectData.cancelDeleteSection()
+                    }
+                }
             }
+            // TODO: show some kind of progress view to show section is being deleted
             return
         case .doNothing:
             return
@@ -279,7 +291,7 @@ extension ProjectViewModel {
     }
 }
 
-enum Effect {
+enum Effect: Equatable {
     case deleteSection(section: SectionRecord)
     case doNothing
 }

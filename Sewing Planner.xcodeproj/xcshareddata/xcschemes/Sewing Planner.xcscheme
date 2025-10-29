@@ -57,6 +57,17 @@
                ReferencedContainer = "container:Sewing Planner.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "6E4914192EB2A0B30077C63D"
+               BuildableName = "Sewing PlannerUnitTests.xctest"
+               BlueprintName = "Sewing PlannerUnitTests"
+               ReferencedContainer = "container:Sewing Planner.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
