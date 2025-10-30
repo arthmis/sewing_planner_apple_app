@@ -13,7 +13,7 @@ struct ReceiveImageView: View {
     let dismiss: () -> Void
     @State var projects: [SharedProject] = []
     @State var selection: Int64 = 0
-    @State var error: String
+    @State var error = ""
     @State var showError = false
 
     private var hasNoProject: Bool {
@@ -100,7 +100,8 @@ struct ReceiveImageView: View {
         .padding(.horizontal, 10)
         .task {
             do {
-                projects = try getProjects()
+                let projects = try getProjects()
+                self.projects = projects
                 if let first = projects.first {
                     selection = first.id
                 }

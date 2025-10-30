@@ -29,7 +29,9 @@ struct SharedPersistence {
     func getFile(fileName: String) throws -> Data? {
         let fileManager = FileManager.default
         guard let sharedLocation = try getPersistenceLocation() else {
-            throw ShareError.cannotFindAppGroupContainer("Couldn't get the location of the shared container for the app group")
+            throw ShareError.cannotFindAppGroupContainer(
+                "Couldn't get the location of the shared container for the app group"
+            )
         }
         let fileUrl = constructFileLocation(
             location: sharedLocation,
@@ -42,9 +44,11 @@ struct SharedPersistence {
     func writeFile(data: Data, fileName: String) throws {
         let fileManager = FileManager.default
         guard let sharedLocation = try getPersistenceLocation() else {
-            throw ShareError.cannotFindAppGroupContainer("Couldn't get the location of the shared container for the app group")
+            throw ShareError.cannotFindAppGroupContainer(
+                "Couldn't get the location of the shared container for the app group"
+            )
         }
-        
+
         let fileUrl = constructFileLocation(
             location: sharedLocation,
             fileName: fileName
@@ -96,7 +100,9 @@ struct SharedPersistence {
     private func createImagesDirectory(at directory: String) throws -> URL {
         let fileManager = FileManager.default
         guard let sharedLocation = try getPersistenceLocation() else {
-            throw ShareError.cannotFindAppGroupContainer("Couldn't get the location of the shared container for the app group")
+            throw ShareError.cannotFindAppGroupContainer(
+                "Couldn't get the location of the shared container for the app group"
+            )
         }
         let imagesDirectory = sharedLocation.appending(path: directory)
         try fileManager.createDirectory(
@@ -121,4 +127,51 @@ struct SharedPersistence {
             forSecurityApplicationGroupIdentifier: "group.SewingPlanner"
         )
     }
+
+    #if DEBUG
+        func removeSharedData() throws {
+            let fileManager = FileManager.default
+            guard let sharedLocation = try getPersistenceLocation() else {
+                throw ShareError.cannotFindAppGroupContainer(
+                    "Couldn't get the location of the shared container for the app group"
+                )
+            }
+
+            let projectsUrl = constructFileLocation(
+                location: sharedLocation,
+                fileName: "projects"
+            )
+            do {
+
+                try fileManager.removeItem(
+                    at: projectsUrl
+                )
+            } catch {
+                print(error.localizedDescription)
+            }
+
+            let sharedImagesFileUrl = constructFileLocation(
+                location: sharedLocation,
+                fileName: "sharedImages"
+            )
+            do {
+
+                try fileManager.removeItem(
+                    atPath: sharedImagesFileUrl.path(),
+                )
+            } catch {
+                print(error.localizedDescription)
+            }
+
+            let imagesFolderPath = sharedLocation.appending(
+                path: "SharedImages"
+            )
+            do {
+
+                try fileManager.removeItem(at: imagesFolderPath)
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    #endif
 }
