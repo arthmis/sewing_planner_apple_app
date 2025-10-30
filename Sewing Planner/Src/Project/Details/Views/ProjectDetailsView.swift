@@ -9,19 +9,25 @@ import SwiftUI
 
 struct ProjectDataView: View {
     @Environment(ProjectViewModel.self) var project
+    @Environment(\.appDatabase) var db
 
     var body: some View {
         @Bindable var projectBinding = project
         VStack(alignment: .leading) {
             HStack {
-                ProjectTitle(projectData: $projectBinding.projectData.data, bindedName: $projectBinding.projectData.bindedName, updateName: project.projectData.updateName)
+                ProjectTitle(
+                    projectData: $projectBinding.projectData.data,
+                    bindedName: $projectBinding.projectData.bindedName,
+                    updateName: project.projectData.updateName
+                )
                 Spacer()
             }
             .frame(maxWidth: .infinity)
             .padding(.bottom, 25)
             ScrollView {
                 VStack(alignment: .leading) {
-                    ForEach($projectBinding.projectData.sections, id: \.id) { $section in
+                    ForEach($projectBinding.projectData.sections, id: \.id) {
+                        $section in
                         SectionView(model: $section)
                             .padding(.bottom, 16)
                     }
@@ -30,9 +36,20 @@ struct ProjectDataView: View {
             .frame(maxHeight: .infinity)
         }
         .padding([.leading, .trailing], 8)
-        .confirmationDialog("Delete Section", isPresented: $projectBinding.projectData.showDeleteSectionDialog) {
+        .confirmationDialog(
+            "Delete Section",
+            isPresented: $projectBinding.projectData.showDeleteSectionDialog
+        ) {
             Button("Delete", role: .destructive) {
-                project.handleEffect(effect: project.deleteSection(selectedSection: project.projectData.selectedSectionForDeletion))
+                Task {
+                    await project.handleEffect(
+                        effect: project.deleteSection(
+                            selectedSection: project.projectData
+                                .selectedSectionForDeletion
+                        ),
+                        db: db
+                    )
+                }
             }
             Button("Cancel", role: .cancel) {
                 project.projectData.cancelDeleteSection()

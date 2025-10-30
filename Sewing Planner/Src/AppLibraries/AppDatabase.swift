@@ -10,7 +10,7 @@ import GRDB
 import os.log
 
 /// docs on implementing this struct https://github.com/groue/GRDB.swift/blob/master/Documentation/DemoApps/GRDBDemoiOS/GRDBDemoiOS/AppDatabase.swift
-struct AppDatabase: DbStore {
+struct AppDatabase {
     private let dbWriter: any DatabaseWriter
 
     init(_ dbWriter: any DatabaseWriter) throws {
@@ -209,7 +209,7 @@ extension AppDatabase {
     }
 }
 
-extension AppDatabase {
+extension AppDatabase: DbStore {
     func deleteProjectSection(section: SectionRecord) async throws {
         _ = try await dbWriter.write { db in
             try section.delete(db)

@@ -48,7 +48,6 @@ struct Sewing_PlannerUnitTests {
             data: projectData,
             projectsNavigation: [projectMetadata],
             projectImages: projectImages,
-            db: AppDatabase.makeDb(name: "test")
         )
 
         return model

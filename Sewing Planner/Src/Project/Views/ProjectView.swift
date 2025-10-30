@@ -27,7 +27,8 @@ struct LoadProjectView: View {
         VStack {
             if let project = store.selectedProject {
                 ProjectView(
-                    project: project, projectsNavigation: $projectsNavigation,
+                    project: project,
+                    projectsNavigation: $projectsNavigation,
                     fetchProjects: fetchProjects
                 )
             } else {
@@ -45,11 +46,17 @@ struct LoadProjectView: View {
         .onAppear {
             if let id = projectsNavigation.last?.id {
                 do {
-                    let maybeProjectData = try ProjectData.getProject(with: id, from: appDatabase)
+                    let maybeProjectData = try ProjectData.getProject(
+                        with: id,
+                        from: appDatabase
+                    )
                     if let projectData = maybeProjectData {
                         store.selectedProject = ProjectViewModel(
-                            data: projectData, projectsNavigation: projectsNavigation,
-                            projectImages: ProjectImages(projectId: projectData.data.id), db: appDatabase
+                            data: projectData,
+                            projectsNavigation: projectsNavigation,
+                            projectImages: ProjectImages(
+                                projectId: projectData.data.id
+                            )
                         )
                     } else {
                         dismiss()
@@ -83,9 +90,12 @@ struct ProjectView: View {
     var body: some View {
         VStack {
             TabView(selection: $project.currentView) {
-                Tab("Details", systemImage: "list.bullet.rectangle.portrait", value: .details) {
-                    ProjectDataView(
-                    )
+                Tab(
+                    "Details",
+                    systemImage: "list.bullet.rectangle.portrait",
+                    value: .details
+                ) {
+                    ProjectDataView()
                 }
                 Tab("Images", systemImage: "photo.artframe", value: .images) {
                     ImagesView(model: $project.projectImages)
@@ -118,7 +128,8 @@ struct ProjectView: View {
                         }
                         .buttonStyle(AddImageButtonStyle())
                         .photosPicker(
-                            isPresented: $project.showPhotoPicker, selection: $project.pickerItem,
+                            isPresented: $project.showPhotoPicker,
+                            selection: $project.pickerItem,
                             matching: .images
                         )
                         .onChange(of: project.pickerItem) {
@@ -134,7 +145,10 @@ struct ProjectView: View {
             Toast(showToast: $project.projectError)
                 .padding(.horizontal, 16)
                 .transition(.move(edge: .top))
-                .animation(.easeOut(duration: 0.15), value: project.projectError)
+                .animation(
+                    .easeOut(duration: 0.15),
+                    value: project.projectError
+                )
         }
         .frame(
             maxWidth: .infinity,
@@ -170,14 +184,17 @@ struct ErrorToast: Equatable {
     var show: Bool
     let message: String
 
-    init(show: Bool = false, message: String = "Something went wrong. Please try again") {
+    init(
+        show: Bool = false,
+        message: String = "Something went wrong. Please try again"
+    ) {
         self.show = show
         self.message = message
     }
 }
 
 @Observable
-@MainActor final class ProjectViewModel: Sendable {
+final class ProjectViewModel: Sendable {
     var projectData: ProjectData
     var projectsNavigation: [ProjectMetadata]
     var projectImages: ProjectImages
@@ -191,15 +208,15 @@ struct ErrorToast: Equatable {
     private var photosAppSelectedImage: Data?
     var showPhotoPicker = false
     var projectError: ProjectError?
-    let db: AppDatabase
 
     init(
-        data: ProjectData, projectsNavigation: [ProjectMetadata], projectImages: ProjectImages, db: AppDatabase
+        data: ProjectData,
+        projectsNavigation: [ProjectMetadata],
+        projectImages: ProjectImages
     ) {
         projectData = data
         self.projectsNavigation = projectsNavigation
         self.projectImages = projectImages
-        self.db = db
     }
 
     func addSection() {
@@ -263,31 +280,36 @@ struct ErrorToast: Equatable {
 }
 
 extension ProjectViewModel {
-    func handleEffect(effect: Effect) {
+    func handleEffect(effect: Effect, db: DbStore) async {
         switch effect {
         case let .deleteSection(section):
-            Task {
-                do {
-                    try await db.deleteProjectSection(section: section)
-                    DispatchQueue.main.async {
-                        let updatedSections = self.projectData.sections.filter { projectSection in
-                            section.id != projectSection.section.id
-                        }
-                        self.projectData.sections = updatedSections
-                        self.projectData.cancelDeleteSection()
-                    }
-                } catch {
-                    DispatchQueue.main.async {
-                        self.projectError = .deleteSection
-                        self.projectData.cancelDeleteSection()
-                    }
-                }
+            do {
+                try await db.deleteProjectSection(section: section)
+                await removeSection(section: section)
+            } catch {
+                await cancelSectionDeletion(withError: .deleteSection)
             }
             // TODO: show some kind of progress view to show section is being deleted
             return
         case .doNothing:
             return
         }
+    }
+
+    @MainActor
+    private func removeSection(section: SectionRecord) {
+        let updatedSections = projectData.sections.filter {
+            projectSection in
+            section.id != projectSection.section.id
+        }
+        projectData.sections = updatedSections
+        projectData.cancelDeleteSection()
+    }
+
+    @MainActor
+    private func cancelSectionDeletion(withError error: ProjectError) {
+        projectError = error
+        projectData.cancelDeleteSection()
     }
 }
 
