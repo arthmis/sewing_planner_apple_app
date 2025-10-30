@@ -35,9 +35,11 @@ class ShareViewController: UIViewController {
                 if let url = providedImage as? NSURL {
                     do {
                         let data = try Data(contentsOf: url as URL)
+                        
                         func dismissView() {
                             self.extensionContext?.completeRequest(returningItems: nil, completionHandler: nil)
                         }
+                        
                         DispatchQueue.main.async {
                             // host the SwiftU view
                             let contentView = UIHostingController(rootView: ReceiveImageView(image: data, dismiss: dismissView))

@@ -194,12 +194,11 @@ struct ErrorToast: Equatable {
 }
 
 @Observable
-final class ProjectViewModel: Sendable {
+final class ProjectViewModel {
     var projectData: ProjectData
     var projectsNavigation: [ProjectMetadata]
     var projectImages: ProjectImages
     var deletedImages: [ProjectImage] = []
-    // let fetchProjects: () -> Void
     var currentView = CurrentView.details
     var name = ""
     var showAddTextboxPopup = false

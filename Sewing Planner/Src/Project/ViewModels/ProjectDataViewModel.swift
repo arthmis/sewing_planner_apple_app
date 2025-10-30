@@ -11,7 +11,7 @@ import PhotosUI
 import SwiftUI
 
 @Observable
-class ProjectData {
+final class ProjectData {
     var data: ProjectMetadata
     var sections: [Section] = .init()
     var bindedName = ""

@@ -13,6 +13,8 @@ struct ReceiveImageView: View {
     let dismiss: () -> Void
     @State var projects: [SharedProject] = []
     @State var selection: Int64 = 0
+    @State var error: String
+    @State var showError = false
 
     private var hasNoProject: Bool {
         projects.isEmpty
@@ -22,7 +24,9 @@ struct ReceiveImageView: View {
         VStack {
             HStack {
                 Spacer()
-                Button { dismiss() } label: {
+                Button {
+                    dismiss()
+                } label: {
                     Image(systemName: "xmark.circle")
                         .font(.system(size: 28))
                         .fontWeight(.light)
@@ -59,12 +63,38 @@ struct ReceiveImageView: View {
 
                 Button("Save to selected project") {
                     do {
-                        try saveImageForProject(projectId: selection, image: image)
+                        try saveImageForProject(
+                            projectId: selection,
+                            image: image
+                        )
                         dismiss()
                     } catch {
                         // TODO: handle error
+                        self.error = "Couldn't save image. Please try again."
+                        self.showError = true
                     }
                 }
+            }
+        }
+        .alert(
+            error,
+            isPresented: $showError
+        ) {
+            Button("Try again") {
+                showError = false
+                do {
+                    try saveImageForProject(
+                        projectId: selection,
+                        image: image
+                    )
+                } catch {
+                    self.error = "Couldn't save image. Please try again."
+                    self.showError = true
+                }
+            }
+            Button("Cancel") {
+                self.error = ""
+                self.showError = false
             }
         }
         .padding(.horizontal, 10)
@@ -91,9 +121,8 @@ func getProjects() throws -> [SharedProject] {
         )
     }
     let decoder = JSONDecoder()
-    guard let projects = try? decoder.decode([SharedProject].self, from: data) else {
-        // throw an error
-        //        throw Error
+    guard let projects = try? decoder.decode([SharedProject].self, from: data)
+    else {
         throw ShareError.emptyFile(
             "Couldn't load projects. Head to the main app and create a project"
         )
@@ -104,36 +133,45 @@ func getProjects() throws -> [SharedProject] {
 
 let sharedImagesFileName = "sharedImages"
 
-// func saveImageForProject(projectId: Int64, image: UIImage) throws {
 func saveImageForProject(projectId: Int64, image: Data) throws {
     let fileIdentifier = UUID().uuidString
-    let sharedImageIdentification = SharedImage(projectId: projectId, fileIdentifier: fileIdentifier)
+    let sharedImageIdentification = SharedImage(
+        projectId: projectId,
+        fileIdentifier: fileIdentifier
+    )
 
-    try SharedPersistence().saveImage(fileIdentifier: sharedImageIdentification.fileIdentifier, image: image)
+    try SharedPersistence().saveImage(
+        fileIdentifier: sharedImageIdentification.fileIdentifier,
+        image: image
+    )
 
-    let fileData = try SharedPersistence().getFile(fileName: sharedImagesFileName)
+    let fileData = try SharedPersistence().getFile(
+        fileName: sharedImagesFileName
+    )
+
     guard let data = fileData else {
-        // TODO: create the file if it isn't there
         let sharedImages = [sharedImageIdentification]
         let encoder = JSONEncoder()
         let updatedSharedImagesList = try encoder.encode(sharedImages)
-        try SharedPersistence().writeFile(data: updatedSharedImagesList, fileName: sharedImagesFileName)
+        try SharedPersistence().writeFile(
+            data: updatedSharedImagesList,
+            fileName: sharedImagesFileName
+        )
         return
     }
 
     let decoder = JSONDecoder()
-    guard var sharedImages = try? decoder.decode([SharedImage].self, from: data) else {
+    guard var sharedImages = try? decoder.decode([SharedImage].self, from: data)
+    else {
         throw ShareError.emptyFile("Couldn't get shared images list file")
     }
 
     sharedImages.append(sharedImageIdentification)
 
-    // projectsList.append(Project(id: project.id, name: project.name))
     let encoder = JSONEncoder()
     let updatedSharedImagesList = try encoder.encode(sharedImages)
-    try SharedPersistence().writeFile(data: updatedSharedImagesList, fileName: sharedImagesFileName)
+    try SharedPersistence().writeFile(
+        data: updatedSharedImagesList,
+        fileName: sharedImagesFileName
+    )
 }
-
-// #Preview {
-//     ReceiveImageView(image: UIImage(named: "black_dress_sketch")!)
-// }
