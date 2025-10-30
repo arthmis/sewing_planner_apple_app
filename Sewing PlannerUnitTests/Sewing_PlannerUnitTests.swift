@@ -73,9 +73,8 @@ struct Sewing_PlannerUnitTests {
         #expect(model.projectData.showDeleteSectionDialog == true)
     }
 
-    @Test(
-        "Test delete section",
-        arguments: zip([
+    static let testDeleteSectionCases = [
+        (
             SectionRecord(
                 id: 1,
                 projectId: 1,
@@ -84,9 +83,6 @@ struct Sewing_PlannerUnitTests {
                 createDate: Date(timeIntervalSinceReferenceDate: 0),
                 updateDate: Date(timeIntervalSinceReferenceDate: 0)
             ),
-            nil,
-        ],
-        [
             Effect.deleteSection(
                 section: SectionRecord(
                     id: 1,
@@ -96,9 +92,14 @@ struct Sewing_PlannerUnitTests {
                     createDate: Date(timeIntervalSinceReferenceDate: 0),
                     updateDate: Date(timeIntervalSinceReferenceDate: 0)
                 )
-            ),
-            Effect.doNothing,
-        ])
+            )
+        ),
+        (nil, Effect.doNothing),
+    ]
+
+    @Test(
+        "Test delete section",
+        arguments: testDeleteSectionCases
     )
     @MainActor func testDeleteSection(section: SectionRecord?, expectedEffect: Effect) {
         let model = initializeProjectViewModel()

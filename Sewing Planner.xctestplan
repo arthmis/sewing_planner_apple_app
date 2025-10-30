@@ -25,16 +25,15 @@
       "parallelizable" : true,
       "target" : {
         "containerPath" : "container:Sewing Planner.xcodeproj",
-        "identifier" : "6EF0C8492BED3CE400E7576F",
-        "name" : "Sewing PlannerTests"
+        "identifier" : "6EF0C8532BED3CE400E7576F",
+        "name" : "Sewing PlannerUITests"
       }
     },
     {
-      "parallelizable" : true,
       "target" : {
         "containerPath" : "container:Sewing Planner.xcodeproj",
-        "identifier" : "6EF0C8532BED3CE400E7576F",
-        "name" : "Sewing PlannerUITests"
+        "identifier" : "6E4914192EB2A0B30077C63D",
+        "name" : "Sewing PlannerUnitTests"
       }
     }
   ],
