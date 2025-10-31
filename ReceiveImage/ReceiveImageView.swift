@@ -80,19 +80,7 @@ struct ReceiveImageView: View {
             error,
             isPresented: $showError
         ) {
-            Button("Try again") {
-                showError = false
-                do {
-                    try saveImageForProject(
-                        projectId: selection,
-                        image: image
-                    )
-                } catch {
-                    self.error = "Couldn't save image. Please try again."
-                    self.showError = true
-                }
-            }
-            Button("Cancel") {
+            Button("Ok") {
                 self.error = ""
                 self.showError = false
             }

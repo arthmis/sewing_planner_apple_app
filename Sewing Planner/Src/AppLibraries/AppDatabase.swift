@@ -280,16 +280,6 @@ extension AppDatabase {
 
 extension AppDatabase {
     static let db = {
-        //        let argument = CommandLine.arguments.first(where: { val in val == "--test" })
-
-        //        print("arguments \(argument)")
-        //        if let testArgument = argument {
-        //            if testArgument == "--test" {
-        //                let dbQueue = try! DatabaseQueue(named: "test_db")
-        //                return try! AppDatabase(dbQueue)
-        //            }
-        //        }
-
         makeDb(name: "db")
     }
 
@@ -330,23 +320,6 @@ extension AppDatabase {
             fatalError("Some error happened: \(error)")
         }
     }
-
-    //    static func deleteDb(name: String) {
-    //        do {
-    //            // get db directory
-    //            let fileManager = FileManager.default
-    //            let appSupportUrl = try fileManager.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-    //            let directoryUrl = appSupportUrl.appendingPathComponent("Database", isDirectory: true)
-    //
-    //            // get db file name
-    //            let databaseUrl = directoryUrl.appendingPathComponent(name).appendingPathExtension("sqlite")
-    //            NSLog("Database stored at \(databaseUrl.path)")
-    //
-    //            try! fileManager.removeItem(atPath: databaseUrl.path)
-    //        } catch {
-    //            fatalError("Some error happened: \(error)")
-    //        }
-    //    }
 }
 
 protocol DbStore {

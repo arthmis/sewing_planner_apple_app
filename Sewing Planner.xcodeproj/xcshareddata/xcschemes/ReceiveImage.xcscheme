@@ -72,8 +72,8 @@
       launchAutomaticallySubstyle = "2">
       <RemoteRunnable
          runnableDebuggingMode = "0"
-         BundleIdentifier = "com.apple.mobileslideshow"
-         RemotePath = "/var/containers/Bundle/Application/0BDBDBA0-1B2E-4D9E-9478-CADAE5D9C6D7/Photos.app">
+         BundleIdentifier = "com.apple.DocumentsApp"
+         RemotePath = "/var/containers/Bundle/Application/D4BACECE-4229-4FA2-93C2-041612D96952/Files.app">
       </RemoteRunnable>
       <MacroExpansion>
          <BuildableReference

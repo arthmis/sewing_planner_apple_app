@@ -69,7 +69,7 @@ class ProjectImages {
                     try AppFiles().deleteImage(projectId: projectId, image: image)
                     try image.record.delete(db)
                 } catch {
-                    // throw AppFilesError.deleteError("problem deleting the image")
+                    throw ProjectError.deleteImages
                 }
             }
         }

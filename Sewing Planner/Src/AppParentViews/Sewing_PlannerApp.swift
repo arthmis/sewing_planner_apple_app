@@ -12,10 +12,11 @@ import SwiftUI
 @main
 struct Sewing_PlannerApp: App {
     @State private var store = Store()
+    let db: AppDatabase = .db()
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(\.appDatabase, .db())
+                .environment(\.appDatabase, db)
                 .environment(\.store, store)
         }
     }
