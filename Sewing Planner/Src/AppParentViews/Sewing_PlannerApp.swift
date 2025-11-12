@@ -45,15 +45,19 @@ class Store {
         projects = ProjectsViewModel()
     }
 
-    func addProject() throws {
-        try db.getWriter().write { db in
-            var newProjectInput = ProjectMetadataInput()
-            try newProjectInput.save(db)
+    func addProject() throws(AppError) {
+        do {
+            try db.getWriter().write { db in
+                var newProjectInput = ProjectMetadataInput()
+                try newProjectInput.save(db)
 
-            let newProject = ProjectMetadata(from: newProjectInput)
-            navigation.append(newProject)
+                let newProject = ProjectMetadata(from: newProjectInput)
+                navigation.append(newProject)
 
-            try updateShareExtensionProjectList(project: newProject)
+                try updateShareExtensionProjectList(project: newProject)
+            }
+        } catch {
+            throw AppError.addProject
         }
     }
 
@@ -94,4 +98,6 @@ extension EnvironmentValues {
 enum AppError: Error {
     case projectCards
     case loadProject
+    case addProject
+    case unexpectedError
 }

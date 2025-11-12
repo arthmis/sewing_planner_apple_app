@@ -17,7 +17,7 @@ struct ProjectsView: View {
     @Environment(\.store) private var store
     let columns = [
         GridItem(.flexible(minimum: 100, maximum: 400), spacing: 4),
-        GridItem(.flexible(minimum: 100, maximum: 400), spacing: 4)
+        GridItem(.flexible(minimum: 100, maximum: 400), spacing: 4),
     ]
 
     func fetchProjects() {
@@ -99,8 +99,10 @@ struct ProjectsView: View {
                             Button("New Project") {
                                 do {
                                     try store.addProject()
+                                } catch AppError.addProject {
+                                    store.appError = .addProject
                                 } catch {
-                                    fatalError("\(error)")
+                                    store.appError = .unexpectedError
                                 }
                             }
                             .accessibilityIdentifier("AddNewProjectButton")
