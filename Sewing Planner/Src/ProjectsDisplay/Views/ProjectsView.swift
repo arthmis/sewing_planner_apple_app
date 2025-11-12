@@ -17,7 +17,7 @@ struct ProjectsView: View {
     @Environment(\.store) private var store
     let columns = [
         GridItem(.flexible(minimum: 100, maximum: 400), spacing: 4),
-        GridItem(.flexible(minimum: 100, maximum: 400), spacing: 4),
+        GridItem(.flexible(minimum: 100, maximum: 400), spacing: 4)
     ]
 
     func fetchProjects() {
@@ -38,7 +38,9 @@ struct ProjectsView: View {
             // add a transition to the toast to come from the top
             switch error {
             case .projectCards:
-                Text("Couldn't load projects. Tap button to try reloading again.")
+                Text(
+                    "Couldn't load projects. Tap button to try reloading again."
+                )
                 Button("Load Projects") {
                     fetchProjects()
                     store.appError = nil
@@ -49,11 +51,31 @@ struct ProjectsView: View {
         } else {
             NavigationStack(path: $storeBinding.navigation) {
                 VStack {
+                    if store.projects.projectsDisplay.isEmpty {
+                        Text("Welcome to Fabric Stash!")
+                            .font(.system(size: 60))
+                            .padding(.top, 20)
+                        Text(
+                            "Get started with a project by hitting the New Project Button at the bottom."
+                        )
+                        .font(.system(size: 24))
+                        .padding(.top, 20)
+                        Image(
+                            "vecteezy_crossed-sewing-needles-with-thread-silhouette_"
+                        )
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .padding([.bottom, .horizontal], 60)
+                    }
                     ScrollView {
                         LazyVGrid(columns: columns, spacing: 12) {
-                            ForEach($storeBinding.projects.projectsDisplay, id: \.self.project.id) { $project in
+                            ForEach(
+                                $storeBinding.projects.projectsDisplay,
+                                id: \.self.project.id
+                            ) { $project in
                                 ProjectCardView(
-                                    projectData: project, projectsNavigation: $storeBinding.navigation
+                                    projectData: project,
+                                    projectsNavigation: $storeBinding.navigation
                                 )
                             }
                         }
@@ -62,7 +84,10 @@ struct ProjectsView: View {
                 }
                 .navigationDestination(for: ProjectMetadata.self) { _ in
                     VStack {
-                        LoadProjectView(projectsNavigation: $storeBinding.navigation, fetchProjects: fetchProjects)
+                        LoadProjectView(
+                            projectsNavigation: $storeBinding.navigation,
+                            fetchProjects: fetchProjects
+                        )
                     }
                 }
                 .padding(.horizontal, 8)
@@ -84,7 +109,12 @@ struct ProjectsView: View {
                 }
             }
             .navigationTitle("Projects")
-            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+            .frame(
+                minWidth: 0,
+                maxWidth: .infinity,
+                minHeight: 0,
+                maxHeight: .infinity
+            )
             .background(Color.white)
             .task {
                 fetchProjects()
@@ -107,13 +137,23 @@ struct ProjectCardView: View {
                         .accessibilityIdentifier("ProjectName")
                 }
                 .padding([.bottom, .leading], 8)
-                .frame(minWidth: 100, maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                .frame(
+                    minWidth: 100,
+                    maxWidth: .infinity,
+                    maxHeight: .infinity,
+                    alignment: .leading
+                )
             } else {
                 Text("Error loading project image")
                 // TODO: add a button or make the card clickable to retry loading the image
             }
         }
-        .frame(minWidth: 100, maxWidth: .infinity, minHeight: 200, alignment: .center)
+        .frame(
+            minWidth: 100,
+            maxWidth: .infinity,
+            minHeight: 200,
+            alignment: .center
+        )
         .background(Color.white)
         .cornerRadius(8)
         .shadow(radius: 2, y: 5)
@@ -128,37 +168,47 @@ struct MaybeProjectImageView: View {
     let projectImage: ProjectDisplayImage?
 
     var body: some View {
-        let displayedImage = if let imageData = projectImage {
-            imageData.image!
-        } else {
-            UIImage(named: "black_dress_sketch")
-        }
+        let displayedImage =
+            if let imageData = projectImage {
+                if let image = imageData.image {
+                    image
+                } else {
+                    UIImage(named: "vecteezy_sewing-machine-icon-style_8737393")
+                }
+            } else {
+                UIImage(named: "vecteezy_sewing-machine-icon-style_8737393")
+            }
         Image(uiImage: displayedImage!)
             .resizable()
             .interpolation(.high)
-            .aspectRatio(contentMode: .fill)
+            .aspectRatio(contentMode: .fit)
             .clipped()
-            .frame(minWidth: 100, maxWidth: .infinity, minHeight: 200, alignment: .center)
-//        if let imageData = projectImage {
-//            if let image = imageData.image {
-//                Image(uiImage: image)
-//                    .resizable()
-//                    .interpolation(.high)
-//                    .aspectRatio(contentMode: .fill)
+            .frame(
+                minWidth: 100,
+                maxWidth: .infinity,
+                minHeight: 200,
+                alignment: .center
+            )
+        //        if let imageData = projectImage {
+        //            if let image = imageData.image {
+        //                Image(uiImage: image)
+        //                    .resizable()
+        //                    .interpolation(.high)
+        //                    .aspectRatio(contentMode: .fill)
         ////                    .scaledToFit()
         ////                    .frame(minWidth: 100, maxWidth: .infinity, minHeight: 200, alignment: .center)
-//                    .clipped()
-//                    .frame(width: 120, height: 120, alignment: .center)
-//            }
-//        } else {
-//            Image("black_dress_sketch")
-//                .resizable()
-//                .interpolation(.high)
-//                .aspectRatio(contentMode: .fill)
+        //                    .clipped()
+        //                    .frame(width: 120, height: 120, alignment: .center)
+        //            }
+        //        } else {
+        //            Image("black_dress_sketch")
+        //                .resizable()
+        //                .interpolation(.high)
+        //                .aspectRatio(contentMode: .fill)
         ////                .scaledToFit()
-//                .clipped()
-//                .frame(width: 120, height: 120, alignment: .center)
-//        }
+        //                .clipped()
+        //                .frame(width: 120, height: 120, alignment: .center)
+        //        }
     }
 }
 
