@@ -58,23 +58,28 @@ struct ProjectsView: View {
             NavigationStack(path: $storeBinding.navigation) {
                 VStack {
                     if !settings.createdProject {
-                        Text("Welcome to Fabric Stash!")
-                            .fixedSize(horizontal: false, vertical: true)
-                            .font(.system(size: 40))
+                        VStack {
+                            Text("Welcome to Fabric Stash!")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .font(.system(size: 40))
+                                .padding(.top, 28)
+                                .padding(.horizontal, 16)
+
+                            Text(
+                                "Get started with a project by tapping New Project below."
+                            )
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .font(.system(size: 16))
+                            .padding(.top, 8)
                             .padding(.horizontal, 16)
-                            .padding(.top, 28)
-                        Text(
-                            "Get started with a project by hitting the New Project Button at the bottom."
-                        )
-                        .font(.system(size: 16))
-                        .padding(.top, 20)
-                        .padding(.horizontal, 16)
-                        Image(
-                            "vecteezy_crossed-sewing-needles-with-thread-silhouette_"
-                        )
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .padding([.bottom, .horizontal], 60)
+                            Image(
+                                "vecteezy_crossed-sewing-needles-with-thread-silhouette_"
+                            )
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .padding([.bottom, .horizontal], 68)
+                        }
+                        .padding(.horizontal, 12)
                     } else {
                         ScrollView {
                             LazyVGrid(columns: columns, spacing: 12) {
@@ -100,9 +105,6 @@ struct ProjectsView: View {
                         )
                     }
                 }
-                .padding(.horizontal, 8)
-                .padding(.bottom, 12)
-                .padding(.top, 16)
                 .toolbar {
                     ToolbarItem(placement: .bottomBar) {
                         HStack {
@@ -119,10 +121,13 @@ struct ProjectsView: View {
                                     store.appError = .unexpectedError
                                 }
                             }
+                            .buttonStyle(PrimaryButtonStyle())
+                            .padding(.bottom, 24)
                             .accessibilityIdentifier("AddNewProjectButton")
                         }
                     }
                 }
+                .toolbarBackground(.white, for: .bottomBar)
             }
             .navigationTitle("Projects")
             .frame(

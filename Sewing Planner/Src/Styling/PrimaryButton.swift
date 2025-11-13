@@ -7,13 +7,6 @@
 
 import SwiftUI
 
-struct PrimaryButton: View {
-    var body: some View {
-        Button("New Step") {}.buttonStyle(PrimaryButtonStyle())
-            .frame(minWidth: 300, minHeight: 300)
-    }
-}
-
 struct SectionViewButton<Content: View>: View {
     @State var isHovering = false
     let action: @MainActor () -> Void

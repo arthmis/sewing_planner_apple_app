@@ -12,14 +12,15 @@ struct PrimaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         let isPressed = configuration.isPressed
         configuration.label
-            .padding([.top, .bottom], 7.5)
-            .padding([.leading, .trailing], 18)
-            .background(Color(hex: 0x1A1A1A, opacity: 0.84))
+            .font(.custom("CooperHewitt-Regular", size: 18))
+            .padding([.top, .bottom], 12)
+            .padding([.leading, .trailing], 16)
+            .background(Color(hex: 0x131944, opacity: 1.0))
             .foregroundColor(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 9))
+            .clipShape(RoundedRectangle(cornerRadius: 12))
             .scaleEffect(isPressed ? 0.95 : 1)
             .brightness(isPressed ? -0.05 : 0)
-            .shadow(color: Color(hex: 0xCFCFCF), radius: isPressed ? 1.5 : 3, x: 1, y: 3)
+            .shadow(color: Color(hex: 0x000000, opacity: 0.25), radius: isPressed ? 1.5 : 3, x: 0, y: 4)
             .animation(.easeIn(duration: 0.1), value: isPressed)
     }
 }
