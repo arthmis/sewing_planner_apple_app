@@ -12,9 +12,12 @@ import SwiftUI
 //    case Project(ProjectViewModel)
 // }
 
+let UserCreatedOneProject: String = "CreatedOneProject"
+
 struct ProjectsView: View {
     @Environment(\.appDatabase) private var appDatabase
     @Environment(\.store) private var store
+    @Environment(\.settings) var settings
     let columns = [
         GridItem(.flexible(minimum: 100, maximum: 400), spacing: 4),
         GridItem(.flexible(minimum: 100, maximum: 400), spacing: 4),
@@ -23,7 +26,6 @@ struct ProjectsView: View {
     func fetchProjects() {
         do {
             print("fetching projects")
-            // model.projectsDisplay = try appDatabase.fetchProjectsAndProjectImage()
             let projects = try appDatabase.fetchProjectsAndProjectImage()
             store.projects = ProjectsViewModel(projects: projects)
         } catch {
@@ -47,39 +49,47 @@ struct ProjectsView: View {
                 }
             case .loadProject:
                 Text("Couldn't load project. Try again.")
+            case .addProject:
+                Text("Couldn't add project. Try again.")
+            case .unexpectedError:
+                Text("Something unexpected happen. Contact developer about this.")
             }
         } else {
             NavigationStack(path: $storeBinding.navigation) {
                 VStack {
-                    if store.projects.projectsDisplay.isEmpty {
+                    if !settings.createdProject {
                         Text("Welcome to Fabric Stash!")
-                            .font(.system(size: 60))
-                            .padding(.top, 20)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .font(.system(size: 40))
+                            .padding(.horizontal, 16)
+                            .padding(.top, 28)
                         Text(
                             "Get started with a project by hitting the New Project Button at the bottom."
                         )
-                        .font(.system(size: 24))
+                        .font(.system(size: 16))
                         .padding(.top, 20)
+                        .padding(.horizontal, 16)
                         Image(
                             "vecteezy_crossed-sewing-needles-with-thread-silhouette_"
                         )
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .padding([.bottom, .horizontal], 60)
-                    }
-                    ScrollView {
-                        LazyVGrid(columns: columns, spacing: 12) {
-                            ForEach(
-                                $storeBinding.projects.projectsDisplay,
-                                id: \.self.project.id
-                            ) { $project in
-                                ProjectCardView(
-                                    projectData: project,
-                                    projectsNavigation: $storeBinding.navigation
-                                )
+                    } else {
+                        ScrollView {
+                            LazyVGrid(columns: columns, spacing: 12) {
+                                ForEach(
+                                    $storeBinding.projects.projectsDisplay,
+                                    id: \.self.project.id
+                                ) { $project in
+                                    ProjectCardView(
+                                        projectData: project,
+                                        projectsNavigation: $storeBinding.navigation
+                                    )
+                                }
                             }
+                            .padding(.bottom, 12)
                         }
-                        .padding(.bottom, 12)
                     }
                 }
                 .navigationDestination(for: ProjectMetadata.self) { _ in
@@ -99,6 +109,10 @@ struct ProjectsView: View {
                             Button("New Project") {
                                 do {
                                     try store.addProject()
+                                    if !settings.createdProject {
+                                        settings.setCreatedProject(created: true)
+                                        UserDefaults.standard.set(true, forKey: UserCreatedOneProject)
+                                    }
                                 } catch AppError.addProject {
                                     store.appError = .addProject
                                 } catch {

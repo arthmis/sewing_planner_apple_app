@@ -9,17 +9,53 @@ import GRDB
 import PhotosUI
 import SwiftUI
 
+class UserSettings {
+    var createdProject: Bool
+
+    init() {
+        createdProject = false
+    }
+
+    init(createdProject: Bool) {
+        self.createdProject = createdProject
+    }
+
+    func setCreatedProject(created: Bool) {
+        createdProject = created
+    }
+}
+
 @main
 struct Sewing_PlannerApp: App {
     @State private var store = Store()
+    @State private var settings = UserSettings()
     let db: AppDatabase = .db()
+
+    // runs before app launch
+    // register initial UserDefaults values every launch
+    init() {
+        settings = UserSettings(createdProject: UserDefaults.standard.bool(forKey: UserCreatedOneProject))
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environment(\.appDatabase, db)
                 .environment(\.store, store)
+                .environment(\.settings, settings)
         }
     }
+}
+
+extension EnvironmentValues {
+    var settings: UserSettings {
+        get { self[SettingsKey.self] }
+        set { self[SettingsKey.self] = newValue }
+    }
+}
+
+private struct SettingsKey: EnvironmentKey {
+    static let defaultValue: UserSettings = .init(createdProject: false)
 }
 
 extension EnvironmentValues {

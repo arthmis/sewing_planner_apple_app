@@ -26,6 +26,8 @@ struct AppDatabase {
                 }
             }
 
+            UserDefaults.standard.set(false, forKey: UserCreatedOneProject)
+
         #endif
     }
 }
