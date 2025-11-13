@@ -18,10 +18,6 @@ struct ProjectsView: View {
     @Environment(\.appDatabase) private var appDatabase
     @Environment(\.store) private var store
     @Environment(\.settings) var settings
-    let columns = [
-        GridItem(.flexible(minimum: 100, maximum: 400), spacing: 4),
-        GridItem(.flexible(minimum: 100, maximum: 400), spacing: 4),
-    ]
 
     func fetchProjects() {
         do {
@@ -82,7 +78,7 @@ struct ProjectsView: View {
                         .padding(.horizontal, 12)
                     } else {
                         ScrollView {
-                            LazyVGrid(columns: columns, spacing: 12) {
+                            LazyVStack(alignment: .center, spacing: 12) {
                                 ForEach(
                                     $storeBinding.projects.projectsDisplay,
                                     id: \.self.project.id
@@ -150,14 +146,15 @@ struct ProjectCardView: View {
     @Environment(\.store) private var store
 
     var body: some View {
-        VStack {
+        HStack {
             if !projectData.error {
                 MaybeProjectImageView(projectImage: projectData.image)
+                    .padding(.horizontal, 2)
                 HStack(alignment: .firstTextBaseline) {
                     Text(projectData.project.name)
                         .accessibilityIdentifier("ProjectName")
                 }
-                .padding([.bottom, .leading], 8)
+                .padding([.bottom, .horizontal], 8)
                 .frame(
                     minWidth: 100,
                     maxWidth: .infinity,
@@ -175,10 +172,13 @@ struct ProjectCardView: View {
             minHeight: 200,
             alignment: .center
         )
-        .background(Color.white)
-        .cornerRadius(8)
-        .shadow(radius: 2, y: 5)
-        .padding(4)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(.gray, lineWidth: 1)
+                .fill(.white)
+                .shadow(radius: 2, y: 5)
+        )
+        .padding(8)
         .onTapGesture {
             projectsNavigation.append(projectData.project)
         }
@@ -203,33 +203,15 @@ struct MaybeProjectImageView: View {
             .resizable()
             .interpolation(.high)
             .aspectRatio(contentMode: .fit)
-            .clipped()
+            .clipShape(
+                RoundedRectangle(cornerRadius: 8)
+            )
             .frame(
                 minWidth: 100,
                 maxWidth: .infinity,
                 minHeight: 200,
                 alignment: .center
             )
-        //        if let imageData = projectImage {
-        //            if let image = imageData.image {
-        //                Image(uiImage: image)
-        //                    .resizable()
-        //                    .interpolation(.high)
-        //                    .aspectRatio(contentMode: .fill)
-        ////                    .scaledToFit()
-        ////                    .frame(minWidth: 100, maxWidth: .infinity, minHeight: 200, alignment: .center)
-        //                    .clipped()
-        //                    .frame(width: 120, height: 120, alignment: .center)
-        //            }
-        //        } else {
-        //            Image("black_dress_sketch")
-        //                .resizable()
-        //                .interpolation(.high)
-        //                .aspectRatio(contentMode: .fill)
-        ////                .scaledToFit()
-        //                .clipped()
-        //                .frame(width: 120, height: 120, alignment: .center)
-        //        }
     }
 }
 

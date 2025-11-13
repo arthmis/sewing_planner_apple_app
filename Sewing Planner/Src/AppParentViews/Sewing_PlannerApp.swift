@@ -13,7 +13,7 @@ class UserSettings {
     var createdProject: Bool
 
     init() {
-        createdProject = false
+        createdProject = true
     }
 
     init(createdProject: Bool) {
