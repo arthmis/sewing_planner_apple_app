@@ -53,7 +53,7 @@ struct ProjectsView: View {
         } else {
             NavigationStack(path: $storeBinding.navigation) {
                 VStack {
-                    if !settings.createdProject {
+                    if !(settings.getUserCreatedProjectFirstTime() ?? false) {
                         VStack {
                             Text("Welcome to Fabric Stash!")
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -107,14 +107,19 @@ struct ProjectsView: View {
                             Button("New Project") {
                                 do {
                                     try store.addProject()
-                                    if !settings.createdProject {
-                                        settings.setCreatedProject(created: true)
-                                        UserDefaults.standard.set(true, forKey: UserCreatedOneProject)
+                                    if !(settings.getUserCreatedProjectFirstTime() ?? false) {
+                                        do {
+                                            try settings.userCreatedProjectFirstTime(val: true)
+                                        } catch {
+                                            // TODO: log error
+                                            print(error)
+                                        }
                                     }
                                 } catch AppError.addProject {
                                     store.appError = .addProject
                                 } catch {
                                     store.appError = .unexpectedError
+                                    print(error)
                                 }
                             }
                             .buttonStyle(PrimaryButtonStyle())
