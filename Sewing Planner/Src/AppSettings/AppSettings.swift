@@ -1,6 +1,7 @@
 import Foundation
+import UniformTypeIdentifiers
 
-private protocol Settings {
+protocol Settings {
     func set<T: Codable>(_ value: T, forKey: String) throws
     func get<T: Codable>(forKey key: String) throws -> T?
 }
@@ -8,19 +9,22 @@ private protocol Settings {
 class AppSettings {
     private let directoryName: String
     private var data: [String: Data]
+    private let settingsFileManager: any AppSettingsFileManagerProtocol
 
-    init(directoryName: String) {
+    init(directoryName: String, data: [String: Data]? = nil, settingsFileManager: (any AppSettingsFileManagerProtocol)? = nil) {
         self.directoryName = directoryName
-        data = [:]
+        self.data = data ?? [:]
 
         let fileManager = FileManager.default
+        self.settingsFileManager = settingsFileManager ?? AppSettingsFileManager(fileManager: fileManager, directoryName: directoryName)
+
         do {
             print("Retrieving app settings")
-            let settingsFileData = try getSettingsFileData(fileManager)
+            let settingsFileData = try self.settingsFileManager.getSettingsFileData()
 
             let decoder = JSONDecoder()
             do {
-                data = try decoder.decode([String: Data].self, from: settingsFileData)
+                self.data = try decoder.decode([String: Data].self, from: settingsFileData)
             } catch {
                 // TODO: log the error
                 print(error)
@@ -34,14 +38,13 @@ class AppSettings {
 
 extension AppSettings: Settings {
     func set<T: Codable>(_ value: T, forKey key: String) throws {
-        let fileManager = FileManager.default
         let encoder = JSONEncoder()
         let data = try encoder.encode(value)
 
         _ = self.data.updateValue(data, forKey: key)
         let dataToPersist = try encoder.encode(self.data)
 
-        try writeSettings(dataToPersist, fileManager: fileManager)
+        try settingsFileManager.writeSettings(dataToPersist)
     }
 
     func get<T: Codable>(forKey key: String) throws -> T? {
@@ -51,8 +54,7 @@ extension AppSettings: Settings {
             return try decoder.decode(T.self, from: setting)
         }
 
-        let fileManager = FileManager.default
-        let settingsFileData = try getSettingsFileData(fileManager)
+        let settingsFileData = try settingsFileManager.getSettingsFileData()
         let settings = try decoder.decode([String: Data].self, from: settingsFileData)
         guard let settingData = settings[key] else {
             return nil
@@ -63,8 +65,23 @@ extension AppSettings: Settings {
 
         return setting
     }
+}
 
-    private func writeSettings(_ data: Data, fileManager: FileManager) throws {
+protocol AppSettingsFileManagerProtocol {
+    func writeSettings(_ data: Data) throws
+    func getSettingsFileData() throws -> Data
+}
+
+private struct AppSettingsFileManager: AppSettingsFileManagerProtocol {
+    private let fileManager: FileManager
+    private let directoryName: String
+
+    init(fileManager: FileManager, directoryName: String) {
+        self.fileManager = fileManager
+        self.directoryName = directoryName
+    }
+
+    func writeSettings(_ data: Data) throws {
         let settingsDirectory = getSettingsDirectory(fileManager)
 
         let settingsFolderExists = fileManager.fileExists(atPath: settingsDirectory.path())
@@ -78,7 +95,7 @@ extension AppSettings: Settings {
         try data.write(to: filePath, options: [.atomic, .completeFileProtection])
     }
 
-    private func getSettingsFileData(_ fileManager: FileManager) throws -> Data {
+    func getSettingsFileData() throws -> Data {
         let settingsDirectory = getSettingsDirectory(fileManager)
 
         let settingsFolderExists = fileManager.fileExists(atPath: settingsDirectory.path())

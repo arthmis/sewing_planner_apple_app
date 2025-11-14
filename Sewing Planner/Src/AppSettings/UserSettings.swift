@@ -3,7 +3,7 @@ import Foundation
 private let CREATED_ONE_PROJECT = "Created Project First Time"
 
 class UserSettings {
-    private let settingsManager: AppSettings
+    private let settingsManager: any Settings
     private var createdOneProject: Bool
 
     init(settingsDirectory: String) {
