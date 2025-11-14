@@ -5,22 +5,50 @@ import Testing
 
 struct AppSettingTests {
     @Test("test get setting after inserting")
-    @MainActor func getSettingAfterInsert() throws {
+    @MainActor func getSettingAfterInsert() {
         let mockSettingsFileManager = MockSettingsFileManager(writeSettings: { _ in })
         let appSettings = AppSettings(directoryName: "App Settings", settingsFileManager: mockSettingsFileManager)
 
         let userCreatedProjectSetting = true
         let encoder = JSONEncoder()
-        try appSettings.set(encoder.encode(userCreatedProjectSetting), forKey: "created project")
+        try! appSettings.set(encoder.encode(userCreatedProjectSetting), forKey: "created project")
 
-        let retrievedSetting: Bool? = try appSettings.get(forKey: "created project")
+        let retrievedSetting: Bool? = try! appSettings.get(forKey: "created project")
 
         #expect(retrievedSetting! == userCreatedProjectSetting)
     }
 
-    // static let testDeleteSectionCases = [
-    //     (nil, Effect.doNothing),
-    // ]
+    @Test("test get setting, isn't in memory but is stored")
+    @MainActor func getSettingNotInCacheInPersistentStorage() {
+        let mockSettingsFileManager = MockSettingsFileManager(writeSettings: { _ in }, getSettingsFileData: {
+            let encoder = JSONEncoder()
+            let val = try! encoder.encode(false)
+            let dict: [String: Data] = ["created project": val]
+            let data = try! encoder.encode(dict)
+            return data
+        })
+        let appSettings = AppSettings(directoryName: "App Settings", settingsFileManager: mockSettingsFileManager)
+
+        let retrievedSetting: Bool? = try! appSettings.get(forKey: "created project")
+
+        #expect(retrievedSetting! == false)
+    }
+
+    @Test("test get setting that doesn't exist")
+    @MainActor func getSettingDoesNotExist() {
+        let mockSettingsFileManager = MockSettingsFileManager(writeSettings: { _ in }, getSettingsFileData: {
+            let encoder = JSONEncoder()
+            let val = try! encoder.encode(21)
+            let dict: [String: Data] = ["times counted": val]
+            let data = try! encoder.encode(dict)
+            return data
+        })
+        let appSettings = AppSettings(directoryName: "App Settings", settingsFileManager: mockSettingsFileManager)
+
+        let retrievedSetting: Bool? = try! appSettings.get(forKey: "created project")
+
+        #expect(retrievedSetting == nil)
+    }
 }
 
 private struct MockSettingsFileManager: AppSettingsFileManagerProtocol {
