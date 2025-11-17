@@ -28,8 +28,20 @@ struct Sewing_PlannerApp: App {
                 .environment(\.appDatabase, db)
                 .environment(\.store, store)
                 .environment(\.settings, settings)
+                .environment(\.appLogger, LoggerKey.defaultValue)
         }
     }
+}
+
+extension EnvironmentValues {
+    var appLogger: AppLogger {
+        get { self[LoggerKey.self] }
+        set { self[LoggerKey.self] = newValue }
+    }
+}
+
+private struct LoggerKey: EnvironmentKey {
+    static let defaultValue: AppLogger = .init(label: "app logger")
 }
 
 extension EnvironmentValues {
