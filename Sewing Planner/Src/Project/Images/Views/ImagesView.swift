@@ -55,25 +55,29 @@ struct ImagesView: View {
         }
       }
       .frame(maxWidth: .infinity)
-      ScrollView {
-        LazyVGrid(
-          columns: [
-            GridItem(.flexible(minimum: 100, maximum: 400), spacing: 4),
-            GridItem(.flexible(minimum: 100, maximum: 400), spacing: 4),
-            //                    GridItem(.adaptive(minimum: 100), spacing: 4),
-          ], spacing: 4
-        ) {
-          ForEach($model.images, id: \.self.path) { $image in
-            if !model.isInDeleteMode {
-              ImageButton(image: $image, selectedImage: $model.overlayedImage)
-                .onLongPressGesture {
-                  model.didSetDeleteMode()
-                }
-                .matchedTransitionSource(id: image.path, in: transitionNamespace)
-            } else {
-              SelectedImageButton(
-                image: $image, selectedImagesForDeletion: $model.selectedImages
-              )
+      if model.images.isEmpty {
+        EmptyProjectImagesCallToActionView()
+      } else {
+        ScrollView {
+          LazyVGrid(
+            columns: [
+              GridItem(.flexible(minimum: 100, maximum: 400), spacing: 4),
+              GridItem(.flexible(minimum: 100, maximum: 400), spacing: 4),
+              //                    GridItem(.adaptive(minimum: 100), spacing: 4),
+            ], spacing: 4
+          ) {
+            ForEach($model.images, id: \.self.path) { $image in
+              if !model.isInDeleteMode {
+                ImageButton(image: $image, selectedImage: $model.overlayedImage)
+                  .onLongPressGesture {
+                    model.didSetDeleteMode()
+                  }
+                  .matchedTransitionSource(id: image.path, in: transitionNamespace)
+              } else {
+                SelectedImageButton(
+                  image: $image, selectedImagesForDeletion: $model.selectedImages
+                )
+              }
             }
           }
         }
@@ -116,14 +120,49 @@ struct ImagesView: View {
   }
 }
 
-// #Preview {
-//    VStack {
-//        ImagesView(projectImages: ProjectImages(projectId: 2))
-//    }
-//    .frame(
-//        maxWidth: .infinity,
-//        maxHeight: .infinity,
-//        alignment: .topLeading
-//    )
-//    .background(.white)
-// }
+struct EmptyProjectImagesCallToActionView: View {
+  @Environment(ProjectViewModel.self) var project
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 0) {
+      Image(systemName: "photo.on.rectangle.angled")
+        .font(.system(size: 32, weight: .light))
+      Text("Photos")
+        .font(.system(size: 20, weight: .semibold))
+        .padding(.top, 20)
+
+      Text(
+        "Import photos for references and inspiration. You can share photos from the photos app or web directly to your projects."
+      )
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .font(.system(size: 16))
+      .padding(.top, 8)
+      Button("Add photos") {
+        project.addSection()
+      }
+      .buttonStyle(PrimaryButtonStyle(fontSize: 16))
+      .padding(.top, 28)
+        Spacer()
+    }
+    .padding(.top, 20)
+  }
+}
+
+#Preview {
+  // let image = UIImage(named: "vecteezy_sewing-machine-icon-style_8737393")!
+  // let imageRecord = ProjectImageRecord(from: ProjectImageRecordInput(projectId: 1, filePath: "", thumbnail: "", isDeleted: false, createDate: Date(), updateDate: Date(), path: "", )
+  @Previewable @State var viewModel = ProjectViewModel(
+    data: ProjectData(
+      data: ProjectMetadata(
+        id: 1, name: "Project Name", completed: false, createDate: Date(), updateDate: Date())),
+    projectsNavigation: [], projectImages: ProjectImages(projectId: 1, images: []))
+  ImagesView(
+    model: $viewModel.projectImages
+  )
+  .environment(viewModel)
+  .frame(
+    maxWidth: .infinity,
+    maxHeight: .infinity,
+  )
+  .background(.white)
+}
