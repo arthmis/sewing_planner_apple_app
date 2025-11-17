@@ -1,4 +1,5 @@
 import Foundation
+import Logging
 
 private let CREATED_ONE_PROJECT = "Created Project First Time"
 
@@ -26,15 +27,26 @@ class UserSettings {
   func userCreatedProjectFirstTime(val: Bool) throws {
     let createdOneProject = val
 
-    try settingsManager.set(createdOneProject, forKey: CREATED_ONE_PROJECT)
+    do {
+      try settingsManager.set(createdOneProject, forKey: CREATED_ONE_PROJECT)
+    } catch {
+      let metadata: Logger.Metadata = [
+        "error": .string(error.localizedDescription), "key": .string(CREATED_ONE_PROJECT),
+        "value": .stringConvertible(val),
+      ]
+      logger.error("couldn't get user created project setting", metadata: metadata)
+      throw error
+    }
   }
 
   func getUserCreatedProjectFirstTime() -> Bool? {
     do {
       return try settingsManager.get(forKey: CREATED_ONE_PROJECT)
     } catch {
-      // TODO: log the error
-      print(error)
+      let metadata: Logger.Metadata = [
+        "error": .string(error.localizedDescription), "key": .string(CREATED_ONE_PROJECT),
+      ]
+      logger.error("couldn't get user created project setting", metadata: metadata)
       return nil
     }
   }

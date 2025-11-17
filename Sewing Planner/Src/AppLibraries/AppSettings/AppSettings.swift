@@ -29,7 +29,6 @@ class AppSettings {
       ?? AppSettingsFileManager(fileManager: fileManager, directoryName: directoryName)
 
     do {
-      print("Retrieving app settings")
       let settingsFileData = try self.settingsFileManager.getSettingsFileData()
 
       do {
