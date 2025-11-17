@@ -45,7 +45,9 @@ public struct AppLogger {
     function: String = #function,
     line: UInt = #line
   ) {
-    self.log(level: .trace, message: message, metadata: metadata, source: source)
+    self.log(
+      level: .trace, message: message, metadata: metadata, source: source, file: file,
+      function: function, line: line)
   }
 
   public func debug(
@@ -56,7 +58,9 @@ public struct AppLogger {
     function: String = #function,
     line: UInt = #line
   ) {
-    self.log(level: .debug, message: message, metadata: metadata, source: source)
+    self.log(
+      level: .debug, message: message, metadata: metadata, source: source, file: file,
+      function: function, line: line)
   }
 
   public func info(
@@ -67,7 +71,9 @@ public struct AppLogger {
     function: String = #function,
     line: UInt = #line
   ) {
-    self.log(level: .info, message: message, metadata: metadata, source: source)
+    self.log(
+      level: .info, message: message, metadata: metadata, source: source, file: file,
+      function: function, line: line)
   }
 
   public func notice(
@@ -78,7 +84,9 @@ public struct AppLogger {
     function: String = #function,
     line: UInt = #line
   ) {
-    self.log(level: .notice, message: message, metadata: metadata, source: source)
+    self.log(
+      level: .notice, message: message, metadata: metadata, source: source, file: file,
+      function: function, line: line)
   }
 
   public func warning(
@@ -89,7 +97,9 @@ public struct AppLogger {
     function: String = #function,
     line: UInt = #line
   ) {
-    self.log(level: .warning, message: message, metadata: metadata, source: source)
+    self.log(
+      level: .warning, message: message, metadata: metadata, source: source, file: file,
+      function: function, line: line)
   }
 
   public func error(
@@ -100,7 +110,9 @@ public struct AppLogger {
     function: String = #function,
     line: UInt = #line
   ) {
-    self.log(level: .error, message: message, metadata: metadata, source: source)
+    self.log(
+      level: .error, message: message, metadata: metadata, source: source, file: file,
+      function: function, line: line)
   }
 
   public func critical(
@@ -111,7 +123,9 @@ public struct AppLogger {
     function: String = #function,
     line: UInt = #line
   ) {
-    self.log(level: .critical, message: message, metadata: metadata, source: source)
+    self.log(
+      level: .critical, message: message, metadata: metadata, source: source, file: file,
+      function: function, line: line)
   }
 }
 
@@ -144,11 +158,11 @@ private struct SwiftOsLog: LogHandler {
       explicit: metadata
     )
 
-    let location = "\(file) \(function) \(line) \(source)"
+    let location = "\(file) \(function) #line:\(line) \(source)"
 
     // Format metadata
     let metadataString =
-      mergedMetadata?.map { "\($0.key)=\($0.value)" }.joined(separator: ",") ?? ""
+      mergedMetadata?.map { "\($0.key)=\($0.value)" }.joined(separator: ", ") ?? ""
 
     logger.log(
       level: OSLogType.fromSwiftLog(level: level),
