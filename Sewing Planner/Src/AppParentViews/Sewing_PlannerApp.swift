@@ -12,13 +12,14 @@ import SwiftUI
 @main
 struct Sewing_PlannerApp: App {
     @State private var store = Store()
-    @State private var settings = UserSettings(settingsDirectory: "App Settings")
+    @State private var settings: UserSettings
     let db: AppDatabase = .db()
 
     // runs before app launch
     // register initial UserDefaults values every launch
     init() {
-        settings = UserSettings(settingsDirectory: "App Settings")
+        let logger = AppLogger(label: "app_logger")
+        settings = UserSettings(settingsDirectory: "App Settings", logger: logger)
     }
 
     var body: some Scene {
@@ -39,7 +40,7 @@ extension EnvironmentValues {
 }
 
 private struct SettingsKey: EnvironmentKey {
-    static let defaultValue: UserSettings = .init(settingsDirectory: "App Settings")
+    static let defaultValue: UserSettings = .init(settingsDirectory: "App Settings",  logger: AppLogger(label: "app_logger"))
 }
 
 extension EnvironmentValues {
