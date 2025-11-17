@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6E3EBC0F2ECA5EC700A3C7F1 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = 6E3EBC0E2ECA5EC700A3C7F1 /* Logging */; };
 		6E490FBB2EAD46130077C63D /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 6E490FBA2EAD46130077C63D /* GRDB */; };
 		6E4913462EB0688B0077C63D /* ReceiveImage.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6E2126DE2EAC6AD400A7DC68 /* ReceiveImage.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6E572DC82C497C63008BCF24 /* AllProjectsScreenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E572DC72C497C63008BCF24 /* AllProjectsScreenTests.swift */; };
@@ -91,14 +92,6 @@
 			);
 			target = 6E2126DD2EAC6AD400A7DC68 /* ReceiveImage */;
 		};
-		6E3EBC022EC6876E00A3C7F1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				AppSettings/AppSettings.swift,
-				AppSettings/UserSettings.swift,
-			);
-			target = 6E4914192EB2A0B30077C63D /* Sewing PlannerUnitTests */;
-		};
 		6E49126D2EAE62BD0077C63D /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -119,7 +112,7 @@
 		6E2126DF2EAC6AD400A7DC68 /* ReceiveImage */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (6E2126E92EAC6AD600A7DC68 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ReceiveImage; sourceTree = "<group>"; };
 		6E4912692EAE62700077C63D /* SharedExtensionFiles */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (6E49126D2EAE62BD0077C63D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = SharedExtensionFiles; sourceTree = "<group>"; };
 		6E49141B2EB2A0B30077C63D /* Sewing PlannerUnitTests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (6E4914242EB2A1CC0077C63D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Sewing PlannerUnitTests"; sourceTree = "<group>"; };
-		6E748F932CD2CAA90076F1B4 /* Src */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (6E3EBC022EC6876E00A3C7F1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Src; sourceTree = "<group>"; };
+		6E748F932CD2CAA90076F1B4 /* Src */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Src; sourceTree = "<group>"; };
 		6E748FC92CD2D6110076F1B4 /* Fonts */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Fonts; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -143,6 +136,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E3EBC0F2ECA5EC700A3C7F1 /* Logging in Frameworks */,
 				6E572DCB2C49E03F008BCF24 /* GRDB in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -304,6 +298,7 @@
 			name = "Sewing Planner";
 			packageProductDependencies = (
 				6E572DCA2C49E03F008BCF24 /* GRDB */,
+				6E3EBC0E2ECA5EC700A3C7F1 /* Logging */,
 			);
 			productName = "Sewing Planner";
 			productReference = 6EF0C8392BED3CE200E7576F /* Sewing Planner.app */;
@@ -364,6 +359,7 @@
 			mainGroup = 6EF0C8302BED3CE200E7576F;
 			packageReferences = (
 				6E572DC92C49E03F008BCF24 /* XCRemoteSwiftPackageReference "GRDB.swift" */,
+				6E3EBC0D2ECA5EC700A3C7F1 /* XCRemoteSwiftPackageReference "swift-log" */,
 			);
 			productRefGroup = 6EF0C83A2BED3CE200E7576F /* Products */;
 			projectDirPath = "";
@@ -881,6 +877,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		6E3EBC0D2ECA5EC700A3C7F1 /* XCRemoteSwiftPackageReference "swift-log" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-log";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.6.4;
+			};
+		};
 		6E572DC92C49E03F008BCF24 /* XCRemoteSwiftPackageReference "GRDB.swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/groue/GRDB.swift.git";
@@ -892,6 +896,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		6E3EBC0E2ECA5EC700A3C7F1 /* Logging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6E3EBC0D2ECA5EC700A3C7F1 /* XCRemoteSwiftPackageReference "swift-log" */;
+			productName = Logging;
+		};
 		6E490FBA2EAD46130077C63D /* GRDB */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 6E572DC92C49E03F008BCF24 /* XCRemoteSwiftPackageReference "GRDB.swift" */;
