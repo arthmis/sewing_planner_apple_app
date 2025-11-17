@@ -36,6 +36,83 @@ public struct AppLogger {
       )
     }
   }
+
+  public func trace(
+    _ message: Logger.Message,
+    metadata: Logger.Metadata? = nil,
+    source: String? = nil,
+    file: String = #fileID,
+    function: String = #function,
+    line: UInt = #line
+  ) {
+    self.log(level: .trace, message: message, metadata: metadata, source: source)
+  }
+
+  public func debug(
+    _ message: Logger.Message,
+    metadata: Logger.Metadata? = nil,
+    source: String? = nil,
+    file: String = #fileID,
+    function: String = #function,
+    line: UInt = #line
+  ) {
+    self.log(level: .debug, message: message, metadata: metadata, source: source)
+  }
+
+  public func info(
+    _ message: Logger.Message,
+    metadata: Logger.Metadata? = nil,
+    source: String? = nil,
+    file: String = #fileID,
+    function: String = #function,
+    line: UInt = #line
+  ) {
+    self.log(level: .info, message: message, metadata: metadata, source: source)
+  }
+
+  public func notice(
+    _ message: Logger.Message,
+    metadata: Logger.Metadata? = nil,
+    source: String? = nil,
+    file: String = #fileID,
+    function: String = #function,
+    line: UInt = #line
+  ) {
+    self.log(level: .notice, message: message, metadata: metadata, source: source)
+  }
+
+  public func warning(
+    _ message: Logger.Message,
+    metadata: Logger.Metadata? = nil,
+    source: String? = nil,
+    file: String = #fileID,
+    function: String = #function,
+    line: UInt = #line
+  ) {
+    self.log(level: .warning, message: message, metadata: metadata, source: source)
+  }
+
+  public func error(
+    _ message: Logger.Message,
+    metadata: Logger.Metadata? = nil,
+    source: String? = nil,
+    file: String = #fileID,
+    function: String = #function,
+    line: UInt = #line
+  ) {
+    self.log(level: .error, message: message, metadata: metadata, source: source)
+  }
+
+  public func critical(
+    _ message: Logger.Message,
+    metadata: Logger.Metadata? = nil,
+    source: String? = nil,
+    file: String = #fileID,
+    function: String = #function,
+    line: UInt = #line
+  ) {
+    self.log(level: .critical, message: message, metadata: metadata, source: source)
+  }
 }
 
 private struct SwiftOsLog: LogHandler {

@@ -14,7 +14,7 @@ class UserSettings {
     settingsManager = AppSettings(directoryName: settingsDirectory, logger: logger)
     self.logger = logger
 
-    logger.log(level: .info, message: "instantiating settings manager")
+    logger.info("instantiating settings manager")
 
     do {
       createdOneProject = try settingsManager.get(forKey: CREATED_ONE_PROJECT) ?? false

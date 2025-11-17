@@ -39,15 +39,13 @@ class AppSettings {
         let metadata: Logger.Metadata = [
           "directory name": .string(directoryName), "error": .string(error.localizedDescription),
         ]
-        self.logger.log(
-          level: .error, message: "Couldn't decode app settings file", metadata: metadata)
+        logger.error("Couldn't decode app settings file", metadata: metadata)
       }
     } catch {
       let metadata: Logger.Metadata = [
         "directory name": .string(directoryName), "error": .string(error.localizedDescription),
       ]
-      self.logger.log(
-        level: .error, message: "Couldn't get app settings file", metadata: metadata)
+      logger.error("Couldn't get app settings file", metadata: metadata)
     }
   }
 }
