@@ -14,59 +14,83 @@ struct ProjectTitle: View {
   var projectData: ProjectMetadata
   @State var bindedName: String
   @State var isEditing = false
+  @State private var size: CGFloat = 0
 
   private func sanitize(_ val: String) -> String {
     return val.trimmingCharacters(in: .whitespacesAndNewlines)
   }
+
+  private func saveNewName() {
+    let sanitizedName = sanitize(bindedName)
+    guard !sanitizedName.isEmpty else {
+      // show an error message
+      return
+    }
+
+    let event = project.handleEvent(event: .UpdatedProjectTitle(sanitizedName))
+    Task {
+      await project.handleEffect(effect: event, db: db)
+    }
+    isEditing = false
+  }
   var body: some View {
     HStack {
-      if isEditing {
-        TextField("", text: $bindedName)
-          .onSubmit {
-            let sanitizedName = sanitize(bindedName)
-            guard !sanitizedName.isEmpty else {
-              // show an error message
-              return
-            }
-
-            let event = project.handleEvent(event: .UpdatedProjectTitle(sanitizedName))
-            Task {
-              await project.handleEffect(effect: event, db: db)
-            }
-            isEditing = false
+      Text(projectData.name)
+        .font(.custom("SourceSans3-Medium", size: 18))
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .contentShape(Rectangle())
+        .onTapGesture {
+          if !isEditing {
+            bindedName = projectData.name
+            isEditing.toggle()
           }
-          .textFieldStyle(.plain)
-          .padding(.bottom, 5)
-          .overlay(
-            Rectangle()
-              .fill(Color(hex: 0x131944, opacity: 0.9))
-              .frame(maxWidth: .infinity, maxHeight: 5),
-            alignment: .bottom
-          )
-          .font(.custom("SourceSans3-Medium", size: 14))
-          .accessibilityIdentifier("ProjectNameTextfield")
-        Button("Cancel") {
-          isEditing = false
         }
-      } else {
-        Text(projectData.name)
-          .font(.custom("SourceSans3-Medium", size: 14))
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .contentShape(Rectangle())
-          .onTapGesture {
-            if !isEditing {
-              bindedName = projectData.name
-              isEditing.toggle()
+        .sheet(isPresented: $isEditing) {
+          print("is canceling editing")
+          isEditing = false
+        } content: {
+          VStack {
+            HStack {
+              Spacer()
+              Button {
+                isEditing = false
+              } label: {
+                Image(systemName: "xmark.circle.fill")
+                  .font(.system(size: 32))
+                  .foregroundStyle(.gray)
+              }
+              .padding(.top, 12)
             }
+            TextField("Project Name", text: $bindedName)
+              .onSubmit {
+                saveNewName()
+              }
+              .textFieldStyle(.automatic)
+              .padding(.vertical, 12)
+              .font(.custom("SourceSans3-Medium", size: 20))
+              .accessibilityIdentifier("ProjectNameTextfield")
+              .overlay(
+                Rectangle()
+                  .frame(maxWidth: .infinity, maxHeight: 1)
+                  .foregroundStyle(Color.gray.opacity(0.5)),
+                alignment: .bottom
+              )
+            Button("Save") {
+              saveNewName()
+            }
+            .buttonStyle(SheetPrimaryButtonStyle())
+            .font(.system(size: 20))
+            .padding(.top, 12)
           }
-          .overlay(
-            Rectangle()
-              // .fill(Color(hex: 0x131944, opacity: isHovering ? 1 : 0))
-              .frame(maxWidth: .infinity, maxHeight: 2),
-            alignment: .bottom
-          )
-          .accessibilityIdentifier("ProjectName")
-      }
+          .padding(12)
+          .onGeometryChange(for: CGFloat.self) { proxy in
+            proxy.size.height
+          } action: { newValue in
+            size = newValue
+          }
+          .presentationDetents([.height(size)])
+        }
+        .accessibilityIdentifier("ProjectName")
     }
     .frame(maxWidth: .infinity)
     .padding(.top, 16)
@@ -78,8 +102,23 @@ struct ProjectTitle: View {
   }
 }
 
-// #Preview {
-//    ProjectName(project: ProjectMetadataViewModel(data: ProjectMetadata(id: 2, name: "Project Name", completed: false, createDate: Date(), updateDate: Date())))
-//        .frame(width: 300, height: 300)
-//        .background(Color.white)
-// }
+//  #Preview {
+//      @Previewable @State var project = ProjectViewModel(
+//        data: ProjectData(
+//          data: ProjectMetadata(
+//            id: 1, name: "Project Name", completed: false, createDate: Date(), updateDate: Date())),
+//        projectsNavigation: [], projectImages: ProjectImages(projectId: 1, images: []))
+// //     @Environment(\.appDatabase) var db
+//      @Previewable @State var bindedName = "Project Name"
+//      @Previewable @State var isEditing = true
+//      let projectData = ProjectMetadata(
+//            id: 1, name: "Project Name", completed: false, createDate: Date(), updateDate: Date())
+
+//      ProjectTitle(projectData: projectData, bindedName: bindedName, isEditing: isEditing)
+//          .environment(project)
+//          .frame(
+//            maxWidth: .infinity,
+//            maxHeight: .infinity,
+//          )
+//          .background(.white)
+//  }

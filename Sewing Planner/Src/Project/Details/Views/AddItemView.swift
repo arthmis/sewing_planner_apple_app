@@ -117,8 +117,9 @@ struct SecondaryButtonStyle: ButtonStyle {
   func makeBody(configuration: Configuration) -> some View {
     let isPressed = configuration.isPressed
     configuration.label
-      .padding([.top, .bottom], 8)
-      .padding([.leading, .trailing], 8)
+      .padding([.top, .bottom], 16)
+      .padding([.leading, .trailing], 16)
+      .frame(maxWidth: .infinity)
       .background(Color(hex: 0xEFEFEF, opacity: 0.5))
       .foregroundColor(.black)
       .clipShape(RoundedRectangle(cornerRadius: 4))
@@ -129,11 +130,29 @@ struct SecondaryButtonStyle: ButtonStyle {
   }
 }
 
-#Preview {
-  @Previewable @State var isAddingItem = true
-  @Previewable @State var newItem = ""
-
-  AddItemView(isAddingItem: $isAddingItem, addItem: { val, _ throws in print(val) })
-    .frame(height: 300)
-    .padding(8)
+struct SheetPrimaryButtonStyle: ButtonStyle {
+  func makeBody(configuration: Configuration) -> some View {
+    let isPressed = configuration.isPressed
+    configuration.label
+      .padding([.top, .bottom], 16)
+      .padding([.leading, .trailing], 16)
+      .frame(maxWidth: .infinity)
+//      .background(Color(hex: 0xEFEFEF, opacity: 0.5))
+      .background(Color(hex: 0x131944, opacity: 1.0))
+      .foregroundColor(.white)
+      .clipShape(RoundedRectangle(cornerRadius: 4))
+      .scaleEffect(isPressed ? 0.95 : 1)
+      .brightness(isPressed ? -0.05 : 0)
+      //            .shadow(color: Color(hex: 0xCFCFCF), radius: isPressed ? 1.5 : 3, x: 1, y: 3)
+      .animation(.easeIn(duration: 0.1), value: isPressed)
+  }
 }
+
+//#Preview {
+//  @Previewable @State var isAddingItem = true
+//  @Previewable @State var newItem = ""
+//
+//  AddItemView(isAddingItem: $isAddingItem, addItem: { val, _ throws in print(val) })
+//    .frame(height: 300)
+//    .padding(8)
+//}
