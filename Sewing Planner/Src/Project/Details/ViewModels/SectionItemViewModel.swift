@@ -9,6 +9,6 @@ import Foundation
 import GRDB
 
 struct SectionItem: Decodable, FetchableRecord, Hashable {
-    var record: SectionItemRecord
-    var note: SectionItemNoteRecord?
+  var record: SectionItemRecord
+  var note: SectionItemNoteRecord?
 }

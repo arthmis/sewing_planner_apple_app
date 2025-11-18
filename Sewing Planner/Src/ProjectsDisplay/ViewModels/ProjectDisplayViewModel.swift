@@ -8,30 +8,30 @@
 import SwiftUI
 
 struct ProjectCardViewModel {
-    var project: ProjectMetadata
-    var image: ProjectDisplayImage?
-    var error = false
+  var project: ProjectMetadata
+  var image: ProjectDisplayImage?
+  var error = false
 }
 
 class ProjectDisplayImage {
-    var record: ProjectImageRecord
-    var path: String
-    var image: UIImage?
+  var record: ProjectImageRecord
+  var path: String
+  var image: UIImage?
 
-    init(record: ProjectImageRecord, path: String, image: UIImage?) {
-        self.record = record
-        self.image = image
-        self.path = path
-    }
+  init(record: ProjectImageRecord, path: String, image: UIImage?) {
+    self.record = record
+    self.image = image
+    self.path = path
+  }
 }
 
 class ProjectsViewModel {
-    var projectsDisplay: [ProjectCardViewModel] = []
-    let db: AppDatabase = .db()
+  var projectsDisplay: [ProjectCardViewModel] = []
+  let db: AppDatabase = .db()
 
-    init(projects: [ProjectCardViewModel]) {
-        projectsDisplay = projects
-    }
+  init(projects: [ProjectCardViewModel]) {
+    projectsDisplay = projects
+  }
 
-    init() {}
+  init() {}
 }

@@ -8,87 +8,94 @@
 import SwiftUI
 
 struct ItemView: View {
-    @Binding var data: SectionItem
-    @Environment(ProjectViewModel.self) var project
-    @State var isEditing = false
-    @State var newText = ""
-    @State var newNoteText = ""
-    var updateText: (Int64, String, String?) throws -> Void
-    var updateCompletedState: (Int64) throws -> Void
+  @Binding var data: SectionItem
+  @Environment(ProjectViewModel.self) var project
+  @State var isEditing = false
+  @State var newText = ""
+  @State var newNoteText = ""
+  var updateText: (Int64, String, String?) throws -> Void
+  var updateCompletedState: (Int64) throws -> Void
 
-    func resetToPreviousText() {
-        newText = data.record.text
-        isEditing = false
-    }
+  func resetToPreviousText() {
+    newText = data.record.text
+    isEditing = false
+  }
 
-    private var hasNote: Bool {
-        data.note != nil
-    }
+  private var hasNote: Bool {
+    data.note != nil
+  }
 
-    var body: some View {
-        VStack {
-            if isEditing {
-                UpdateItemView(data: $data, isEditing: $isEditing, newText: $newText, newNoteText: $newNoteText, updateText: updateText, resetToPreviousText: resetToPreviousText)
-                    .transition(.revealFrom(edge: .top).combined(with: .opacity))
-            } else {
-                VStack(alignment: .leading, spacing: 0) {
-                    HStack(alignment: .firstTextBaseline) {
-                        Toggle(data.record.text, isOn: $data.record.isComplete).toggleStyle(CheckboxStyle(id: data.record.id, hasNote: hasNote, updateCompletedState: updateCompletedState, isSelected: false))
-                        Spacer()
-                    }
-                }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    if !isEditing {
-                        isEditing = true
-                        newText = data.record.text
-                        newNoteText = if let note = data.note {
-                            note.text
-                        } else {
-                            ""
-                        }
-                    }
-                }
-            }
+  var body: some View {
+    VStack {
+      if isEditing {
+        UpdateItemView(
+          data: $data, isEditing: $isEditing, newText: $newText, newNoteText: $newNoteText,
+          updateText: updateText, resetToPreviousText: resetToPreviousText
+        )
+        .transition(.revealFrom(edge: .top).combined(with: .opacity))
+      } else {
+        VStack(alignment: .leading, spacing: 0) {
+          HStack(alignment: .firstTextBaseline) {
+            Toggle(data.record.text, isOn: $data.record.isComplete).toggleStyle(
+              CheckboxStyle(
+                id: data.record.id, hasNote: hasNote, updateCompletedState: updateCompletedState,
+                isSelected: false))
+            Spacer()
+          }
         }
-        .animation(.easeOut(duration: 0.075), value: isEditing)
+        .contentShape(Rectangle())
+        .onTapGesture {
+          if !isEditing {
+            isEditing = true
+            newText = data.record.text
+            newNoteText =
+              if let note = data.note {
+                note.text
+              } else {
+                ""
+              }
+          }
+        }
+      }
     }
+    .animation(.easeOut(duration: 0.075), value: isEditing)
+  }
 }
 
 struct CheckboxStyle: ToggleStyle {
-    @Environment(ProjectViewModel.self) var project
-    var id: Int64?
-    var hasNote: Bool
-    var updateCompletedState: (Int64) throws -> Void
-    let isSelected: Bool
+  @Environment(ProjectViewModel.self) var project
+  var id: Int64?
+  var hasNote: Bool
+  var updateCompletedState: (Int64) throws -> Void
+  let isSelected: Bool
 
-    func makeBody(configuration: Configuration) -> some View {
-        HStack(alignment: .firstTextBaseline, spacing: 8) {
-            Button {
-                // TODO: move this side effect out of the checkbox
-                // doesn't make sense for it to be here
-                // might even need to make my own checkbox view
-                do {
-                    try updateCompletedState(id!)
-                } catch {
-                    project.handleError(error: .updateSectionItemCompletion)
-                }
-                configuration.isOn.toggle()
-            } label: {
-                Image(systemName: configuration.isOn ? "checkmark.square" : "square")
-            }
-            VStack(spacing: 0) {
-                configuration.label
-                    .frame(maxWidth: .infinity, alignment: .topLeading)
-                if hasNote {
-                    Image(systemName: "note.text")
-                        .font(.system(size: 14, weight: Font.Weight.light))
-                        .foregroundStyle(isSelected ? Color.white : Color.gray)
-                        .frame(maxWidth: .infinity, alignment: .topLeading)
-                }
-            }
+  func makeBody(configuration: Configuration) -> some View {
+    HStack(alignment: .firstTextBaseline, spacing: 8) {
+      Button {
+        // TODO: move this side effect out of the checkbox
+        // doesn't make sense for it to be here
+        // might even need to make my own checkbox view
+        do {
+          try updateCompletedState(id!)
+        } catch {
+          project.handleError(error: .updateSectionItemCompletion)
         }
+        configuration.isOn.toggle()
+      } label: {
+        Image(systemName: configuration.isOn ? "checkmark.square" : "square")
+      }
+      VStack(spacing: 0) {
+        configuration.label
+          .frame(maxWidth: .infinity, alignment: .topLeading)
+        if hasNote {
+          Image(systemName: "note.text")
+            .font(.system(size: 14, weight: Font.Weight.light))
+            .foregroundStyle(isSelected ? Color.white : Color.gray)
+            .frame(maxWidth: .infinity, alignment: .topLeading)
+        }
+      }
     }
+  }
 }
 
 // #Preview {
