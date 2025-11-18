@@ -70,7 +70,7 @@ struct ProjectDataView: View {
     @Environment(ProjectViewModel.self) var project
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+      VStack(alignment: .leading, spacing: 0) {
         Image(systemName: "list.bullet.rectangle")
           .font(.system(size: 32, weight: .light))
         Text("Sections")
