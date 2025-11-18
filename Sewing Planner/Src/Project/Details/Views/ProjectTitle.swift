@@ -10,24 +10,28 @@ import SwiftUI
 
 struct ProjectTitle: View {
   @Environment(ProjectViewModel.self) var project
-  @Binding var projectData: ProjectMetadata
-  @Binding var bindedName: String
-  var updateName: (String) throws -> Void
+  @Environment(\.appDatabase) var db
+  var projectData: ProjectMetadata
+  @State var bindedName: String
   @State var isEditing = false
 
+  private func sanitize(_ val: String) -> String {
+    return val.trimmingCharacters(in: .whitespacesAndNewlines)
+  }
   var body: some View {
     HStack {
       if isEditing {
         TextField("", text: $bindedName)
           .onSubmit {
-            // TODO: add a popup telling user that name can't be empty
-            let sanitizedName = bindedName.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard !sanitizedName.isEmpty else { return }
+            let sanitizedName = sanitize(bindedName)
+            guard !sanitizedName.isEmpty else {
+              // show an error message
+              return
+            }
 
-            do {
-              try updateName(sanitizedName)
-            } catch {
-              project.handleError(error: .renameProject)
+            let event = project.handleEvent(event: .UpdatedProjectTitle(sanitizedName))
+            Task {
+              await project.handleEffect(effect: event, db: db)
             }
             isEditing = false
           }
@@ -42,7 +46,6 @@ struct ProjectTitle: View {
           .font(.custom("SourceSans3-Medium", size: 14))
           .accessibilityIdentifier("ProjectNameTextfield")
         Button("Cancel") {
-          projectData.name = bindedName
           isEditing = false
         }
       } else {

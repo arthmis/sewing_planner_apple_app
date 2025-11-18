@@ -16,9 +16,8 @@ struct ProjectDataView: View {
     VStack(alignment: .leading) {
       HStack {
         ProjectTitle(
-          projectData: $projectBinding.projectData.data,
-          bindedName: $projectBinding.projectData.bindedName,
-          updateName: project.projectData.updateName
+          projectData: projectBinding.projectData.data,
+          bindedName: projectBinding.projectData.bindedName,
         )
         Spacer()
       }
