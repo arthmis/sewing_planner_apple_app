@@ -14,21 +14,21 @@ struct ProjectDataView: View {
   var body: some View {
     @Bindable var projectBinding = project
     VStack(alignment: .leading) {
-      HStack {
-        ProjectTitle(
-          projectData: projectBinding.projectData.data,
-          bindedName: projectBinding.projectData.bindedName,
-        )
-        Spacer()
-      }
-      .frame(maxWidth: .infinity)
-      .padding(.bottom, 25)
       if project.projectData.sections.isEmpty {
         EmptyProjectCallToActionView()
         Spacer()
       } else {
         ScrollView {
           VStack(alignment: .leading) {
+            HStack {
+              ProjectTitle(
+                projectData: projectBinding.projectData.data,
+                bindedName: projectBinding.projectData.bindedName,
+              )
+              Spacer()
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.bottom, 25)
             ForEach($projectBinding.projectData.sections, id: \.id) {
               $section in
               SectionView(model: $section)

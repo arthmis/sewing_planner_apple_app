@@ -38,7 +38,7 @@ struct ProjectTitle: View {
   var body: some View {
     HStack {
       Text(projectData.name)
-        .font(.custom("SourceSans3-Medium", size: 18))
+        .font(.custom("SourceSans3-Medium", size: 20).weight(.semibold))
         .frame(maxWidth: .infinity, alignment: .leading)
         .contentShape(Rectangle())
         .onTapGesture {
