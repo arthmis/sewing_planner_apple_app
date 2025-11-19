@@ -27,7 +27,6 @@ class ProjectDisplayImage {
 
 class ProjectsViewModel {
   var projectsDisplay: [ProjectCardViewModel] = []
-  let db: AppDatabase = .db()
 
   init(projects: [ProjectCardViewModel]) {
     projectsDisplay = projects

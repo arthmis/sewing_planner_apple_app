@@ -82,6 +82,7 @@ struct LoadProjectView: View {
 struct ProjectView: View {
   // used for dismissing a view(basically the back button)
   @Environment(\.dismiss) private var dismiss
+  @Environment(\.db) private var db
   @Environment(Store.self) private var store
   @State var project: ProjectViewModel
   @Binding var projectsNavigation: [ProjectMetadata]
@@ -134,7 +135,7 @@ struct ProjectView: View {
             )
             .onChange(of: project.pickerItem) {
               Task {
-                await project.handleOnChangePickerItem()
+                await project.handleOnChangePickerItem(db: db)
               }
             }
           }
@@ -247,15 +248,15 @@ final class ProjectViewModel {
     showPhotoPicker = true
   }
 
-  func handleOnChangePickerItem() async {
+  func handleOnChangePickerItem(db: AppDatabase) async {
     do {
-      try await handleOnChangePickerItemInner()
+      try await handleOnChangePickerItemInner(db: db)
     } catch {
       projectError = .importImage
     }
   }
 
-  private func handleOnChangePickerItemInner() async throws {
+  private func handleOnChangePickerItemInner(db: AppDatabase) async throws {
     let result = try await pickerItem?.loadTransferable(type: Data.self)
 
     switch result {
@@ -267,7 +268,7 @@ final class ProjectViewModel {
         // TODO: Performance problem here, scale the images in a background task
         let resizedImage = img.scaleToAppImageMaxDimension()
         let projectImage = ProjectImageInput(image: resizedImage)
-        try projectImages.importImages([projectImage])
+        try projectImages.importImages([projectImage], db: db)
       case .none:
         // TODO: think about how to deal with path that couldn't become an image
         // I'm thinking display an error alert that lists every image that couldn't be uploaded

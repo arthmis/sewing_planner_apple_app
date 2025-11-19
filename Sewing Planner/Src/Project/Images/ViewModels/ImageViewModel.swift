@@ -21,8 +21,6 @@ class ProjectImages {
   var photosAppSelectedImage: Data?
   var inDeleteMode = false
 
-  let appDatabase: AppDatabase = .db()
-
   init(projectId: Int64) {
     self.projectId = projectId
   }
@@ -32,28 +30,39 @@ class ProjectImages {
     self.images = images
   }
 
-  func importImages(_ newImages: [ProjectImageInput]) throws {
-    let savedImages = try saveImages(images: newImages)
+  func importImages(_ newImages: [ProjectImageInput], db: AppDatabase) throws {
+    let savedImages = try saveImages(images: newImages, db: db)
     images.append(contentsOf: savedImages)
   }
 
-  private func saveImages(images: [ProjectImageInput]) throws -> [ProjectImage] {
+  private func saveImages(images: [ProjectImageInput], db: AppDatabase) throws -> [ProjectImage] {
     var savedImages: [ProjectImage] = []
-    try appDatabase.getWriter().write { db in
+    try db.getWriter().write { db in
       // TODO: convert this loop into a map call or consider it
       for image in images {
         do {
           if image.record == nil {
             let (imagePath, thumbnailPath) = try AppFiles().saveProjectImage(
-              projectId: projectId, image: image)!
+              projectId: projectId,
+              image: image
+            )!
             let now = Date.now
             var input = ProjectImageRecordInput(
-              id: nil, projectId: projectId, filePath: imagePath, thumbnail: thumbnailPath,
-              isDeleted: false, createDate: now, updateDate: now)
+              id: nil,
+              projectId: projectId,
+              filePath: imagePath,
+              thumbnail: thumbnailPath,
+              isDeleted: false,
+              createDate: now,
+              updateDate: now
+            )
             try input.save(db)
             let record = ProjectImageRecord(from: consume input)
             let projectImage = ProjectImage(
-              record: consume record, path: imagePath, image: image.image)
+              record: consume record,
+              path: imagePath,
+              image: image.image
+            )
             savedImages.append(projectImage)
           }
         } catch {
@@ -66,8 +75,8 @@ class ProjectImages {
     return savedImages
   }
 
-  func deleteImages() throws {
-    try appDatabase.getWriter().write { db in
+  func deleteImages(db: AppDatabase) throws {
+    try db.getWriter().write { db in
       for image in deletedImages {
         do {
           try AppFiles().deleteImage(projectId: projectId, image: image)
@@ -94,7 +103,7 @@ class ProjectImages {
     inDeleteMode = false
   }
 
-  func handleDeleteImage() throws {
+  func handleDeleteImage(db: AppDatabase) throws {
     if selectedImagesIsEmpty {
       return
     }
@@ -105,7 +114,7 @@ class ProjectImages {
         deletedImages.append(image)
       }
     }
-    try deleteImages()
+    try deleteImages(db: db)
 
     inDeleteMode = false
     selectedImages = Set()
@@ -123,20 +132,20 @@ class ProjectImages {
     AppFiles().getImage(for: imageIdentifier, fromProject: projectId) ?? UIImage()
   }
 
-  func loadProjectImages(appDatabase: AppDatabase) throws {
+  func loadProjectImages(db: AppDatabase) throws {
     do {
-      try loadSharedImages()
+      try loadSharedImages(db: db)
     } catch {
       print("failed to load shared image")
       // TODO: decide what I want to do here
     }
 
     if images.isEmpty {
-      images = try appDatabase.getProjectThumbnails(projectId: projectId)
+      images = try db.getProjectThumbnails(projectId: projectId)
     }
   }
 
-  private func loadSharedImages() throws {
+  private func loadSharedImages(db: AppDatabase) throws {
     let sharedImagesFileName = "sharedImages"
     let sharedPersistence = SharedPersistence()
     guard let fileData = try sharedPersistence.getFile(fileName: sharedImagesFileName) else {
@@ -156,7 +165,7 @@ class ProjectImages {
       if sharedImage.projectId == projectId {
         let data = try sharedPersistence.getImage(withIdentifier: sharedImage.fileIdentifier)
         let image = UIImage(data: data)!
-        _ = try saveImages(images: [ProjectImageInput(image: image)])
+        _ = try saveImages(images: [ProjectImageInput(image: image)], db: db)
         try sharedPersistence.deleteImage(withIdentifier: sharedImage.fileIdentifier)
       }
     }

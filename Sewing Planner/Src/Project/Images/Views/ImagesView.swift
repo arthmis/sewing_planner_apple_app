@@ -18,7 +18,7 @@ struct OverlayedImage: Identifiable, Hashable {
 }
 
 struct ImagesView: View {
-  @Environment(\.db) private var appDatabase
+  @Environment(\.db) private var db
   @Environment(ProjectViewModel.self) private var project
   @Binding var model: ProjectImages
   @Namespace var transitionNamespace
@@ -45,7 +45,7 @@ struct ImagesView: View {
             .simultaneousGesture(
               LongPressGesture(minimumDuration: 2).onEnded { _ in
                 do {
-                  try model.handleDeleteImage()
+                  try model.handleDeleteImage(db: db)
                 } catch {
                   project.handleError(error: .deleteImages)
                 }
@@ -115,7 +115,7 @@ struct ImagesView: View {
     .animation(.easeOut(duration: 0.1), value: model.overlayedImage)
     .task {
       do {
-        try model.loadProjectImages(appDatabase: appDatabase)
+        try model.loadProjectImages(db: db)
       } catch {
         project.handleError(error: .loadImages)
       }
