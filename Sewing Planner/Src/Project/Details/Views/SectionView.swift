@@ -10,6 +10,7 @@ import SwiftUI
 struct SectionView: View {
   @Binding var model: Section
   @Environment(ProjectViewModel.self) var project
+  @Environment(\.db) var db
 
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
@@ -19,7 +20,7 @@ struct SectionView: View {
           HStack {
             TextField("", text: $model.name)
               .onSubmit {
-                model.updateName()
+                model.updateName(db: db)
               }
               .textFieldStyle(.plain)
               .padding(.bottom, 5)
@@ -33,7 +34,7 @@ struct SectionView: View {
               model.isRenamingSection = false
             }
             Button("Set") {
-              model.updateName()
+              model.updateName(db: db)
             }
           }
           .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
@@ -58,7 +59,7 @@ struct SectionView: View {
               }
               Button {
                 do {
-                  try model.deleteSelection()
+                  try model.deleteSelection(db: db)
                   withAnimation(.smooth(duration: 0.2)) {
                     model.isEditingSection = false
                   }
@@ -89,13 +90,16 @@ struct SectionView: View {
       .overlay(
         Divider()
           .frame(maxWidth: .infinity, maxHeight: 1)
-          .background(Color(red: 230, green: 230, blue: 230)), alignment: .bottom)
+          .background(Color(red: 230, green: 230, blue: 230)),
+        alignment: .bottom
+      )
       VStack(spacing: 0) {
         ForEach($model.items, id: \.self.record.id) { $item in
           if !model.isEditingSection {
             ItemView(
-              data: $item, updateText: model.updateText,
-              updateCompletedState: model.updateCompletedState
+              data: $item,
+              updateText: model.updateText,
+              updateCompletedState: model.updateCompletedState,
             )
             .contentShape(Rectangle())
             .onLongPressGesture {
@@ -106,7 +110,9 @@ struct SectionView: View {
             .padding(.top, 4)
           } else {
             SelectedSectionItemView(
-              data: $item, selected: $model.selectedItems, updateText: model.updateText,
+              data: $item,
+              selected: $model.selectedItems,
+              updateText: model.updateText,
               updateCompletedState: model.updateCompletedState
             )
             .contentShape(Rectangle())
@@ -117,8 +123,11 @@ struct SectionView: View {
             .onDrop(
               of: [.text],
               delegate: DropSectionItemViewDelegate(
-                item: item, data: $model.items, draggedItem: $model.draggedItem,
-                saveNewOrder: model.saveOrder)
+                item: item,
+                data: $model.items,
+                draggedItem: $model.draggedItem,
+                saveNewOrder: model.saveOrder
+              )
             )
             .padding(.top, 4)
           }
@@ -137,8 +146,8 @@ struct SelectedSectionItemView: View {
   @State var isEditing = false
   @State var newText = ""
   @Binding var selected: Set<Int64>
-  var updateText: (Int64, String, String?) throws -> Void
-  var updateCompletedState: (Int64) throws -> Void
+  var updateText: (Int64, String, String?, AppDatabase) throws -> Void
+  var updateCompletedState: (Int64, AppDatabase) throws -> Void
 
   var isSelected: Bool {
     selected.contains(data.record.id)
@@ -153,8 +162,11 @@ struct SelectedSectionItemView: View {
       Toggle(data.record.text, isOn: $data.record.isComplete)
         .toggleStyle(
           CheckboxStyle(
-            id: data.record.id, hasNote: hasNote, updateCompletedState: updateCompletedState,
-            isSelected: isSelected)
+            id: data.record.id,
+            hasNote: hasNote,
+            updateCompletedState: updateCompletedState,
+            isSelected: isSelected
+          )
         )
         .foregroundStyle(isSelected ? Color.white : Color.black)
       Spacer()
@@ -178,10 +190,11 @@ struct SelectedSectionItemView: View {
 }
 
 struct DropSectionItemViewDelegate: DropDelegate {
+  @Environment(\.db) var db
   var item: SectionItem
   @Binding var data: [SectionItem]
   @Binding var draggedItem: SectionItem?
-  var saveNewOrder: () throws -> Void
+  var saveNewOrder: (AppDatabase) throws -> Void
 
   func dropEntered(info _: DropInfo) {
     guard item != draggedItem,
@@ -203,7 +216,7 @@ struct DropSectionItemViewDelegate: DropDelegate {
   }
 
   func performDrop(info _: DropInfo) -> Bool {
-    try! saveNewOrder()
+    try! saveNewOrder(db)
     draggedItem = nil
     return true
   }

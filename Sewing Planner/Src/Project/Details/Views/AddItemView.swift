@@ -9,9 +9,10 @@ import SwiftUI
 
 struct AddItemView: View {
   @Environment(ProjectViewModel.self) var project
+  @Environment(\.db) var db
   @Binding var isAddingItem: Bool
   @State var newItem = ""
-  let addItem: (_ text: String, _ note: String?) throws -> Void
+  let addItem: (_ text: String, _ note: String?, AppDatabase) throws -> Void
   @State var showErrorText = false
   @State var itemNote = ""
   let errorText = "Item text can't be empty."
@@ -30,7 +31,7 @@ struct AddItemView: View {
     let validNoteText = itemNote.trimmingCharacters(in: .whitespacesAndNewlines)
     let noteText = validNoteText.isEmpty ? nil : validNoteText
     do {
-      try addItem(validText, noteText)
+      try addItem(validText, noteText, db)
     } catch {
       project.handleError(error: .addSectionItem)
     }
@@ -137,7 +138,7 @@ struct SheetPrimaryButtonStyle: ButtonStyle {
       .padding([.top, .bottom], 16)
       .padding([.leading, .trailing], 16)
       .frame(maxWidth: .infinity)
-//      .background(Color(hex: 0xEFEFEF, opacity: 0.5))
+      //      .background(Color(hex: 0xEFEFEF, opacity: 0.5))
       .background(Color(hex: 0x131944, opacity: 1.0))
       .foregroundColor(.white)
       .clipShape(RoundedRectangle(cornerRadius: 4))

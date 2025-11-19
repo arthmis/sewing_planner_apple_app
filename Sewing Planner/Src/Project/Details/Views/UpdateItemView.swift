@@ -9,13 +9,14 @@ import SwiftUI
 
 struct UpdateItemView: View {
   @Environment(ProjectViewModel.self) var project
+  @Environment(\.db) var db
   @Binding var data: SectionItem
   @Binding var isEditing: Bool
   @Binding var newText: String
   @Binding var newNoteText: String
   @State var showErrorText = false
   let errorText = "Item text can't be empty."
-  let updateText: (Int64, String, String?) throws -> Void
+  let updateText: (Int64, String, String?, AppDatabase) throws -> Void
   let resetToPreviousText: () -> Void
 
   private var isNewTextValid: Bool {
@@ -33,7 +34,7 @@ struct UpdateItemView: View {
     let noteText = validNoteText.isEmpty ? nil : validNoteText
 
     do {
-      try updateText(data.record.id, validText, noteText)
+      try updateText(data.record.id, validText, noteText, db)
     } catch {
       project.handleError(error: .updateSectionItemText)
     }

@@ -13,8 +13,8 @@ struct ItemView: View {
   @State var isEditing = false
   @State var newText = ""
   @State var newNoteText = ""
-  var updateText: (Int64, String, String?) throws -> Void
-  var updateCompletedState: (Int64) throws -> Void
+  var updateText: (Int64, String, String?, AppDatabase) throws -> Void
+  var updateCompletedState: (Int64, AppDatabase) throws -> Void
 
   func resetToPreviousText() {
     newText = data.record.text
@@ -29,8 +29,12 @@ struct ItemView: View {
     VStack {
       if isEditing {
         UpdateItemView(
-          data: $data, isEditing: $isEditing, newText: $newText, newNoteText: $newNoteText,
-          updateText: updateText, resetToPreviousText: resetToPreviousText
+          data: $data,
+          isEditing: $isEditing,
+          newText: $newText,
+          newNoteText: $newNoteText,
+          updateText: updateText,
+          resetToPreviousText: resetToPreviousText
         )
         .transition(.revealFrom(edge: .top).combined(with: .opacity))
       } else {
@@ -38,8 +42,12 @@ struct ItemView: View {
           HStack(alignment: .firstTextBaseline) {
             Toggle(data.record.text, isOn: $data.record.isComplete).toggleStyle(
               CheckboxStyle(
-                id: data.record.id, hasNote: hasNote, updateCompletedState: updateCompletedState,
-                isSelected: false))
+                id: data.record.id,
+                hasNote: hasNote,
+                updateCompletedState: updateCompletedState,
+                isSelected: false
+              )
+            )
             Spacer()
           }
         }
@@ -64,9 +72,10 @@ struct ItemView: View {
 
 struct CheckboxStyle: ToggleStyle {
   @Environment(ProjectViewModel.self) var project
+  @Environment(\.db) var db
   var id: Int64?
   var hasNote: Bool
-  var updateCompletedState: (Int64) throws -> Void
+  var updateCompletedState: (Int64, AppDatabase) throws -> Void
   let isSelected: Bool
 
   func makeBody(configuration: Configuration) -> some View {
@@ -76,7 +85,7 @@ struct CheckboxStyle: ToggleStyle {
         // doesn't make sense for it to be here
         // might even need to make my own checkbox view
         do {
-          try updateCompletedState(id!)
+          try updateCompletedState(id!, db)
         } catch {
           project.handleError(error: .updateSectionItemCompletion)
         }

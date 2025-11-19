@@ -24,7 +24,6 @@ class Section {
   var isAddingItem = false
   var draggedItem: SectionItem?
   var isEditingSection = false
-  private let db: AppDatabase = .db()
 
   init(id: UUID, name: SectionRecord) {
     section = name
@@ -52,32 +51,36 @@ class Section {
     !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
   }
 
-  func updateName() {
+  func updateName(db: AppDatabase) {
     // TODO: add a popup telling user that instruction can't be empty
     guard isNewNameValid else { return }
 
     isRenamingSection = false
     do {
-      try updateSectionName(with: name)
+      try updateSectionName(with: name, db: db)
     } catch {
       fatalError("\(error)")
     }
   }
 
-  func addItem(text: String, note: String?) throws {
+  func addItem(text: String, note: String?, db: AppDatabase) throws {
     try db.getWriter().write { db in
       // TODO: do this in a transaction or see if the write is already a transaction
       let order = Int64(items.count)
       var recordInput = SectionItemInputRecord(
-        text: text.trimmingCharacters(in: .whitespacesAndNewlines), order: order,
-        sectionId: section.id)
+        text: text.trimmingCharacters(in: .whitespacesAndNewlines),
+        order: order,
+        sectionId: section.id
+      )
       recordInput.sectionId = section.id
       try recordInput.save(db)
       let record = SectionItemRecord(from: recordInput)
 
       if let noteText = note {
         var noteInputRecord = SectionItemNoteInputRecord(
-          text: noteText.trimmingCharacters(in: .whitespacesAndNewlines), sectionItemId: record.id)
+          text: noteText.trimmingCharacters(in: .whitespacesAndNewlines),
+          sectionItemId: record.id
+        )
         try noteInputRecord.save(db)
         let noteRecord = SectionItemNoteRecord(from: noteInputRecord)
         let sectionItem = SectionItem(record: record, note: noteRecord)
@@ -89,7 +92,7 @@ class Section {
     }
   }
 
-  func updateItem(id: Int64) throws {
+  func updateItem(id: Int64, db: AppDatabase) throws {
     try db.getWriter().write { db in
       for var item in items {
         if item.record.id == id {
@@ -100,7 +103,7 @@ class Section {
     }
   }
 
-  func saveOrder() throws {
+  func saveOrder(db: AppDatabase) throws {
     try db.getWriter().write { db in
       for case (let i, var item) in items.enumerated() {
         item.record.order = Int64(i)
@@ -110,7 +113,9 @@ class Section {
   }
 
   // TODO: investigate updateText and updateItem redundancy
-  func updateText(id: Int64, consume newText: String, consume newNoteText: String?) throws {
+  func updateText(id: Int64, consume newText: String, consume newNoteText: String?, db: AppDatabase)
+    throws
+  {
     try db.getWriter().write { db in
       if let i = items.firstIndex(where: { $0.record.id == id }) {
         var item = items[i]
@@ -131,7 +136,9 @@ class Section {
           } else {
             let trimmedNoteText = noteText.trimmingCharacters(in: .whitespacesAndNewlines)
             var noteInput = SectionItemNoteInputRecord(
-              text: trimmedNoteText, sectionItemId: item.record.id)
+              text: trimmedNoteText,
+              sectionItemId: item.record.id
+            )
             try noteInput.save(db)
             item.note = SectionItemNoteRecord(from: noteInput)
             items[i].note = item.note
@@ -141,7 +148,7 @@ class Section {
     }
   }
 
-  func deleteSelection() throws {
+  func deleteSelection(db: AppDatabase) throws {
     try db.getWriter().write { db in
       for id in selectedItems {
         let maybeIndex = items.firstIndex { val in
@@ -156,7 +163,7 @@ class Section {
     }
   }
 
-  func updateCompletedState(id: Int64) throws {
+  func updateCompletedState(id: Int64, db: AppDatabase) throws {
     try db.getWriter().write { db in
       if var item = items.first(where: { $0.record.id == id }) {
         item.record.isComplete.toggle()
@@ -165,7 +172,7 @@ class Section {
     }
   }
 
-  func updateSectionName(with name: String) throws {
+  func updateSectionName(with name: String, db: AppDatabase) throws {
     section.name = name
     try db.getWriter().write { db in
       try section.save(db)
