@@ -15,6 +15,7 @@ struct ProjectTitle: View {
   @State var bindedName: String
   @State var isEditing = false
   @State private var size: CGFloat = 0
+  @State private var validationError = ""
 
   private func sanitize(_ val: String) -> String {
     return val.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -24,6 +25,7 @@ struct ProjectTitle: View {
     let sanitizedName = sanitize(bindedName)
     guard !sanitizedName.isEmpty else {
       // show an error message
+      validationError = "Title can't be empty."
       return
     }
 
@@ -59,7 +61,6 @@ struct ProjectTitle: View {
                   .font(.system(size: 32))
                   .foregroundStyle(.gray)
               }
-              .padding(.top, 12)
             }
             TextField("Project Name", text: $bindedName)
               .onSubmit {
@@ -75,18 +76,30 @@ struct ProjectTitle: View {
                   .foregroundStyle(Color.gray.opacity(0.5)),
                 alignment: .bottom
               )
+            HStack {
+              Text(validationError)
+                .foregroundStyle(.red)
+                .padding(.top, 2)
+              Spacer()
+            }
+            .transition(.move(edge: .top))
+
             Button("Save") {
-              saveNewName()
+              withAnimation(.easeOut(duration: 0.13)) {
+                saveNewName()
+              }
             }
             .buttonStyle(SheetPrimaryButtonStyle())
             .font(.system(size: 20))
-            .padding(.top, 12)
+            .padding(.top, 16)
           }
           .padding(12)
           .onGeometryChange(for: CGFloat.self) { proxy in
             proxy.size.height
           } action: { newValue in
-            size = newValue
+            withAnimation(.easeOut(duration: 0.15)) {
+              size = newValue
+            }
           }
           .presentationDetents([.height(size)])
         }
@@ -109,10 +122,10 @@ struct ProjectTitle: View {
 //            id: 1, name: "Project Name", completed: false, createDate: Date(), updateDate: Date())),
 //        projectsNavigation: [], projectImages: ProjectImages(projectId: 1, images: []))
 // //     @Environment(\.appDatabase) var db
-//      @Previewable @State var bindedName = "Project Name"
+//      @Previewable @State var bindedName = ""
 //      @Previewable @State var isEditing = true
 //      let projectData = ProjectMetadata(
-//            id: 1, name: "Project Name", completed: false, createDate: Date(), updateDate: Date())
+//            id: 1, name: "", completed: false, createDate: Date(), updateDate: Date())
 
 //      ProjectTitle(projectData: projectData, bindedName: bindedName, isEditing: isEditing)
 //          .environment(project)
