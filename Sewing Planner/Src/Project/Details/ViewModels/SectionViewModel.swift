@@ -107,7 +107,7 @@ class Section {
     try db.getWriter().write { db in
       for case (let i, var item) in items.enumerated() {
         item.record.order = Int64(i)
-        try item.record.save(db)
+        try item.record.update(db)
       }
     }
   }

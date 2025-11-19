@@ -35,8 +35,6 @@ struct DeleteButtonStyle: ButtonStyle {
   func makeBody(configuration: Configuration) -> some View {
     let isPressed = configuration.isPressed
     configuration.label
-      //            .font(.custom("CooperHewitt-Regular", size: 16))
-      //            .font(.custom("CooperHewitt-Regular", size: 16))
       .padding(8)
       .background(Color(hex: 0xF85A3E, opacity: 1.0))
       .foregroundStyle(.white)

@@ -10,7 +10,7 @@ import SwiftUI
 struct SectionView: View {
   @Binding var model: Section
   @Environment(ProjectViewModel.self) var project
-  @Environment(\.db) var db
+  let db: AppDatabase
 
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
@@ -109,6 +109,7 @@ struct SectionView: View {
             }
             .padding(.top, 4)
           } else {
+            let appDatabase = db
             SelectedSectionItemView(
               data: $item,
               selected: $model.selectedItems,
@@ -126,7 +127,8 @@ struct SectionView: View {
                 item: item,
                 data: $model.items,
                 draggedItem: $model.draggedItem,
-                saveNewOrder: model.saveOrder
+                saveNewOrder: model.saveOrder,
+                db: appDatabase,
               )
             )
             .padding(.top, 4)
@@ -190,11 +192,11 @@ struct SelectedSectionItemView: View {
 }
 
 struct DropSectionItemViewDelegate: DropDelegate {
-  @Environment(\.db) var db
   var item: SectionItem
   @Binding var data: [SectionItem]
   @Binding var draggedItem: SectionItem?
   var saveNewOrder: (AppDatabase) throws -> Void
+  let db: AppDatabase
 
   func dropEntered(info _: DropInfo) {
     guard item != draggedItem,
@@ -216,8 +218,13 @@ struct DropSectionItemViewDelegate: DropDelegate {
   }
 
   func performDrop(info _: DropInfo) -> Bool {
-    try! saveNewOrder(db)
-    draggedItem = nil
-    return true
+    do {
+      try saveNewOrder(db)
+      draggedItem = nil
+      return true
+    } catch {
+      // TODO: add logging for error
+      return false
+    }
   }
 }

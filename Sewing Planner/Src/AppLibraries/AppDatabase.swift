@@ -221,6 +221,7 @@ extension AppDatabase {
       .including(optional: SectionItemRecord.note)
       .filter(Column("sectionId") == sectionId)
       .filter(Column("isDeleted") == false)
+      .order(Column("order").asc)
       .asRequest(of: SectionItem.self)
       .fetchAll(db)
 

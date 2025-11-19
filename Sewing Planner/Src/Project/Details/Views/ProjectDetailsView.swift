@@ -31,7 +31,7 @@ struct ProjectDataView: View {
             .padding(.bottom, 25)
             ForEach($projectBinding.projectData.sections, id: \.id) {
               $section in
-              SectionView(model: $section)
+              SectionView(model: $section, db: db)
                 .padding(.bottom, 16)
             }
           }

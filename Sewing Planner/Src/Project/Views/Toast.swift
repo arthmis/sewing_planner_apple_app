@@ -81,15 +81,13 @@ struct Toast: View {
 
 #Preview {
   @Previewable @State var showToast: ProjectError? = nil
-  var text = "This is some text to demonstrate how the toast will look with long text"
+  var _ = "This is some text to demonstrate how the toast will look with long text"
 
   VStack {
     Button("Toggle Toast") {
       showToast = .addSection
     }
-    if let toast = showToast {
-      Toast(showToast: $showToast)
-    }
+  Toast(showToast: $showToast)
   }
   .frame(width: 500, height: 500)
   .background(.white)
