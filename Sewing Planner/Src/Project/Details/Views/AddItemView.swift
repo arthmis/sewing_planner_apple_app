@@ -118,10 +118,9 @@ struct SecondaryButtonStyle: ButtonStyle {
   func makeBody(configuration: Configuration) -> some View {
     let isPressed = configuration.isPressed
     configuration.label
-      .padding([.top, .bottom], 16)
-      .padding([.leading, .trailing], 16)
-      .frame(maxWidth: .infinity)
-      .background(Color(hex: 0xEFEFEF, opacity: 0.5))
+      .padding([.vertical], 8)
+      .padding([.horizontal], 8)
+      .background(Color(hex: 0xD9D9D9, opacity: 0.5))
       .foregroundColor(.black)
       .clipShape(RoundedRectangle(cornerRadius: 4))
       .scaleEffect(isPressed ? 0.95 : 1)
