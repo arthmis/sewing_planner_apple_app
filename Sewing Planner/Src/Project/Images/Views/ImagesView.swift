@@ -21,6 +21,7 @@ struct ImagesView: View {
   @Environment(\.db) private var db
   @Environment(ProjectViewModel.self) private var project
   @Binding var model: ProjectImages
+  @State var showDeleteImagesDialog = false
   @Namespace var transitionNamespace
 
   var body: some View {
@@ -32,6 +33,7 @@ struct ImagesView: View {
               .buttonStyle(SecondaryButtonStyle())
             Spacer()
             Button {
+              showDeleteImagesDialog = true
             } label: {
               HStack {
                 Text("Delete")
@@ -42,15 +44,6 @@ struct ImagesView: View {
             }
             .disabled(model.selectedImagesIsEmpty)
             .buttonStyle(DeleteButtonStyle())
-            .simultaneousGesture(
-              LongPressGesture(minimumDuration: 2).onEnded { _ in
-                do {
-                  try model.handleDeleteImage(db: db)
-                } catch {
-                  project.handleError(error: .deleteImages)
-                }
-              }
-            )
           }
           .padding(.top, 16)
         }
@@ -87,6 +80,27 @@ struct ImagesView: View {
       }
     }
     .padding([.horizontal, .bottom], 8)
+    .confirmationDialog(
+      "Delete Images",
+      isPresented: $showDeleteImagesDialog
+    ) {
+      Button("Delete", role: .destructive) {
+        do {
+          try model.handleDeleteImage(db: db)
+        } catch {
+          project.handleError(error: .deleteImages)
+        }
+      }
+      Button("Cancel", role: .cancel) {
+        showDeleteImagesDialog = false
+      }
+    } message: {
+      if model.selectedImages.count > 1 {
+        Text("Delete \(model.selectedImages.count) Images")
+      } else {
+        Text("Delete Image")
+      }
+    }
     .sheet(item: $model.overlayedImage) { item in
       VStack {
         HStack(alignment: .firstTextBaseline) {

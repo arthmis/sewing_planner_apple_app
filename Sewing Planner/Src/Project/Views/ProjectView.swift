@@ -312,7 +312,6 @@ extension ProjectViewModel {
           try await self.projectData.updateName(updatedProject: projectData, db: db)
         } catch {
           // TODO: log the error
-          print(error.localizedDescription)
           handleError(error: .renameProject)
         }
         return

@@ -75,7 +75,7 @@ struct SectionView: View {
             }
           }
         }
-        // TODO: Next add the popup for this, with a delete button
+
         Menu {
           Button("Delete") {
             project.initiateDeleteSection(section: model.section)
