@@ -265,20 +265,6 @@ extension AppDatabase {
   }
 }
 
-extension AppDatabase: DbStore {
-  func deleteProjectSection(section: SectionRecord) async throws {
-    _ = try await dbWriter.write { db in
-      try section.delete(db)
-    }
-  }
-
-  func updateProjectTitle(projectData: ProjectMetadata) async throws {
-    _ = try await dbWriter.write { db in
-      try projectData.update(db)
-    }
-  }
-}
-
 extension AppDatabase {
   static func empty() -> AppDatabase {
     let dbQueue = try! DatabaseQueue()
@@ -330,7 +316,22 @@ extension AppDatabase {
   }
 }
 
-protocol DbStore {
-  func deleteProjectSection(section: SectionRecord) async throws
-  func updateProjectTitle(projectData: ProjectMetadata) async throws
+// protocol DbStore {
+//   func deleteProjectSection(section: SectionRecord) async throws
+//   func updateProjectTitle(projectData: ProjectMetadata) async throws
+// }
+
+// extension AppDatabase: DbStore {
+extension AppDatabase {
+  func deleteProjectSection(section: SectionRecord) async throws {
+    _ = try await dbWriter.write { db in
+      try section.delete(db)
+    }
+  }
+
+  func updateProjectTitle(projectData: ProjectMetadata) async throws {
+    _ = try await dbWriter.write { db in
+      try projectData.update(db)
+    }
+  }
 }

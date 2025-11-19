@@ -67,6 +67,7 @@ struct ProjectDataView: View {
 
   struct EmptyProjectCallToActionView: View {
     @Environment(ProjectViewModel.self) var project
+    @Environment(\.db) var db
 
     var body: some View {
       VStack(alignment: .leading, spacing: 0) {
@@ -83,7 +84,7 @@ struct ProjectDataView: View {
         .font(.system(size: 16))
         .padding(.top, 8)
         Button("Create new section") {
-          project.addSection()
+          project.addSection(db: db)
         }
         .buttonStyle(PrimaryButtonStyle(fontSize: 16))
         .padding(.top, 28)

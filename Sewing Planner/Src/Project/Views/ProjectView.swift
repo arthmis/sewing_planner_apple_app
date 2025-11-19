@@ -115,7 +115,7 @@ struct ProjectView: View {
         ToolbarItem(placement: .primaryAction) {
           if project.currentView == CurrentView.details {
             Button {
-              project.addSection()
+              project.addSection(db: db)
             } label: {
               Image(systemName: "plus")
             }
@@ -219,9 +219,9 @@ final class ProjectViewModel {
     self.projectImages = projectImages
   }
 
-  func addSection() {
+  func addSection(db: AppDatabase) {
     do {
-      try projectData.addSection()
+      try projectData.addSection(db: db)
     } catch {
       projectError = .addSection
     }
@@ -292,7 +292,7 @@ extension ProjectViewModel {
     }
   }
 
-  func handleEffect(effect: Effect?, db: DbStore) async {
+  func handleEffect(effect: Effect?, db: AppDatabase) async {
     guard let effect = effect else {
       return
     }
@@ -309,7 +309,7 @@ extension ProjectViewModel {
         return
       case .updateProjectTitle(let projectData):
         do {
-          try await self.projectData.updateName(updatedProject: projectData)
+          try await self.projectData.updateName(updatedProject: projectData, db: db)
         } catch {
           // TODO: log the error
           print(error.localizedDescription)

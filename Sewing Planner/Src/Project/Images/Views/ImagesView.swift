@@ -125,6 +125,7 @@ struct ImagesView: View {
 
 struct EmptyProjectImagesCallToActionView: View {
   @Environment(ProjectViewModel.self) var project
+  @Environment(\.db) var db
 
   var body: some View {
     VStack(alignment: .leading, spacing: 0) {
@@ -141,7 +142,7 @@ struct EmptyProjectImagesCallToActionView: View {
       .font(.system(size: 16))
       .padding(.top, 8)
       Button("Add photos") {
-        project.addSection()
+        project.showPhotoPickerView()
       }
       .buttonStyle(PrimaryButtonStyle(fontSize: 16))
       .padding(.top, 28)

@@ -17,7 +17,6 @@ final class ProjectData {
   var bindedName = ""
   var selectedSectionForDeletion: SectionRecord?
   var showDeleteSectionDialog = false
-  let db: AppDatabase = .db()
 
   init(data: ProjectMetadata) {
     self.data = data
@@ -28,11 +27,13 @@ final class ProjectData {
     sections = projectSections
   }
 
-  func addSection() throws {
+  func addSection(db: AppDatabase) throws {
     try db.getWriter().write { db in
       let now = Date()
       var sectionInput = SectionInputRecord(
-        projectId: data.id, name: "Section \(sections.count + 1)", createDate: now,
+        projectId: data.id,
+        name: "Section \(sections.count + 1)",
+        createDate: now,
         updateDate: now
       )
       try sectionInput.save(db)
@@ -47,7 +48,7 @@ final class ProjectData {
     showDeleteSectionDialog = false
   }
 
-  func updateName(updatedProject: ProjectMetadata) async throws {
+  func updateName(updatedProject: ProjectMetadata, db: AppDatabase) async throws {
     try await db.getWriter().write { db in
       try updatedProject.update(db)
 
@@ -55,7 +56,7 @@ final class ProjectData {
     }
   }
 
-  private func updateProjectNameInSharedExtensionProjectList(project: ProjectMetadata) throws {
+  func updateProjectNameInSharedExtensionProjectList(project: ProjectMetadata) throws {
     let fileData = try SharedPersistence().getFile(fileName: "projects")
     guard let data = fileData else {
       // TODO: figure out what I want to do here if no file is found
