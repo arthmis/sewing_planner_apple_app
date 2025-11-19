@@ -15,9 +15,9 @@ import SwiftUI
 let UserCreatedOneProject: String = "CreatedOneProject"
 
 struct ProjectsView: View {
-  @Environment(\.appDatabase) private var appDatabase
-  @Environment(\.store) private var store
+  @Environment(\.db) private var appDatabase
   @Environment(\.settings) var settings
+  @Environment(Store.self) var store
 
   func fetchProjects() {
     do {
@@ -31,24 +31,24 @@ struct ProjectsView: View {
 
   var body: some View {
     @Bindable var storeBinding = store
-    if case let .some(error) = store.appError {
+    if case .some(let error) = store.appError {
       // TODO: do this error handling for how to display the toast message
       // add a transition to the toast to come from the top
       switch error {
-      case .projectCards:
-        Text(
-          "Couldn't load projects. Tap button to try reloading again."
-        )
-        Button("Load Projects") {
-          fetchProjects()
-          store.appError = nil
-        }
-      case .loadProject:
-        Text("Couldn't load project. Try again.")
-      case .addProject:
-        Text("Couldn't add project. Try again.")
-      case .unexpectedError:
-        Text("Something unexpected happen. Contact developer about this.")
+        case .projectCards:
+          Text(
+            "Couldn't load projects. Tap button to try reloading again."
+          )
+          Button("Load Projects") {
+            fetchProjects()
+            store.appError = nil
+          }
+        case .loadProject:
+          Text("Couldn't load project. Try again.")
+        case .addProject:
+          Text("Couldn't add project. Try again.")
+        case .unexpectedError:
+          Text("Something unexpected happen. Contact developer about this.")
       }
     } else {
       NavigationStack(path: $storeBinding.navigation) {
@@ -146,9 +146,9 @@ struct ProjectsView: View {
 }
 
 struct ProjectCardView: View {
+  @Environment(Store.self) private var store
   var projectData: ProjectCardViewModel
   @Binding var projectsNavigation: [ProjectMetadata]
-  @Environment(\.store) private var store
 
   var body: some View {
     HStack {
@@ -220,6 +220,7 @@ struct MaybeProjectImageView: View {
   }
 }
 
-#Preview {
-  ProjectsView()
-}
+// #Preview {
+//   let db = AppDatabase.db()
+//   ProjectsView(store: Store(db: db))
+// }

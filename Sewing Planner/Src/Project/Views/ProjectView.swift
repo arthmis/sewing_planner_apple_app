@@ -17,8 +17,8 @@ enum CurrentView {
 struct LoadProjectView: View {
   // used for dismissing a view(basically the back button)
   @Environment(\.dismiss) private var dismiss
-  @Environment(\.appDatabase) private var appDatabase
-  @Environment(\.store) private var store
+  @Environment(\.db) private var appDatabase
+  @Environment(Store.self) private var store
   @Binding var projectsNavigation: [ProjectMetadata]
   let fetchProjects: () -> Void
   // @State var isLoading = true
@@ -82,7 +82,7 @@ struct LoadProjectView: View {
 struct ProjectView: View {
   // used for dismissing a view(basically the back button)
   @Environment(\.dismiss) private var dismiss
-  @Environment(\.store) private var store
+  @Environment(Store.self) private var store
   @State var project: ProjectViewModel
   @Binding var projectsNavigation: [ProjectMetadata]
   let fetchProjects: () -> Void
@@ -259,19 +259,19 @@ final class ProjectViewModel {
     let result = try await pickerItem?.loadTransferable(type: Data.self)
 
     switch result {
-    case let .some(files):
-      // fix this unwrap by throwing an error, display to user
-      guard let img = UIImage(data: files) else {
-        throw ProjectError.importImage
-      }
-      // TODO: Performance problem here, scale the images in a background task
-      let resizedImage = img.scaleToAppImageMaxDimension()
-      let projectImage = ProjectImageInput(image: resizedImage)
-      try projectImages.importImages([projectImage])
-    case .none:
-      // TODO: think about how to deal with path that couldn't become an image
-      // I'm thinking display an error alert that lists every image that couldn't be uploaded
-      projectError = .importImage
+      case .some(let files):
+        // fix this unwrap by throwing an error, display to user
+        guard let img = UIImage(data: files) else {
+          throw ProjectError.importImage
+        }
+        // TODO: Performance problem here, scale the images in a background task
+        let resizedImage = img.scaleToAppImageMaxDimension()
+        let projectImage = ProjectImageInput(image: resizedImage)
+        try projectImages.importImages([projectImage])
+      case .none:
+        // TODO: think about how to deal with path that couldn't become an image
+        // I'm thinking display an error alert that lists every image that couldn't be uploaded
+        projectError = .importImage
     // errorToast = ErrorToast(show: true, message: "Error importing images. Please try again later")
     // log error
     }
@@ -283,11 +283,11 @@ enum ProjectEvent {
 }
 
 extension ProjectViewModel {
-  func handleEvent(event: ProjectEvent) -> Effect? {
+  @MainActor func handleEvent(event: ProjectEvent) -> Effect? {
     switch event {
-    case .UpdatedProjectTitle(let newTitle):
-      projectData.data.name = newTitle
-      return Effect.updateProjectTitle(projectData: projectData.data)
+      case .UpdatedProjectTitle(let newTitle):
+        projectData.data.name = newTitle
+        return Effect.updateProjectTitle(projectData: projectData.data)
     }
   }
 
@@ -297,24 +297,26 @@ extension ProjectViewModel {
     }
 
     switch effect {
-    case let .deleteSection(section):
-      do {
-        try await db.deleteProjectSection(section: section)
-        await removeSection(section: section)
-      } catch {
-        await cancelSectionDeletion(withError: .deleteSection)
-      }
-      // TODO: show some kind of progress view to show section is being deleted
-      return
-    case .updateProjectTitle(let projectData):
-      do {
-        try await self.projectData.updateName(updatedProject: projectData)
-      } catch {
-        // TODO: log the error
-        handleError(error: .renameProject)
-      }
-    case .doNothing:
-      return
+      case .deleteSection(let section):
+        do {
+          try await db.deleteProjectSection(section: section)
+          await removeSection(section: section)
+        } catch {
+          await cancelSectionDeletion(withError: .deleteSection)
+        }
+        // TODO: show some kind of progress view to show section is being deleted
+        return
+      case .updateProjectTitle(let projectData):
+        do {
+          try await self.projectData.updateName(updatedProject: projectData)
+        } catch {
+          // TODO: log the error
+          print(error.localizedDescription)
+          handleError(error: .renameProject)
+        }
+        return
+      case .doNothing:
+        return
     }
   }
 

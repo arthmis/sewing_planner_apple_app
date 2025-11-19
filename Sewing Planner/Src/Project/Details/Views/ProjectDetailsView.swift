@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ProjectDataView: View {
   @Environment(ProjectViewModel.self) var project
-  @Environment(\.appDatabase) var db
+  @Environment(\.db) var db
 
   var body: some View {
     @Bindable var projectBinding = project
@@ -97,8 +97,16 @@ struct ProjectDataView: View {
   let viewModel = ProjectViewModel(
     data: ProjectData(
       data: ProjectMetadata(
-        id: 1, name: "Project Name", completed: false, createDate: Date(), updateDate: Date())),
-    projectsNavigation: [], projectImages: ProjectImages(projectId: 1))
+        id: 1,
+        name: "Project Name",
+        completed: false,
+        createDate: Date(),
+        updateDate: Date()
+      )
+    ),
+    projectsNavigation: [],
+    projectImages: ProjectImages(projectId: 1)
+  )
   ProjectDataView()
     .environment(viewModel)
 

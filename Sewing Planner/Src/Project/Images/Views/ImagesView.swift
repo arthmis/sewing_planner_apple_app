@@ -18,7 +18,7 @@ struct OverlayedImage: Identifiable, Hashable {
 }
 
 struct ImagesView: View {
-  @Environment(\.appDatabase) private var appDatabase
+  @Environment(\.db) private var appDatabase
   @Environment(ProjectViewModel.self) private var project
   @Binding var model: ProjectImages
   @Namespace var transitionNamespace
@@ -49,7 +49,8 @@ struct ImagesView: View {
                 } catch {
                   project.handleError(error: .deleteImages)
                 }
-              })
+              }
+            )
           }
           .padding(.top, 16)
         }
@@ -64,7 +65,8 @@ struct ImagesView: View {
               GridItem(.flexible(minimum: 100, maximum: 400), spacing: 4),
               GridItem(.flexible(minimum: 100, maximum: 400), spacing: 4),
               //                    GridItem(.adaptive(minimum: 100), spacing: 4),
-            ], spacing: 4
+            ],
+            spacing: 4
           ) {
             ForEach($model.images, id: \.self.path) { $image in
               if !model.isInDeleteMode {
@@ -75,7 +77,8 @@ struct ImagesView: View {
                   .matchedTransitionSource(id: image.path, in: transitionNamespace)
               } else {
                 SelectedImageButton(
-                  image: $image, selectedImagesForDeletion: $model.selectedImages
+                  image: $image,
+                  selectedImagesForDeletion: $model.selectedImages
                 )
               }
             }
@@ -142,7 +145,7 @@ struct EmptyProjectImagesCallToActionView: View {
       }
       .buttonStyle(PrimaryButtonStyle(fontSize: 16))
       .padding(.top, 28)
-        Spacer()
+      Spacer()
     }
     .padding(.top, 20)
   }
@@ -154,8 +157,16 @@ struct EmptyProjectImagesCallToActionView: View {
   @Previewable @State var viewModel = ProjectViewModel(
     data: ProjectData(
       data: ProjectMetadata(
-        id: 1, name: "Project Name", completed: false, createDate: Date(), updateDate: Date())),
-    projectsNavigation: [], projectImages: ProjectImages(projectId: 1, images: []))
+        id: 1,
+        name: "Project Name",
+        completed: false,
+        createDate: Date(),
+        updateDate: Date()
+      )
+    ),
+    projectsNavigation: [],
+    projectImages: ProjectImages(projectId: 1, images: [])
+  )
   ImagesView(
     model: $viewModel.projectImages
   )

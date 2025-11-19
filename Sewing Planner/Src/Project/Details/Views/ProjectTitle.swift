@@ -10,7 +10,7 @@ import SwiftUI
 
 struct ProjectTitle: View {
   @Environment(ProjectViewModel.self) var project
-  @Environment(\.appDatabase) var db
+  @Environment(\.db) var db
   var projectData: ProjectMetadata
   @State var bindedName: String
   @State var isEditing = false
