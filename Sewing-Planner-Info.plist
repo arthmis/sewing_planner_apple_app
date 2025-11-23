@@ -2,16 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>UILaunchScreen</key>
-	<dict>
-		<key>UIToolbar</key>
-		<dict>
-			<key>UIImageName</key>
-			<string></string>
-		</dict>
-		<key>UILaunchScreen</key>
-		<dict/>
-	</dict>
 	<key>UIAppFonts</key>
 	<array>
 		<string>CooperHewitt-Book.otf</string>
@@ -20,5 +10,15 @@
 		<string>SourceSans3-Regular.ttf</string>
 		<string>SourceSans3-Bold.ttf</string>
 	</array>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UILaunchScreen</key>
+		<dict/>
+		<key>UIToolbar</key>
+		<dict>
+			<key>UIImageName</key>
+			<string></string>
+		</dict>
+	</dict>
 </dict>
 </plist>
