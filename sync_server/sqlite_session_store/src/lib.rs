@@ -1,3 +1,5 @@
+mod schema;
+
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -23,8 +25,8 @@ pub struct SqliteSessionStore {
 #[derive(Queryable, Selectable, Insertable)]
 #[diesel(table_name = crate::schema::sessions)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
-#[derive(Serialize, Deserialize)]
-pub struct UserSession {
+#[derive(Serialize, Deserialize, Debug)]
+pub struct StoreSession {
     id: String,
     data: Vec<u8>,
     expires: i32,
@@ -48,9 +50,9 @@ impl SessionStore for SqliteSessionStore {
 
         let result = {
             let mut conn = self.conn.lock().await;
-            let result: UserSession = match table
+            let result: StoreSession = match table
                 .filter(id.eq(session_key.as_ref()))
-                .select(UserSession::as_select())
+                .select(StoreSession::as_select())
                 .first(&mut conn)
                 .await
             {
@@ -87,7 +89,7 @@ impl SessionStore for SqliteSessionStore {
             }
         };
 
-        let user_session = UserSession {
+        let user_session = StoreSession {
             id: session_key.as_ref().to_string(),
             data: session_state,
             expires: 1_000,

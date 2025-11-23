@@ -1,15 +1,22 @@
-mod schema;
-mod sqlite_session_store;
+mod api;
 
 use actix_session::{Session, SessionMiddleware};
 use actix_web::cookie::Key;
 use actix_web::{App, HttpResponse, HttpServer, Responder, get, post, web};
 use diesel::{Connection, SqliteConnection};
-use diesel_async::sync_connection_wrapper::SyncConnectionWrapper;
 
 #[get("/")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!")
+async fn hello(session: Session) -> impl Responder {
+    // let user_id = session.insert("user_id", "hello").unwrap();
+    let user_id: Option<String> = session.get("user_id").unwrap();
+    // let user_id = session.get::<UserSession>("user_id").unwrap();
+    // if let Some(user_id) = user_id {
+    //     dbg!(user_id);
+    //     HttpResponse::Ok().body(format!("Hello user {}", "user"))
+    // } else {
+    //     HttpResponse::Ok().body("Hello world!")
+    // }
+    "Hello"
 }
 
 pub fn establish_connection() -> SqliteConnection {
@@ -35,7 +42,7 @@ async fn main() -> std::io::Result<()> {
             .service(hello)
     })
     .workers(1)
-    .bind(("127.0.0.1", 8080))?
+    .bind(("localhost", 8080))?
     .run()
     .await
 }
