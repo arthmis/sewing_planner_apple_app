@@ -1,0 +1,16 @@
+[package]
+name = "sync_server"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+actix-session = "0.11.0"
+actix-web = "4"
+anyhow = "1.0.100"
+async-lock = "3.4.1"
+diesel = { version = "2.2.0", features = ["sqlite", "returning_clauses_for_sqlite_3_35"] }
+diesel-async = { version = "0.7.0", features = ["postgres", "sync-connection-wrapper"] }
+libsqlite3-sys = { version = "0.35", features = ["bundled"] }
+serde = "1.0.228"
+serde_json = "1.0.145"
+# compio = { version = "0.16.0", features = ["macros"] }
