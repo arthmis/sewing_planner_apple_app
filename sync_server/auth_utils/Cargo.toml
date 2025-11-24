@@ -1,0 +1,10 @@
+[package]
+name = "auth_utils"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+argon2 = "0.5.3"
+anyhow = { workspace = true }
+serde = { workspace = true }
+email_address = { workspace = true }

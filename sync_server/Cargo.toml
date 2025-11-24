@@ -4,27 +4,30 @@ version = "0.1.0"
 edition = "2024"
 
 [workspace]
-members = ["sqlite_session_store"]
+members = ["auth_utils","sqlite_session_store"]
 
 [workspace.dependencies]
 actix-session = "0.11.0"
 actix-web = "4"
 anyhow = "1.0.100"
 async-lock = "3.4.1"
-diesel = { version = "2.2.0", features = ["sqlite", "returning_clauses_for_sqlite_3_35"] }
+diesel = { version = "2.2.0", features = ["sqlite", "returning_clauses_for_sqlite_3_35", "postgres_backend"] }
 diesel-async = { version = "0.7.0", features = ["postgres", "sync-connection-wrapper"] }
 libsqlite3-sys = { version = "0.35", features = ["bundled"] }
 serde = "1.0.228"
 serde_json = "1.0.145"
-# compio = { version = "0.16.0", features = ["macros"] }
+email_address = "0.2.9"
+chrono = "0.4"
 
 [dependencies]
 sqlite_session_store = { path = "./sqlite_session_store" }
+auth_utils = { path = "./auth_utils" }
 actix-session = { workspace = true }
 actix-web = { workspace = true }
-# anyhow = { workspace = true }
+anyhow = { workspace = true }
 async-lock = { workspace = true }
-diesel = { workspace = true, features = ["sqlite", "returning_clauses_for_sqlite_3_35"] }
-diesel-async = { workspace = true, features = ["postgres", "sync-connection-wrapper"] }
+diesel = { workspace = true, features = ["postgres_backend"] }
+diesel-async = { workspace = true, features = ["postgres", "sync-connection-wrapper", "pool", "deadpool"] }
 serde = { workspace = true }
 serde_json = { workspace = true }
+email_address = "0.2.9"
