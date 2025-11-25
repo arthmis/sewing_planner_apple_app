@@ -1,4 +1,5 @@
 mod api;
+mod db;
 mod schema;
 
 use actix_session::{Session, SessionMiddleware};
@@ -60,7 +61,7 @@ async fn main() -> std::io::Result<()> {
             ))
             .app_data(web::Data::new(pool.clone()))
             .service(hello)
-            .service(api::signup)
+            .service(api::signup_endpoint)
             .service(api::login)
     })
     .workers(1)

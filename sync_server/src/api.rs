@@ -18,6 +18,8 @@ use serde::Deserialize;
 use serde::Serialize;
 use std::io::Write;
 
+use crate::db::{DB, Database};
+
 #[derive(
     Debug,
     Clone,
@@ -27,7 +29,7 @@ use std::io::Write;
     diesel::deserialize::FromSqlRow,
 )]
 #[diesel(sql_type = Text)]
-struct Email(EmailAddress);
+pub struct Email(EmailAddress);
 
 impl FromSql<Text, diesel::pg::Pg> for Email {
     fn from_sql(bytes: diesel::pg::PgValue) -> deserialize::Result<Self> {
@@ -47,7 +49,7 @@ impl ToSql<Text, diesel::pg::Pg> for Email {
 }
 
 impl Email {
-    fn as_str(&self) -> &str {
+    pub fn as_str(&self) -> &str {
         self.0.as_str()
     }
 }
@@ -91,7 +93,7 @@ impl TryFrom<SignupCredentials> for UserCredentials {
 
 #[derive(Insertable, Debug)]
 #[diesel(table_name = crate::schema::users)]
-struct UserInput {
+pub struct UserInput {
     email: Email,
     password_hash: String,
 }
@@ -104,7 +106,7 @@ struct UserLogin {
 
 #[derive(Queryable, Insertable, Selectable, Debug, Serialize)]
 #[diesel(table_name = crate::schema::users)]
-struct User {
+pub struct User {
     id: i32,
     email: Email,
     password_hash: String,
@@ -113,20 +115,27 @@ struct User {
 type DbPool = Pool<AsyncPgConnection>;
 
 #[post("/signup")]
-async fn signup(
+async fn signup_endpoint(
     db_pool: web::Data<DbPool>,
     web::Json(credentials): web::Json<SignupCredentials>,
 ) -> actix_web::Result<(), actix_web::Error> {
-    let credentials = UserCredentials::try_from(credentials).unwrap();
+    let mut conn = db_pool.get().await.unwrap();
+    let db = DB::new(&mut conn).unwrap();
 
+    signup(credentials, db).await.unwrap();
+    Ok(())
+}
+
+async fn signup(credentials: SignupCredentials, mut db: impl Database) -> Result<(), Error> {
+    let credentials = UserCredentials::try_from(credentials).unwrap();
     let hash = auth_utils::generate_password_hash(&credentials.password).unwrap();
     let user = UserInput {
         email: credentials.email,
         password_hash: hash,
     };
 
-    let mut conn = db_pool.get().await.unwrap();
-    store_user(user, &mut conn).await.unwrap();
+    db.create_user(user).await.unwrap();
+
     Ok(())
 }
 
@@ -151,22 +160,6 @@ async fn login(
     Ok(())
 }
 
-async fn store_user(
-    user: UserInput,
-    conn: &mut pg::AsyncPgConnection,
-) -> Result<(), diesel::result::Error> {
-    use crate::schema::users::dsl::*;
-
-    let count = diesel::insert_into(users)
-        .values(user)
-        .execute(conn)
-        .await?;
-
-    debug_assert!(count == 1);
-
-    Ok(())
-}
-
 async fn get_user(
     user_email: &Email,
     conn: &mut pg::AsyncPgConnection,
@@ -181,4 +174,101 @@ async fn get_user(
         .unwrap();
 
     Ok(user_id)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::db::Database;
+
+    pub struct MockDatabase {
+        get_user_fn: Box<dyn Fn(&Email) -> Result<User, anyhow::Error> + Send + Sync>,
+        create_user_fn: Box<dyn Fn(UserInput) -> Result<(), anyhow::Error> + Send + Sync>,
+    }
+
+    impl MockDatabase {
+        pub fn builder() -> MockDatabaseBuilder {
+            MockDatabaseBuilder::default()
+        }
+    }
+
+    pub struct MockDatabaseBuilder {
+        get_user_fn: Option<Box<dyn Fn(&Email) -> Result<User, anyhow::Error> + Send + Sync>>,
+        create_user_fn: Option<Box<dyn Fn(UserInput) -> Result<(), anyhow::Error> + Send + Sync>>,
+    }
+
+    impl Default for MockDatabaseBuilder {
+        fn default() -> Self {
+            Self {
+                get_user_fn: None,
+                create_user_fn: None,
+            }
+        }
+    }
+
+    impl MockDatabaseBuilder {
+        pub fn with_get_user<F>(mut self, f: F) -> Self
+        where
+            F: Fn(&Email) -> Result<User, anyhow::Error> + Send + Sync + 'static,
+        {
+            self.get_user_fn = Some(Box::new(f));
+            self
+        }
+
+        pub fn with_create_user<F>(mut self, f: F) -> Self
+        where
+            F: Fn(UserInput) -> Result<(), anyhow::Error> + Send + Sync + 'static,
+        {
+            self.create_user_fn = Some(Box::new(f));
+            self
+        }
+
+        pub fn build(self) -> MockDatabase {
+            MockDatabase {
+                get_user_fn: self.get_user_fn.unwrap_or_else(|| {
+                    Box::new(|_| Err(anyhow::anyhow!("get_user not configured")))
+                }),
+                create_user_fn: self.create_user_fn.unwrap_or_else(|| Box::new(|_| Ok(()))),
+            }
+        }
+    }
+
+    impl Database for MockDatabase {
+        async fn get_user(&mut self, user_email: &Email) -> Result<User, anyhow::Error> {
+            (self.get_user_fn)(user_email)
+        }
+
+        async fn create_user(&mut self, user: UserInput) -> Result<(), anyhow::Error> {
+            (self.create_user_fn)(user)
+        }
+    }
+
+    #[actix_web::test]
+    async fn test_create_user() {
+        let mock_db = MockDatabase::builder()
+            .with_create_user(|_user| Ok(()))
+            .build();
+
+        let credentials = SignupCredentials {
+            email: "test@example.com".to_string(),
+            password: "password123".to_string(),
+        };
+
+        let result = signup(credentials, mock_db).await;
+        assert!(result.is_ok());
+    }
+
+    // #[actix_rt::test]
+    // async fn test_get_user() {
+    //     let mut conn = db_pool.get().await.unwrap();
+    //     let user = UserInput {
+    //         email: "test@example.com".parse().unwrap(),
+    //         password_hash: "password".to_string(),
+    //     };
+
+    //     create_user(user, &mut conn).await.unwrap();
+
+    //     let user = get_user(&"test@example.com".parse().unwrap(), &mut conn).await.unwrap();
+    //     assert_eq!(user.email, "test@example.com");
+    // }
 }
