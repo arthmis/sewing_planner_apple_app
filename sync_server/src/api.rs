@@ -1,6 +1,6 @@
-use actix_session::Session;
-use actix_web::http::header;
-use actix_web::{Error, mime, post, web};
+use actix_session::{Session, SessionInsertError};
+use actix_web::http::{StatusCode, header};
+use actix_web::{Error, HttpResponse, Responder, get, mime, post, web};
 use actix_web::{HttpResponseBuilder, ResponseError};
 use auth_utils::GenerateHashError;
 use diesel::ExpressionMethods;
@@ -190,25 +190,81 @@ async fn signup(credentials: SignupCredentials, mut db: impl Database) -> Result
     Ok(())
 }
 
+#[derive(Debug, Snafu)]
+pub enum LoginError {
+    #[snafu(display("Invalid email or password"))]
+    InvalidCredentials,
+    #[snafu(display("Internal server error. Please try again later."))]
+    UserNotFound {
+        #[snafu(implicit)]
+        location: Location,
+        source: diesel::result::Error,
+    },
+    #[snafu(display("Internal server error. Please try again later."))]
+    SessionError {
+        #[snafu(implicit)]
+        location: Location,
+        source: SessionInsertError,
+    },
+}
+
+impl ResponseError for LoginError {
+    fn status_code(&self) -> StatusCode {
+        match self {
+            LoginError::InvalidCredentials => StatusCode::OK,
+            LoginError::UserNotFound { .. } | LoginError::SessionError { .. } => {
+                StatusCode::INTERNAL_SERVER_ERROR
+            }
+        }
+    }
+
+    fn error_response(&self) -> actix_web::HttpResponse<actix_web::body::BoxBody> {
+        let mut response_builder = HttpResponseBuilder::new(self.status_code());
+        response_builder.insert_header((header::CONTENT_TYPE, mime::TEXT_PLAIN_UTF_8));
+
+        let message = self.to_string();
+        let response = response_builder.body(message);
+
+        response
+    }
+}
+
 #[post("/login")]
 async fn login(
     db_pool: web::Data<DbPool>,
     web::Json(credentials): web::Json<UserLogin>,
     session: Session,
-) -> actix_web::Result<(), Error> {
+) -> actix_web::Result<(), LoginError> {
     let mut conn = db_pool.get().await.unwrap();
-    let user = get_user(&credentials.email, &mut conn).await.unwrap();
-    let result = auth_utils::compare_passwords(&credentials.password, &user.password_hash);
+    let user = get_user(&credentials.email, &mut conn)
+        .await
+        .context(UserNotFoundSnafu)?;
 
+    let result = auth_utils::compare_passwords(&credentials.password, &user.password_hash);
     if let auth_utils::PasswordVerify::NoMatch = result {
-        return Err(actix_web::error::ErrorUnauthorized("Invalid credentials"));
+        return Err(LoginError::InvalidCredentials);
     }
 
-    dbg!(user.id);
-    let _user_id = session.insert("user_id", user.id).unwrap();
-    let session_user_id: i32 = session.get("user_id").unwrap().unwrap();
-    dbg!(session_user_id);
+    session.insert("user_id", user.id).context(SessionSnafu)?;
     Ok(())
+}
+
+#[get("/")]
+pub async fn hello(session: Session) -> impl Responder {
+    // let user_id = session.insert("user_id", "hello").unwrap();
+    let user_id: Option<i32> = session.get("user_id").unwrap();
+    dbg!(user_id);
+    // let user_id = session.get::<UserSession>("user_id").unwrap();
+    // if let Some(user_id) = user_id {
+    //     dbg!(user_id);
+    //     HttpResponse::Ok().body(format!("Hello user {}", "user"))
+    // } else {
+    //     HttpResponse::Ok().body("Hello world!")
+    // }
+    match user_id {
+        Some(id) => HttpResponse::Ok().body(format!("Hello user {}", id)),
+        None => HttpResponse::Ok().body("Hello world!"),
+    }
 }
 
 async fn get_user(

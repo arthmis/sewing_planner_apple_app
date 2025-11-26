@@ -2,27 +2,12 @@ mod api;
 mod db;
 mod schema;
 
-use actix_session::{Session, SessionMiddleware};
+use actix_session::SessionMiddleware;
 use actix_web::cookie::Key;
-use actix_web::{App, HttpServer, Responder, get, web};
+use actix_web::{App, HttpServer, web};
 use diesel::{Connection, SqliteConnection};
 use diesel_async::AsyncPgConnection;
 use diesel_async::pooled_connection::AsyncDieselConnectionManager;
-
-#[get("/")]
-async fn hello(session: Session) -> impl Responder {
-    // let user_id = session.insert("user_id", "hello").unwrap();
-    let user_id: Option<i32> = session.get("user_id").unwrap();
-    dbg!(user_id);
-    // let user_id = session.get::<UserSession>("user_id").unwrap();
-    // if let Some(user_id) = user_id {
-    //     dbg!(user_id);
-    //     HttpResponse::Ok().body(format!("Hello user {}", "user"))
-    // } else {
-    //     HttpResponse::Ok().body("Hello world!")
-    // }
-    "Hello"
-}
 
 pub fn get_session_conn() -> SqliteConnection {
     // dotenv().ok();
@@ -60,7 +45,7 @@ async fn main() -> std::io::Result<()> {
                 secret_key.clone(),
             ))
             .app_data(web::Data::new(pool.clone()))
-            .service(hello)
+            .service(api::hello)
             .service(api::signup_endpoint)
             .service(api::login)
     })
