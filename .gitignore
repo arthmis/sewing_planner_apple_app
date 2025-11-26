@@ -33,6 +33,7 @@ buildServer.json
 
 # rust
 target/
+*.db
 
 # bruno
 bruno.json

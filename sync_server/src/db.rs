@@ -41,6 +41,11 @@ impl<'a> Database for DB<'a> {
     async fn create_user(&mut self, user: UserInput) -> Result<(), Error> {
         use crate::schema::users::dsl::*;
 
+        // return Err(diesel::result::Error::DatabaseError(
+        //     diesel::result::DatabaseErrorKind::ClosedConnection,
+        //     Box::new("Database connection closed".to_string()),
+        // ));
+
         let count = diesel::insert_into(users)
             .values(user)
             .execute(&mut self.conn)

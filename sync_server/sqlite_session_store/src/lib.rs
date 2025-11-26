@@ -8,6 +8,7 @@ use actix_session::storage::SessionStore;
 use actix_session::storage::generate_session_key;
 use anyhow::anyhow;
 use async_lock::Mutex;
+use chrono::NaiveDateTime;
 use diesel::SqliteConnection;
 use diesel::prelude::*;
 use diesel_async::RunQueryDsl;
@@ -29,7 +30,7 @@ pub struct SqliteSessionStore {
 pub struct StoreSession {
     id: String,
     data: Vec<u8>,
-    expires: i32,
+    expires: NaiveDateTime,
 }
 
 impl SqliteSessionStore {
@@ -38,6 +39,29 @@ impl SqliteSessionStore {
         SqliteSessionStore {
             conn: Arc::new(Mutex::new(conn)),
         }
+    }
+
+    // pub async fn delete_expired(&self) -> Result<(), DeleteError> {
+    //     use crate::schema::sessions::*;
+
+    //     let mut conn = self.conn.lock().await;
+    //     let result = table
+    //         .filter(expires.lt(chrono::OffsetDateTime::now_utc().unix_timestamp()))
+    //         .delete()
+    //         .execute(&mut conn);
+
+    //     match result {
+    //         Ok(_) => Ok(()),
+    //         Err(err) => Err(DeleteError::Other(
+    //             anyhow!("failed to delete expired sessions").context(err),
+    //         )),
+    //     }
+    // }
+    fn calculate_expires(
+        now: &NaiveDateTime,
+        ttl: &actix_web::cookie::time::Duration,
+    ) -> NaiveDateTime {
+        *now + chrono::Duration::seconds(ttl.whole_seconds())
     }
 }
 
@@ -51,7 +75,7 @@ impl SessionStore for SqliteSessionStore {
         let result = {
             let mut conn = self.conn.lock().await;
             let result: StoreSession = match table
-                .filter(id.eq(session_key.as_ref()))
+                .find(session_key.as_ref())
                 .select(StoreSession::as_select())
                 .first(&mut conn)
                 .await
@@ -74,8 +98,7 @@ impl SessionStore for SqliteSessionStore {
     async fn save(
         &self,
         session_state: SessionState,
-        // TODO: add handling for ttl
-        _ttl: &actix_web::cookie::time::Duration,
+        ttl: &actix_web::cookie::time::Duration,
     ) -> Result<actix_session::storage::SessionKey, actix_session::storage::SaveError> {
         use crate::schema::sessions::*;
 
@@ -89,10 +112,12 @@ impl SessionStore for SqliteSessionStore {
             }
         };
 
+        let expires_datetime = Self::calculate_expires(&chrono::Utc::now().naive_utc(), ttl);
+
         let user_session = StoreSession {
             id: session_key.as_ref().to_string(),
             data: session_state,
-            expires: 1_000,
+            expires: expires_datetime,
         };
 
         let mut conn = self.conn.lock().await;
@@ -116,8 +141,7 @@ impl SessionStore for SqliteSessionStore {
         &self,
         session_key: actix_session::storage::SessionKey,
         session_state: SessionState,
-        // TODO: deal with ttl
-        _ttl: &actix_web::cookie::time::Duration,
+        ttl: &actix_web::cookie::time::Duration,
     ) -> Result<actix_session::storage::SessionKey, actix_session::storage::UpdateError> {
         use crate::schema::sessions::*;
 
@@ -130,9 +154,12 @@ impl SessionStore for SqliteSessionStore {
             }
         };
 
+        let updated_expires_datetime =
+            Self::calculate_expires(&chrono::Utc::now().naive_utc(), ttl);
+
         let mut conn = self.conn.lock().await;
-        match diesel::update(table.find(id))
-            .set((data.eq(session_state), expires.eq(1000)))
+        match diesel::update(table.find(session_key.as_ref()))
+            .set((data.eq(session_state), expires.eq(updated_expires_datetime)))
             .execute(&mut conn)
             .await
         {
@@ -156,7 +183,7 @@ impl SessionStore for SqliteSessionStore {
         use crate::schema::sessions::*;
 
         let mut conn = self.conn.lock().await;
-        match diesel::delete(table.filter(id.eq(session_key.as_ref())))
+        match diesel::delete(table.find(session_key.as_ref()))
             .execute(&mut conn)
             .await
         {
@@ -176,6 +203,25 @@ impl SessionStore for SqliteSessionStore {
         session_key: &actix_session::storage::SessionKey,
         ttl: &actix_web::cookie::time::Duration,
     ) -> Result<(), anyhow::Error> {
+        use crate::schema::sessions::*;
+
+        let updated_expires_datetime =
+            Self::calculate_expires(&chrono::Utc::now().naive_utc(), ttl);
+
+        let mut conn = self.conn.lock().await;
+        match diesel::update(table.find(session_key.as_ref()))
+            .set(expires.eq(updated_expires_datetime))
+            .execute(&mut conn)
+            .await
+        {
+            Ok(count) => {
+                debug_assert!(count == 1);
+            }
+            Err(err) => {
+                return Err(anyhow!("failed to update session ttl in sqlite").context(err));
+            }
+        };
+
         Ok(())
     }
 }
