@@ -18,6 +18,8 @@ serde = "1.0.228"
 serde_json = "1.0.145"
 email_address = "0.2.9"
 chrono = "0.4"
+argon2 = { version = "0.5.3", features = ["std"] }
+snafu = { version = "0.8.9", features = ["rust_1_81", "alloc"] }
 
 [dependencies]
 sqlite_session_store = { path = "./sqlite_session_store" }
@@ -30,4 +32,7 @@ diesel = { workspace = true, features = ["postgres_backend"] }
 diesel-async = { workspace = true, features = ["postgres", "sync-connection-wrapper", "pool", "deadpool"] }
 serde = { workspace = true }
 serde_json = { workspace = true }
+argon2 = { workspace = true }
+snafu = { workspace = true, features = ["rust_1_81", "alloc"] }
+
 email_address = "0.2.9"

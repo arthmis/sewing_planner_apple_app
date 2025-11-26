@@ -1,5 +1,6 @@
 use actix_session::Session;
 use actix_web::{Error, post, web};
+use auth_utils::GenerateHashError;
 use diesel::ExpressionMethods;
 use diesel::Insertable;
 use diesel::QueryDsl;
@@ -16,6 +17,8 @@ use diesel_async::pooled_connection::deadpool::Pool;
 use email_address::{EmailAddress, Options};
 use serde::Deserialize;
 use serde::Serialize;
+use snafu::ResultExt;
+use snafu::Snafu;
 use std::io::Write;
 
 use crate::db::{DB, Database};
@@ -66,7 +69,7 @@ struct UserCredentials {
 }
 
 impl TryFrom<SignupCredentials> for UserCredentials {
-    type Error = anyhow::Error;
+    type Error = SignupError;
 
     fn try_from(value: SignupCredentials) -> Result<Self, Self::Error> {
         let email = EmailAddress::parse_with_options(&value.email, Options::default());
@@ -74,14 +77,12 @@ impl TryFrom<SignupCredentials> for UserCredentials {
         let email = match email {
             Ok(email) => Email(email),
             Err(_) => {
-                return Err(
-                    anyhow::anyhow!("Invalid email address").context("Failed to parse email")
-                );
+                return Err(SignupError::InvalidEmail);
             }
         };
 
         if value.password.is_empty() {
-            return Err(anyhow::anyhow!("Email and password cannot be empty"));
+            return Err(SignupError::InvalidPassword);
         }
 
         Ok(UserCredentials {
@@ -126,15 +127,30 @@ async fn signup_endpoint(
     Ok(())
 }
 
-async fn signup(credentials: SignupCredentials, mut db: impl Database) -> Result<(), Error> {
-    let credentials = UserCredentials::try_from(credentials).unwrap();
-    let hash = auth_utils::generate_password_hash(&credentials.password).unwrap();
+#[derive(Debug, Snafu)]
+pub enum SignupError {
+    #[snafu(display("Invalid email"))]
+    InvalidEmail,
+    #[snafu(display("Invalid password"))]
+    InvalidPassword,
+    #[snafu(display("Create user failed"))]
+    CreateUserFailed { source: diesel::result::Error },
+    #[snafu(display("Password hash error"))]
+    PasswordHashError { source: GenerateHashError },
+}
+
+async fn signup(credentials: SignupCredentials, mut db: impl Database) -> Result<(), SignupError> {
+    let credentials = UserCredentials::try_from(credentials)?;
+    let hash =
+        auth_utils::generate_password_hash(&credentials.password).context(PasswordHashSnafu {})?;
     let user = UserInput {
         email: credentials.email,
         password_hash: hash,
     };
 
-    db.create_user(user).await.unwrap();
+    db.create_user(user)
+        .await
+        .context(CreateUserFailedSnafu {})?;
 
     Ok(())
 }
@@ -147,7 +163,7 @@ async fn login(
 ) -> actix_web::Result<(), Error> {
     let mut conn = db_pool.get().await.unwrap();
     let user = get_user(&credentials.email, &mut conn).await.unwrap();
-    let result = auth_utils::compare_passwords(&credentials.password, &user.password_hash).unwrap();
+    let result = auth_utils::compare_passwords(&credentials.password, &user.password_hash);
 
     if let auth_utils::PasswordVerify::NoMatch = result {
         return Err(actix_web::error::ErrorUnauthorized("Invalid credentials"));
@@ -182,8 +198,8 @@ mod tests {
     use crate::db::Database;
 
     pub struct MockDatabase {
-        get_user_fn: Box<dyn Fn(&Email) -> Result<User, anyhow::Error> + Send + Sync>,
-        create_user_fn: Box<dyn Fn(UserInput) -> Result<(), anyhow::Error> + Send + Sync>,
+        get_user_fn: Box<dyn Fn(&Email) -> Result<User, diesel::result::Error> + Send + Sync>,
+        create_user_fn: Box<dyn Fn(UserInput) -> Result<(), diesel::result::Error> + Send + Sync>,
     }
 
     impl MockDatabase {
@@ -193,8 +209,10 @@ mod tests {
     }
 
     pub struct MockDatabaseBuilder {
-        get_user_fn: Option<Box<dyn Fn(&Email) -> Result<User, anyhow::Error> + Send + Sync>>,
-        create_user_fn: Option<Box<dyn Fn(UserInput) -> Result<(), anyhow::Error> + Send + Sync>>,
+        get_user_fn:
+            Option<Box<dyn Fn(&Email) -> Result<User, diesel::result::Error> + Send + Sync>>,
+        create_user_fn:
+            Option<Box<dyn Fn(UserInput) -> Result<(), diesel::result::Error> + Send + Sync>>,
     }
 
     impl Default for MockDatabaseBuilder {
@@ -209,7 +227,7 @@ mod tests {
     impl MockDatabaseBuilder {
         pub fn with_get_user<F>(mut self, f: F) -> Self
         where
-            F: Fn(&Email) -> Result<User, anyhow::Error> + Send + Sync + 'static,
+            F: Fn(&Email) -> Result<User, diesel::result::Error> + Send + Sync + 'static,
         {
             self.get_user_fn = Some(Box::new(f));
             self
@@ -217,7 +235,7 @@ mod tests {
 
         pub fn with_create_user<F>(mut self, f: F) -> Self
         where
-            F: Fn(UserInput) -> Result<(), anyhow::Error> + Send + Sync + 'static,
+            F: Fn(UserInput) -> Result<(), diesel::result::Error> + Send + Sync + 'static,
         {
             self.create_user_fn = Some(Box::new(f));
             self
@@ -225,20 +243,20 @@ mod tests {
 
         pub fn build(self) -> MockDatabase {
             MockDatabase {
-                get_user_fn: self.get_user_fn.unwrap_or_else(|| {
-                    Box::new(|_| Err(anyhow::anyhow!("get_user not configured")))
-                }),
+                get_user_fn: self
+                    .get_user_fn
+                    .unwrap_or_else(|| Box::new(|_| Err(diesel::result::Error::NotFound))),
                 create_user_fn: self.create_user_fn.unwrap_or_else(|| Box::new(|_| Ok(()))),
             }
         }
     }
 
     impl Database for MockDatabase {
-        async fn get_user(&mut self, user_email: &Email) -> Result<User, anyhow::Error> {
+        async fn get_user(&mut self, user_email: &Email) -> Result<User, diesel::result::Error> {
             (self.get_user_fn)(user_email)
         }
 
-        async fn create_user(&mut self, user: UserInput) -> Result<(), anyhow::Error> {
+        async fn create_user(&mut self, user: UserInput) -> Result<(), diesel::result::Error> {
             (self.create_user_fn)(user)
         }
     }

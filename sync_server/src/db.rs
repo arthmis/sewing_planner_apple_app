@@ -1,10 +1,10 @@
 use crate::api::Email;
 use crate::api::User;
 use crate::api::UserInput;
-use anyhow::Error;
 use diesel::ExpressionMethods;
 use diesel::QueryDsl;
 use diesel::SelectableHelper;
+use diesel::result::Error;
 use diesel_async::RunQueryDsl;
 use diesel_async::pg;
 
@@ -33,8 +33,7 @@ impl<'a> Database for DB<'a> {
             .filter(email.eq(&user_email.as_str()))
             .select(User::as_select())
             .get_result(&mut self.conn)
-            .await
-            .unwrap();
+            .await?;
 
         Ok(user_id)
     }
