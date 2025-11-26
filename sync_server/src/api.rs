@@ -1,5 +1,7 @@
 use actix_session::Session;
-use actix_web::{Error, post, web};
+use actix_web::http::header;
+use actix_web::{Error, mime, post, web};
+use actix_web::{HttpResponseBuilder, ResponseError};
 use auth_utils::GenerateHashError;
 use diesel::ExpressionMethods;
 use diesel::Insertable;
@@ -17,8 +19,9 @@ use diesel_async::pooled_connection::deadpool::Pool;
 use email_address::{EmailAddress, Options};
 use serde::Deserialize;
 use serde::Serialize;
+use snafu::Location;
 use snafu::ResultExt;
-use snafu::Snafu;
+use snafu::prelude::*;
 use std::io::Write;
 
 use crate::db::{DB, Database};
@@ -72,14 +75,9 @@ impl TryFrom<SignupCredentials> for UserCredentials {
     type Error = SignupError;
 
     fn try_from(value: SignupCredentials) -> Result<Self, Self::Error> {
-        let email = EmailAddress::parse_with_options(&value.email, Options::default());
-
-        let email = match email {
-            Ok(email) => Email(email),
-            Err(_) => {
-                return Err(SignupError::InvalidEmail);
-            }
-        };
+        let email = EmailAddress::parse_with_options(&value.email, Options::default())
+            .context(InvalidEmailSnafu {})?;
+        let email = Email(email);
 
         if value.password.is_empty() {
             return Err(SignupError::InvalidPassword);
@@ -119,24 +117,61 @@ type DbPool = Pool<AsyncPgConnection>;
 async fn signup_endpoint(
     db_pool: web::Data<DbPool>,
     web::Json(credentials): web::Json<SignupCredentials>,
-) -> actix_web::Result<(), actix_web::Error> {
+) -> actix_web::Result<(), SignupError> {
     let mut conn = db_pool.get().await.unwrap();
     let db = DB::new(&mut conn).unwrap();
 
-    signup(credentials, db).await.unwrap();
+    signup(credentials, db).await?;
+
     Ok(())
 }
 
 #[derive(Debug, Snafu)]
 pub enum SignupError {
     #[snafu(display("Invalid email"))]
-    InvalidEmail,
+    InvalidEmail {
+        #[snafu(implicit)]
+        location: Location,
+        source: email_address::Error,
+    },
     #[snafu(display("Invalid password"))]
     InvalidPassword,
     #[snafu(display("Create user failed"))]
-    CreateUserFailed { source: diesel::result::Error },
+    CreateUserFailed {
+        #[snafu(implicit)]
+        location: Location,
+        source: diesel::result::Error,
+    },
     #[snafu(display("Password hash error"))]
-    PasswordHashError { source: GenerateHashError },
+    PasswordHashError {
+        #[snafu(implicit)]
+        location: Location,
+        source: GenerateHashError,
+    },
+}
+
+impl ResponseError for SignupError {
+    fn status_code(&self) -> actix_web::http::StatusCode {
+        match self {
+            SignupError::InvalidEmail { .. } => actix_web::http::StatusCode::BAD_REQUEST,
+            SignupError::InvalidPassword => actix_web::http::StatusCode::BAD_REQUEST,
+            SignupError::CreateUserFailed { .. } => {
+                actix_web::http::StatusCode::INTERNAL_SERVER_ERROR
+            }
+            SignupError::PasswordHashError { .. } => {
+                actix_web::http::StatusCode::INTERNAL_SERVER_ERROR
+            }
+        }
+    }
+
+    fn error_response(&self) -> actix_web::HttpResponse<actix_web::body::BoxBody> {
+        let mut response_builder = HttpResponseBuilder::new(self.status_code());
+        response_builder.insert_header((header::CONTENT_TYPE, mime::TEXT_PLAIN_UTF_8));
+        let message = self.to_string();
+        let response = response_builder.body(message);
+
+        response
+    }
 }
 
 async fn signup(credentials: SignupCredentials, mut db: impl Database) -> Result<(), SignupError> {
