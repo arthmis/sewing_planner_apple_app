@@ -41,22 +41,22 @@ impl SqliteSessionStore {
         }
     }
 
-    // pub async fn delete_expired(&self) -> Result<(), DeleteError> {
-    //     use crate::schema::sessions::*;
+    pub async fn delete_expired(&self) -> Result<(), anyhow::Error> {
+        use crate::schema::sessions::*;
 
-    //     let mut conn = self.conn.lock().await;
-    //     let result = table
-    //         .filter(expires.lt(chrono::OffsetDateTime::now_utc().unix_timestamp()))
-    //         .delete()
-    //         .execute(&mut conn);
+        let now = chrono::Utc::now().naive_utc();
+        let mut conn = self.conn.lock().await;
+        let result = diesel::delete(table.filter(expires.lt(now)))
+            .execute(&mut conn)
+            .await;
 
-    //     match result {
-    //         Ok(_) => Ok(()),
-    //         Err(err) => Err(DeleteError::Other(
-    //             anyhow!("failed to delete expired sessions").context(err),
-    //         )),
-    //     }
-    // }
+        // TODO: add logging
+        match result {
+            Ok(_) => Ok(()),
+            Err(err) => Err(anyhow!("failed to delete expired sessions").context(err)),
+        }
+    }
+
     fn calculate_expires(
         now: &NaiveDateTime,
         ttl: &actix_web::cookie::time::Duration,

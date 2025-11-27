@@ -17,7 +17,7 @@ pub fn get_session_conn() -> SqliteConnection {
         .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
 }
 
-pub async fn get_db_conn() -> AsyncDieselConnectionManager<AsyncPgConnection> {
+pub async fn get_app_db_conn() -> AsyncDieselConnectionManager<AsyncPgConnection> {
     // dotenv().ok();
 
     let database_url = std::env::var("DATABASE_URL")
@@ -29,10 +29,23 @@ pub async fn get_db_conn() -> AsyncDieselConnectionManager<AsyncPgConnection> {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let secret_key = Key::generate();
+
     let session_store_conn = get_session_conn();
     let session_store = sqlite_session_store::SqliteSessionStore::new(session_store_conn);
-    let config = get_db_conn().await;
+    let session_store_clone = session_store.clone();
+    // TODO: think about holding a handle to this within the server so it shuts down when the server shuts down
+    let _session_deletion_task = actix_web::rt::spawn(async move {
+        loop {
+            let result = session_store_clone.delete_expired().await;
+            if let Err(err) = result {
+                // TODO: log the error
+                eprintln!("Error deleting expired sessions: {}", err);
+            }
+            actix_web::rt::time::sleep(std::time::Duration::from_secs(100)).await;
+        }
+    });
 
+    let config = get_app_db_conn().await;
     let pool = diesel_async::pooled_connection::deadpool::Pool::builder(config)
         .max_size(10)
         .build()

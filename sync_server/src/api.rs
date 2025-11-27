@@ -1,6 +1,6 @@
 use actix_session::{Session, SessionInsertError};
 use actix_web::http::{StatusCode, header};
-use actix_web::{Error, HttpResponse, Responder, get, mime, post, web};
+use actix_web::{HttpResponse, Responder, get, mime, post, web};
 use actix_web::{HttpResponseBuilder, ResponseError};
 use auth_utils::GenerateHashError;
 use diesel::ExpressionMethods;
