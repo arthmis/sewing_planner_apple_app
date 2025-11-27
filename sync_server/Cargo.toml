@@ -34,5 +34,6 @@ serde = { workspace = true }
 serde_json = { workspace = true }
 argon2 = { workspace = true }
 snafu = { workspace = true, features = ["rust_1_81", "alloc"] }
-
 email_address = "0.2.9"
+dotenvy = "0.15.7"
+base64 = "0.22.1"

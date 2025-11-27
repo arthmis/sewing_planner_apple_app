@@ -5,21 +5,19 @@ mod schema;
 use actix_session::SessionMiddleware;
 use actix_web::cookie::Key;
 use actix_web::{App, HttpServer, web};
+use base64::Engine;
 use diesel::{Connection, SqliteConnection};
 use diesel_async::AsyncPgConnection;
 use diesel_async::pooled_connection::AsyncDieselConnectionManager;
+use dotenvy::dotenv;
 
 pub fn get_session_conn() -> SqliteConnection {
-    // dotenv().ok();
-
     let database_url = std::env::var("DATABASE_URL").unwrap_or("./sessions.db".to_string());
     SqliteConnection::establish(&database_url)
         .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
 }
 
 pub async fn get_app_db_conn() -> AsyncDieselConnectionManager<AsyncPgConnection> {
-    // dotenv().ok();
-
     let database_url = std::env::var("DATABASE_URL")
         .unwrap_or("postgres://postgres:postgres@localhost:7777".to_string());
     let config = AsyncDieselConnectionManager::<diesel_async::AsyncPgConnection>::new(database_url);
@@ -28,7 +26,12 @@ pub async fn get_app_db_conn() -> AsyncDieselConnectionManager<AsyncPgConnection
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let secret_key = Key::generate();
+    dotenv().ok();
+    let secret_key = std::env::var("COOKIE_SECRET_KEY").unwrap();
+    let bytes = base64::engine::general_purpose::STANDARD
+        .decode(secret_key)
+        .unwrap();
+    let secret_key = Key::from(&bytes);
 
     let session_store_conn = get_session_conn();
     let session_store = sqlite_session_store::SqliteSessionStore::new(session_store_conn);
