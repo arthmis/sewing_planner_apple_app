@@ -62,7 +62,7 @@ async fn main() -> std::io::Result<()> {
                     .cookie_secure(false)
                     .session_lifecycle(
                         PersistentSession::default()
-                            .session_ttl(actix_web::cookie::time::Duration::new(60, 0)),
+                            .session_ttl(actix_web::cookie::time::Duration::new(60 * 60 * 24, 0)),
                     )
                     .build(),
             )

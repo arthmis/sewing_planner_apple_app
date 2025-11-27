@@ -1,3 +1,31 @@
+## Sync Actions
+
+### Lazy Syncing
+- when the client goes to different screens, like all projects, a project, or the projects images, or fabrics, it will check if it needs to sync data with the server
+- it won't be checked until you go to these screens and might potentially do a full sync for related tables
+- this should be resumeable ideally, especially with images
+
+### Eager Syncing
+- will be done through websockets
+- when a client is connected, it pushes events to the server
+- data will be updated in the database and only if it is successful will the event be sent to connected
+clients
+- the events will also be stored as is in the database in one table
+- any other connected clients will receive the events and update their local database accordingly
+and return acknowledgement that it was stored successfully
+
+## Deletes
+- deletes should be soft deletes on the server, up to a certain time point otherwise if a user hasn't done a sync for a table in a while then a full sync is necessary
+
+## Potential Problems with syncing
+- if a user is using multiple devices, they update one device which updated the database schema, but their other device(s) haven't updated. If the
+updated device pushes new events to the server the other devices that don't support the new schema will have problems syncing. Will need to add versioning
+to each database schema update. 
+- So each event will have the version of the database for the app. 
+- If a version is greater than the version on the app the app will ignore it
+- if an older version pushes an event, but the newest version of the database doesn't support that event anymore will need to figure out what to do there
+  - I can consider making the database fully backwards compatible and just soft deprecate columns or tables
+  
 @Environment
 - this is used to dismiss a view, among other things, if you want to do it programmatically (lesson 36, showing and hiding views)
 
