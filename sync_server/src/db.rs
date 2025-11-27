@@ -20,8 +20,8 @@ pub struct DB<'a> {
 }
 
 impl<'a> DB<'a> {
-    pub fn new(conn: &'a mut pg::AsyncPgConnection) -> Result<Self, Error> {
-        Ok(Self { conn })
+    pub fn new(conn: &'a mut pg::AsyncPgConnection) -> Self {
+        Self { conn }
     }
 }
 

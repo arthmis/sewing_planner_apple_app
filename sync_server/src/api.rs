@@ -119,7 +119,7 @@ async fn signup_endpoint(
     web::Json(credentials): web::Json<SignupCredentials>,
 ) -> actix_web::Result<(), SignupError> {
     let mut conn = db_pool.get().await.unwrap();
-    let db = DB::new(&mut conn).unwrap();
+    let db = DB::new(&mut conn);
 
     signup(credentials, db).await?;
 
