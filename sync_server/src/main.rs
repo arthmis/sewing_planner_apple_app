@@ -3,6 +3,7 @@ mod db;
 mod schema;
 
 use actix_session::SessionMiddleware;
+use actix_session::config::PersistentSession;
 use actix_web::cookie::Key;
 use actix_web::{App, HttpServer, web};
 use base64::Engine;
@@ -56,10 +57,15 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(move || {
         App::new()
-            .wrap(SessionMiddleware::new(
-                session_store.clone(),
-                secret_key.clone(),
-            ))
+            .wrap(
+                SessionMiddleware::builder(session_store.clone(), secret_key.clone())
+                    .cookie_secure(false)
+                    .session_lifecycle(
+                        PersistentSession::default()
+                            .session_ttl(actix_web::cookie::time::Duration::new(60, 0)),
+                    )
+                    .build(),
+            )
             .app_data(web::Data::new(pool.clone()))
             .service(api::hello)
             .service(api::signup_endpoint)
