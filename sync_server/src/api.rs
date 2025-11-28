@@ -247,24 +247,6 @@ async fn login(
     Ok(())
 }
 
-#[get("/")]
-pub async fn hello(session: Session) -> impl Responder {
-    // let user_id = session.insert("user_id", "hello").unwrap();
-    let user_id: Option<i32> = session.get("user_id").unwrap();
-    dbg!(user_id);
-    // let user_id = session.get::<UserSession>("user_id").unwrap();
-    // if let Some(user_id) = user_id {
-    //     dbg!(user_id);
-    //     HttpResponse::Ok().body(format!("Hello user {}", "user"))
-    // } else {
-    //     HttpResponse::Ok().body("Hello world!")
-    // }
-    match user_id {
-        Some(id) => HttpResponse::Ok().body(format!("Hello user {}", id)),
-        None => HttpResponse::Ok().body("Hello world!"),
-    }
-}
-
 async fn get_user(
     user_email: &Email,
     conn: &mut pg::AsyncPgConnection,

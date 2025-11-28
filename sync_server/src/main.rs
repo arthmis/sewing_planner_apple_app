@@ -67,7 +67,6 @@ async fn main() -> std::io::Result<()> {
                     .build(),
             )
             .app_data(web::Data::new(pool.clone()))
-            .service(api::hello)
             .service(api::signup_endpoint)
             .service(api::login)
     })
