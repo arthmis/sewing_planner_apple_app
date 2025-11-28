@@ -3,15 +3,12 @@ use actix_web::http::{StatusCode, header};
 use actix_web::{HttpResponse, Responder, get, mime, post, web};
 use actix_web::{HttpResponseBuilder, ResponseError};
 use auth_utils::GenerateHashError;
-use diesel::ExpressionMethods;
-use diesel::Insertable;
-use diesel::QueryDsl;
-use diesel::Queryable;
-use diesel::Selectable;
-use diesel::SelectableHelper;
 use diesel::deserialize::{self, FromSql};
+use diesel::prelude::Queryable;
 use diesel::serialize::{self, Output, ToSql};
 use diesel::sql_types::Text;
+use diesel::{ExpressionMethods, QueryDsl, Selectable};
+use diesel::{Insertable, SelectableHelper};
 use diesel_async::AsyncPgConnection;
 use diesel_async::RunQueryDsl;
 use diesel_async::pg;
@@ -91,7 +88,7 @@ impl TryFrom<SignupCredentials> for UserCredentials {
 }
 
 #[derive(Insertable, Debug)]
-#[diesel(table_name = crate::schema::users)]
+#[diesel(table_name = app_db::schema::users)]
 pub struct UserInput {
     email: Email,
     password_hash: String,
@@ -104,7 +101,8 @@ struct UserLogin {
 }
 
 #[derive(Queryable, Insertable, Selectable, Debug, Serialize)]
-#[diesel(table_name = crate::schema::users)]
+#[diesel(table_name = app_db::schema::users)]
+// #[diesel(check_for_backend(_))]
 pub struct User {
     id: i32,
     email: Email,
@@ -271,7 +269,7 @@ async fn get_user(
     user_email: &Email,
     conn: &mut pg::AsyncPgConnection,
 ) -> Result<User, diesel::result::Error> {
-    use crate::schema::users::dsl::*;
+    use app_db::schema::users::dsl::*;
 
     let user_id: User = users
         .filter(email.eq(&user_email.as_str()))

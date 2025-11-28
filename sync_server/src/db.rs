@@ -27,7 +27,7 @@ impl<'a> DB<'a> {
 
 impl<'a> Database for DB<'a> {
     async fn get_user(&mut self, user_email: &Email) -> Result<User, Error> {
-        use crate::schema::users::dsl::*;
+        use app_db::schema::users::dsl::*;
 
         let user_id: User = users
             .filter(email.eq(&user_email.as_str()))
@@ -39,7 +39,7 @@ impl<'a> Database for DB<'a> {
     }
 
     async fn create_user(&mut self, user: UserInput) -> Result<(), Error> {
-        use crate::schema::users::dsl::*;
+        use app_db::schema::users::dsl::*;
 
         // return Err(diesel::result::Error::DatabaseError(
         //     diesel::result::DatabaseErrorKind::ClosedConnection,

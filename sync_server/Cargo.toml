@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [workspace]
-members = ["auth_utils","sqlite_session_store"]
+members = ["auth_utils", "event_database", "app_db", "sqlite_session_store"]
 
 [workspace.dependencies]
 actix-session = "0.11.0"
@@ -20,9 +20,15 @@ email_address = "0.2.9"
 argon2 = { version = "0.5.3", features = ["std"] }
 snafu = { version = "0.8.9", features = ["rust_1_81", "alloc"] }
 chrono = { version = "0.4", features = ["serde"] }
+app_db = { path = "./app_db" }
+event_database = { path = "./event_database" }
 
 [dependencies]
 sqlite_session_store = { path = "./sqlite_session_store" }
+app_db = { workspace = true }
+event_database = { workspace = true }
+
+# third party dependencies
 auth_utils = { path = "./auth_utils" }
 actix-session = { workspace = true }
 actix-web = { workspace = true }
@@ -35,5 +41,6 @@ serde_json = { workspace = true }
 argon2 = { workspace = true }
 snafu = { workspace = true, features = ["rust_1_81", "alloc"] }
 email_address = "0.2.9"
+chrono = { workspace = true, features = ["serde"] }
 dotenvy = "0.15.7"
 base64 = "0.22.1"

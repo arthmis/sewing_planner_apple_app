@@ -1,0 +1,14 @@
+[package]
+name = "event_database"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+app_db = { workspace = true }
+
+# third party dependencies
+diesel = { workspace = true, features = ["postgres_backend"] }
+diesel-async = { workspace = true, features = ["postgres", "sync-connection-wrapper", "pool", "deadpool"] }
+serde = { workspace = true }
+snafu = { workspace = true, features = ["rust_1_81", "alloc"] }
+chrono = { workspace = true, features = ["serde"] }

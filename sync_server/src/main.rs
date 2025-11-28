@@ -1,6 +1,6 @@
 mod api;
 mod db;
-mod schema;
+mod events;
 
 use actix_session::SessionMiddleware;
 use actix_session::config::PersistentSession;
