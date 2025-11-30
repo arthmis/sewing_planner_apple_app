@@ -20,3 +20,4 @@ diesel_migrations = "2"
 diesel = { version = "2.2.0", features = ["postgres", "chrono"] }
 pq-sys = { version = "0.7", features = ["bundled"] }
 openssl-sys = { version = "0.9.111", features = ["vendored"] }
+api = { workspace = true }

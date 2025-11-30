@@ -20,8 +20,8 @@ diesel::table! {
         email -> Varchar,
         #[max_length = 255]
         password_hash -> Varchar,
-        created_at -> Timestamp,
-        updated_at -> Timestamp,
+        created_at -> Timestamptz,
+        updated_at -> Timestamptz,
     }
 }
 

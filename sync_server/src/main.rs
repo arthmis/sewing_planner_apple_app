@@ -1,5 +1,3 @@
-mod api;
-mod db;
 mod events;
 
 use actix_session::SessionMiddleware;

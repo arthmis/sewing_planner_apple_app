@@ -55,8 +55,8 @@ impl<'a> EventDb for EventDatabase<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use diesel::QueryDsl;
-    use diesel_async::AsyncConnection;
+    use diesel::{QueryDsl, SelectableHelper};
+    use diesel_async::{AsyncConnection, RunQueryDsl};
     use diesel_migrations::{EmbeddedMigrations, MigrationHarness, embed_migrations};
     use testcontainers_modules::{postgres, testcontainers::runners::AsyncRunner};
     pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("../app_db/migrations");
@@ -92,6 +92,28 @@ mod tests {
         let mut conn = pg::AsyncPgConnection::establish(&connection_string)
             .await
             .unwrap();
+        {
+            use api::{Email, User, UserInput};
+            use app_db::schema::users::dsl::*;
+            let now = chrono::Utc::now();
+            let user_input = UserInput::new(
+                Email::new("test@example.com").unwrap(),
+                "password".to_string(),
+                now,
+                now,
+            );
+
+            // return Err(diesel::result::Error::DatabaseError(
+            //     diesel::result::DatabaseErrorKind::ClosedConnection,
+            //     Box::new("Database connection closed".to_string()),
+            // ));
+
+            let user: User = diesel::insert_into(users)
+                .values(user_input)
+                .get_result(&mut conn)
+                .await
+                .unwrap();
+        }
         let mut db = EventDatabase::new(&mut conn);
 
         let data = CreateProjectData {

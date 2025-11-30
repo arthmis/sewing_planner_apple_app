@@ -1,6 +1,6 @@
-use crate::api::Email;
-use crate::api::User;
-use crate::api::UserInput;
+use crate::Email;
+use crate::User;
+use crate::UserInput;
 use diesel::ExpressionMethods;
 use diesel::QueryDsl;
 use diesel::SelectableHelper;
@@ -9,8 +9,8 @@ use diesel_async::RunQueryDsl;
 use diesel_async::pg;
 
 pub trait Database {
-    async fn get_user(&mut self, user_email: &Email) -> Result<User, Error>;
-    async fn create_user(&mut self, user: UserInput) -> Result<(), Error>;
+    fn get_user(&mut self, user_email: &Email) -> impl Future<Output = Result<User, Error>>;
+    fn create_user(&mut self, user: UserInput) -> impl Future<Output = Result<(), Error>>;
     // fn update_user(&self, id: &str, email: &str, password: &str) -> Result<User, Error>;
     // fn delete_user(&self, id: &str) -> Result<(), Error>;
 }

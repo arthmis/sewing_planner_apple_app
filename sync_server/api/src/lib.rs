@@ -1,13 +1,16 @@
+mod db;
+
 use actix_session::{Session, SessionInsertError};
 use actix_web::http::{StatusCode, header};
 use actix_web::{HttpResponse, Responder, get, mime, post, web};
 use actix_web::{HttpResponseBuilder, ResponseError};
 use auth_utils::GenerateHashError;
+use chrono::{DateTime, Utc};
 use diesel::deserialize::{self, FromSql};
 use diesel::prelude::Queryable;
 use diesel::serialize::{self, Output, ToSql};
 use diesel::sql_types::Text;
-use diesel::{ExpressionMethods, QueryDsl, Selectable};
+use diesel::{ExpressionMethods, QueryDsl, QueryableByName, Selectable};
 use diesel::{Insertable, SelectableHelper};
 use diesel_async::AsyncPgConnection;
 use diesel_async::RunQueryDsl;
@@ -33,6 +36,12 @@ use crate::db::{DB, Database};
 )]
 #[diesel(sql_type = Text)]
 pub struct Email(EmailAddress);
+
+impl Email {
+    pub fn new(email: &str) -> Result<Self, email_address::Error> {
+        EmailAddress::parse_with_options(email, Options::default()).map(Email)
+    }
+}
 
 impl FromSql<Text, diesel::pg::Pg> for Email {
     fn from_sql(bytes: diesel::pg::PgValue) -> deserialize::Result<Self> {
@@ -92,6 +101,24 @@ impl TryFrom<SignupCredentials> for UserCredentials {
 pub struct UserInput {
     email: Email,
     password_hash: String,
+    created_at: DateTime<Utc>,
+    updated_at: DateTime<Utc>,
+}
+
+impl UserInput {
+    pub fn new(
+        email: Email,
+        password_hash: String,
+        created_at: DateTime<Utc>,
+        updated_at: DateTime<Utc>,
+    ) -> Self {
+        UserInput {
+            email,
+            password_hash,
+            created_at,
+            updated_at,
+        }
+    }
 }
 
 #[derive(Debug, Deserialize)]
@@ -100,13 +127,15 @@ struct UserLogin {
     password: String,
 }
 
-#[derive(Queryable, Insertable, Selectable, Debug, Serialize)]
+#[derive(Queryable, Selectable, Debug)]
 #[diesel(table_name = app_db::schema::users)]
-// #[diesel(check_for_backend(_))]
+// #[diesel(check_for_backend("postgres"))]
 pub struct User {
     id: i32,
     email: Email,
     password_hash: String,
+    created_at: DateTime<Utc>,
+    updated_at: DateTime<Utc>,
 }
 
 type DbPool = Pool<AsyncPgConnection>;
@@ -119,7 +148,7 @@ async fn signup_endpoint(
     let mut conn = db_pool.get().await.unwrap();
     let db = DB::new(&mut conn);
 
-    signup(credentials, db).await?;
+    create_user_from_signup(credentials, db).await?;
 
     Ok(())
 }
@@ -172,13 +201,19 @@ impl ResponseError for SignupError {
     }
 }
 
-async fn signup(credentials: SignupCredentials, mut db: impl Database) -> Result<(), SignupError> {
+async fn create_user_from_signup(
+    credentials: SignupCredentials,
+    mut db: impl Database,
+) -> Result<(), SignupError> {
     let credentials = UserCredentials::try_from(credentials)?;
     let hash =
         auth_utils::generate_password_hash(&credentials.password).context(PasswordHashSnafu {})?;
+    let now = Utc::now();
     let user = UserInput {
         email: credentials.email,
         password_hash: hash,
+        created_at: now,
+        updated_at: now,
     };
 
     db.create_user(user)
@@ -256,7 +291,8 @@ async fn get_user(
     let user_id: User = users
         .filter(email.eq(&user_email.as_str()))
         .select(User::as_select())
-        .get_result(conn)
+        .first(conn)
+        // .get_result(conn)
         .await
         .unwrap();
 
@@ -343,7 +379,7 @@ mod tests {
             password: "password123".to_string(),
         };
 
-        let result = signup(credentials, mock_db).await;
+        let result = create_user_from_signup(credentials, mock_db).await;
         assert!(result.is_ok());
     }
 
