@@ -67,6 +67,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(pool.clone()))
             .service(api::signup_endpoint)
             .service(api::login)
+            .route("/ws", web::get().to(api::websocket_connection))
     })
     .workers(1)
     .bind(("localhost", 8080))?

@@ -9,6 +9,8 @@ app_db = { workspace = true }
 
 actix-session = { workspace = true }
 actix-web = { workspace = true }
+actix-ws = { workspace = true }
+futures-util = { workspace = true }
 diesel = { workspace = true, features = ["postgres_backend", "chrono"] }
 diesel-async = { workspace = true, features = ["postgres", "pool", "deadpool"] }
 serde = { workspace = true }

@@ -2,8 +2,9 @@ mod db;
 
 use actix_session::{Session, SessionInsertError};
 use actix_web::http::{StatusCode, header};
-use actix_web::{HttpResponse, Responder, get, mime, post, web};
+use actix_web::{HttpRequest, HttpResponse, Responder, get, mime, post, web};
 use actix_web::{HttpResponseBuilder, ResponseError};
+use actix_ws::AggregatedMessage;
 use auth_utils::GenerateHashError;
 use chrono::{DateTime, Utc};
 use diesel::deserialize::{self, FromSql};
@@ -17,6 +18,7 @@ use diesel_async::RunQueryDsl;
 use diesel_async::pg;
 use diesel_async::pooled_connection::deadpool::Pool;
 use email_address::{EmailAddress, Options};
+use futures_util::StreamExt as _;
 use serde::Deserialize;
 use serde::Serialize;
 use snafu::Location;
@@ -227,7 +229,7 @@ async fn create_user_from_signup(
 pub enum LoginError {
     #[snafu(display("Invalid email or password"))]
     InvalidCredentials,
-    #[snafu(display("Internal server error. Please try again later."))]
+    #[snafu(display("Invalid email or password"))]
     UserNotFound {
         #[snafu(implicit)]
         location: Location,
@@ -244,10 +246,8 @@ pub enum LoginError {
 impl ResponseError for LoginError {
     fn status_code(&self) -> StatusCode {
         match self {
-            LoginError::InvalidCredentials => StatusCode::OK,
-            LoginError::UserNotFound { .. } | LoginError::SessionError { .. } => {
-                StatusCode::INTERNAL_SERVER_ERROR
-            }
+            LoginError::InvalidCredentials | LoginError::UserNotFound { .. } => StatusCode::OK,
+            LoginError::SessionError { .. } => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 
@@ -279,7 +279,47 @@ async fn login(
     }
 
     session.insert("user_id", user.id).context(SessionSnafu)?;
+
     Ok(())
+}
+
+pub async fn websocket_connection(
+    request: HttpRequest,
+    stream: web::Payload,
+) -> actix_web::Result<HttpResponse, actix_web::Error> {
+    let user_id = 1i32;
+    let (res, mut ws_session, stream) = actix_ws::handle(&request, stream).unwrap();
+
+    let mut stream = stream
+        .aggregate_continuations()
+        // aggregate continuation frames up to 1MiB
+        .max_continuation_size(2_usize.pow(20));
+
+    // start task but don't wait for it
+    actix_web::rt::spawn(async move {
+        // receive messages from websocket
+        while let Some(msg) = stream.next().await {
+            match msg {
+                Ok(AggregatedMessage::Text(text)) => {
+                    // echo text message
+                    ws_session.text(text).await.unwrap();
+                }
+
+                Ok(AggregatedMessage::Binary(bin)) => {
+                    // echo binary message
+                    ws_session.binary(bin).await.unwrap();
+                }
+
+                Ok(AggregatedMessage::Ping(msg)) => {
+                    // respond to PING frame with PONG frame
+                    ws_session.pong(&msg).await.unwrap();
+                }
+
+                _ => {}
+            }
+        }
+    });
+    Ok(res)
 }
 
 async fn get_user(
@@ -292,9 +332,7 @@ async fn get_user(
         .filter(email.eq(&user_email.as_str()))
         .select(User::as_select())
         .first(conn)
-        // .get_result(conn)
-        .await
-        .unwrap();
+        .await?;
 
     Ok(user_id)
 }

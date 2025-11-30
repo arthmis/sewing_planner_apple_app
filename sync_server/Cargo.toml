@@ -13,6 +13,8 @@ auth_utils = { path = "./auth_utils" }
 
 actix-session = "0.11.0"
 actix-web = "4"
+actix-ws = "0.3.0"
+futures-util = "0.3.31"
 anyhow = "1.0.100"
 async-lock = "3.4.1"
 diesel = { version = "2.2.0", features = ["postgres_backend", "chrono"] }
