@@ -55,65 +55,68 @@ impl<'a> EventDb for EventDatabase<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use diesel::{QueryDsl, SelectableHelper};
-    use diesel_async::{AsyncConnection, RunQueryDsl};
+    use diesel::QueryDsl;
+    use diesel_async::{AsyncConnection, AsyncPgConnection, RunQueryDsl};
     use diesel_migrations::{EmbeddedMigrations, MigrationHarness, embed_migrations};
-    use testcontainers_modules::{postgres, testcontainers::runners::AsyncRunner};
+    use testcontainers_modules::{
+        postgres::{self, Postgres},
+        testcontainers::{ContainerAsync, runners::AsyncRunner},
+    };
     pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("../app_db/migrations");
 
-    async fn start_db() -> String {
-        let postgres_instance = postgres::Postgres::default().start().await.unwrap();
+    async fn start_postgres() -> (ContainerAsync<Postgres>, AsyncPgConnection) {
+        let postgres_instance_handle = postgres::Postgres::default().start().await.unwrap();
 
-        let connection_string = format!(
+        let connection_string =
+            connection_string_from_postgres_instance(&postgres_instance_handle).await;
+        run_migrations(connection_string.clone());
+
+        let conn = pg::AsyncPgConnection::establish(&connection_string)
+            .await
+            .unwrap();
+        (postgres_instance_handle, conn)
+    }
+
+    async fn connection_string_from_postgres_instance(
+        container: &ContainerAsync<Postgres>,
+    ) -> String {
+        format!(
             "postgres://postgres:postgres@{}:{}/postgres",
-            postgres_instance.get_host().await.unwrap(),
-            postgres_instance.get_host_port_ipv4(5432).await.unwrap()
+            container.get_host().await.unwrap(),
+            container.get_host_port_ipv4(5432).await.unwrap()
+        )
+    }
+
+    fn run_migrations(connection_string: String) {
+        use diesel::PgConnection;
+        use diesel::prelude::*;
+        let mut sync_conn = PgConnection::establish(&connection_string).unwrap();
+        sync_conn.run_pending_migrations(MIGRATIONS).unwrap();
+    }
+
+    async fn seed_one_project(conn: &mut AsyncPgConnection) {
+        use api::{Email, UserInput};
+        use app_db::schema::users::dsl::*;
+        let now = chrono::Utc::now();
+        let user_input = UserInput::new(
+            Email::new("test@example.com").unwrap(),
+            "password".to_string(),
+            now,
+            now,
         );
 
-        connection_string
+        diesel::insert_into(users)
+            .values(user_input)
+            .execute(conn)
+            .await
+            .unwrap();
     }
 
     #[tokio::test]
     async fn add_project() {
-        // let connection_string = start_db().await;
-        let postgres_instance = postgres::Postgres::default().start().await.unwrap();
+        let (_postgres_instance_handle, mut conn) = start_postgres().await;
+        seed_one_project(&mut conn).await;
 
-        let connection_string = format!(
-            "postgres://postgres:postgres@{}:{}/postgres",
-            postgres_instance.get_host().await.unwrap(),
-            postgres_instance.get_host_port_ipv4(5432).await.unwrap()
-        );
-        {
-            use diesel::PgConnection;
-            use diesel::prelude::*;
-            let mut sync_conn = PgConnection::establish(&connection_string).unwrap();
-            sync_conn.run_pending_migrations(MIGRATIONS).unwrap();
-        }
-        let mut conn = pg::AsyncPgConnection::establish(&connection_string)
-            .await
-            .unwrap();
-        {
-            use api::{Email, User, UserInput};
-            use app_db::schema::users::dsl::*;
-            let now = chrono::Utc::now();
-            let user_input = UserInput::new(
-                Email::new("test@example.com").unwrap(),
-                "password".to_string(),
-                now,
-                now,
-            );
-
-            // return Err(diesel::result::Error::DatabaseError(
-            //     diesel::result::DatabaseErrorKind::ClosedConnection,
-            //     Box::new("Database connection closed".to_string()),
-            // ));
-
-            let user: User = diesel::insert_into(users)
-                .values(user_input)
-                .get_result(&mut conn)
-                .await
-                .unwrap();
-        }
         let mut db = EventDatabase::new(&mut conn);
 
         let data = CreateProjectData {
@@ -121,21 +124,16 @@ mod tests {
             project_id: 1,
             title: "Test Project".to_string(),
         };
-
         db.handle_create_project(data).await.unwrap();
 
-        let mut conn = pg::AsyncPgConnection::establish(&connection_string)
-            .await
-            .unwrap();
-
         use app_db::schema::projects::dsl::*;
+
         let result: String = projects
             .filter(title.eq("Test Project"))
             .select(title)
             .get_result(&mut conn)
             .await
             .unwrap();
-
         assert_eq!(result, "Test Project");
     }
 }
