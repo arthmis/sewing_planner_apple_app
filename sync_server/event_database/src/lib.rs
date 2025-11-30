@@ -52,13 +52,68 @@ impl<'a> EventDb for EventDatabase<'a> {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use diesel::QueryDsl;
+    use diesel_async::AsyncConnection;
+    use diesel_migrations::{EmbeddedMigrations, MigrationHarness, embed_migrations};
+    use testcontainers_modules::{postgres, testcontainers::runners::AsyncRunner};
+    pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("../app_db/migrations");
 
-//     #[test]
-//     fn it_works() {
-//         let result = add(2, 2);
-//         assert_eq!(result, 4);
-//     }
-// }
+    async fn start_db() -> String {
+        let postgres_instance = postgres::Postgres::default().start().await.unwrap();
+
+        let connection_string = format!(
+            "postgres://postgres:postgres@{}:{}/postgres",
+            postgres_instance.get_host().await.unwrap(),
+            postgres_instance.get_host_port_ipv4(5432).await.unwrap()
+        );
+
+        connection_string
+    }
+
+    #[tokio::test]
+    async fn add_project() {
+        // let connection_string = start_db().await;
+        let postgres_instance = postgres::Postgres::default().start().await.unwrap();
+
+        let connection_string = format!(
+            "postgres://postgres:postgres@{}:{}/postgres",
+            postgres_instance.get_host().await.unwrap(),
+            postgres_instance.get_host_port_ipv4(5432).await.unwrap()
+        );
+        {
+            use diesel::PgConnection;
+            use diesel::prelude::*;
+            let mut sync_conn = PgConnection::establish(&connection_string).unwrap();
+            sync_conn.run_pending_migrations(MIGRATIONS).unwrap();
+        }
+        let mut conn = pg::AsyncPgConnection::establish(&connection_string)
+            .await
+            .unwrap();
+        let mut db = EventDatabase::new(&mut conn);
+
+        let data = CreateProjectData {
+            user_id: 1,
+            project_id: 1,
+            title: "Test Project".to_string(),
+        };
+
+        db.handle_create_project(data).await.unwrap();
+
+        let mut conn = pg::AsyncPgConnection::establish(&connection_string)
+            .await
+            .unwrap();
+
+        use app_db::schema::projects::dsl::*;
+        let result: String = projects
+            .filter(title.eq("Test Project"))
+            .select(title)
+            .get_result(&mut conn)
+            .await
+            .unwrap();
+
+        assert_eq!(result, "Test Project");
+    }
+}

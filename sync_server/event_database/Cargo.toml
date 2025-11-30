@@ -8,7 +8,15 @@ app_db = { workspace = true }
 
 # third party dependencies
 diesel = { workspace = true, features = ["postgres_backend"] }
-diesel-async = { workspace = true, features = ["postgres", "sync-connection-wrapper", "pool", "deadpool"] }
-serde = { workspace = true }
+diesel-async = { workspace = true, features = ["postgres", "pool", "deadpool"] }
+serde = { workspace = true, features = ["derive"] }
 snafu = { workspace = true, features = ["rust_1_81", "alloc"] }
 chrono = { workspace = true, features = ["serde"] }
+
+[dev-dependencies]
+testcontainers-modules = { version = "0.13", features = ["postgres"] }
+tokio = { version = "1", features = ["macros"] }
+diesel_migrations = "2"
+diesel = { version = "2.2.0", features = ["postgres", "chrono"] }
+pq-sys = { version = "0.7", features = ["bundled"] }
+openssl-sys = { version = "0.9.111", features = ["vendored"] }

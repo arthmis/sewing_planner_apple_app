@@ -7,35 +7,35 @@ edition = "2024"
 members = ["auth_utils", "event_database", "app_db", "sqlite_session_store"]
 
 [workspace.dependencies]
+app_db = { path = "./app_db" }
+event_database = { path = "./event_database" }
+
 actix-session = "0.11.0"
 actix-web = "4"
 anyhow = "1.0.100"
 async-lock = "3.4.1"
-diesel = { version = "2.2.0", features = ["sqlite", "returning_clauses_for_sqlite_3_35", "postgres_backend", "chrono"] }
-diesel-async = { version = "0.7.0", features = ["postgres", "sync-connection-wrapper"] }
-libsqlite3-sys = { version = "0.35", features = ["bundled"] }
+diesel = { version = "2.2.0", features = ["postgres_backend", "chrono"] }
+diesel-async = { version = "0.7.0", features = ["postgres", "pool", "deadpool"] }
 serde = "1.0.228"
 serde_json = "1.0.145"
 email_address = "0.2.9"
 argon2 = { version = "0.5.3", features = ["std"] }
 snafu = { version = "0.8.9", features = ["rust_1_81", "alloc"] }
 chrono = { version = "0.4", features = ["serde"] }
-app_db = { path = "./app_db" }
-event_database = { path = "./event_database" }
 
 [dependencies]
 sqlite_session_store = { path = "./sqlite_session_store" }
+auth_utils = { path = "./auth_utils" }
 app_db = { workspace = true }
 event_database = { workspace = true }
 
 # third party dependencies
-auth_utils = { path = "./auth_utils" }
 actix-session = { workspace = true }
 actix-web = { workspace = true }
 anyhow = { workspace = true }
 async-lock = { workspace = true }
 diesel = { workspace = true, features = ["postgres_backend"] }
-diesel-async = { workspace = true, features = ["postgres", "sync-connection-wrapper", "pool", "deadpool"] }
+diesel-async = { workspace = true, features = ["postgres", "pool", "deadpool"] }
 serde = { workspace = true }
 serde_json = { workspace = true }
 argon2 = { workspace = true }
