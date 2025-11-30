@@ -1,4 +1,5 @@
 mod db;
+mod events;
 
 use actix_session::{Session, SessionInsertError};
 use actix_web::http::{StatusCode, header};
@@ -284,10 +285,19 @@ async fn login(
 }
 
 pub async fn websocket_connection(
+    db_pool: web::Data<DbPool>,
+    // session: Session,
     request: HttpRequest,
     stream: web::Payload,
 ) -> actix_web::Result<HttpResponse, actix_web::Error> {
+    // let user_id = match session.get::<i32>("user_id") {
+    //     Ok(Some(user_id)) => user_id,
+    //     Ok(None) => todo!("Redirect user to login"),
+    //     Err(err) => todo!("Handle session error: {}", err),
+    // };
+    // bruno can't work with a session and websocket so hardcoding while manually testing
     let user_id = 1i32;
+
     let (res, mut ws_session, stream) = actix_ws::handle(&request, stream).unwrap();
 
     let mut stream = stream
@@ -301,8 +311,13 @@ pub async fn websocket_connection(
         while let Some(msg) = stream.next().await {
             match msg {
                 Ok(AggregatedMessage::Text(text)) => {
-                    // echo text message
-                    ws_session.text(text).await.unwrap();
+                    let mut conn = db_pool.get().await.unwrap();
+                    let mut event_database = event_database::EventDatabase::new(&mut conn);
+
+                    let event = events::deserialize_event(text).unwrap();
+                    events::handle_event(user_id, event, &mut event_database)
+                        .await
+                        .unwrap();
                 }
 
                 Ok(AggregatedMessage::Binary(bin)) => {

@@ -1,5 +1,3 @@
-mod events;
-
 use actix_session::SessionMiddleware;
 use actix_session::config::PersistentSession;
 use actix_web::cookie::Key;
