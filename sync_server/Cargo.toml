@@ -51,3 +51,4 @@ chrono = { workspace = true, features = ["serde"] }
 dotenvy = "0.15.7"
 base64 = "0.22.1"
 actix-cors = { workspace = true }
+mimalloc = "0.1"

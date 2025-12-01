@@ -1,4 +1,7 @@
+use mimalloc::MiMalloc;
+
 use actix_session::SessionMiddleware;
+
 use actix_session::config::PersistentSession;
 use actix_web::cookie::Key;
 use actix_web::{App, HttpServer, web};
@@ -7,6 +10,9 @@ use diesel::{Connection, SqliteConnection};
 use diesel_async::AsyncPgConnection;
 use diesel_async::pooled_connection::AsyncDieselConnectionManager;
 use dotenvy::dotenv;
+
+#[global_allocator]
+static GLOBAL: MiMalloc = MiMalloc;
 
 pub fn get_session_conn() -> SqliteConnection {
     let database_url = std::env::var("DATABASE_URL").unwrap_or("./sessions.db".to_string());
