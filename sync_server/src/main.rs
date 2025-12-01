@@ -52,6 +52,12 @@ async fn main() -> std::io::Result<()> {
         .unwrap();
 
     HttpServer::new(move || {
+        #[cfg(target_os = "linux")]
+        let cors = actix_cors::Cors::default();
+
+        #[cfg(target_os = "windows")]
+        let cors = actix_cors::Cors::permissive();
+
         App::new()
             .wrap(
                 SessionMiddleware::builder(session_store.clone(), secret_key.clone())
@@ -62,6 +68,7 @@ async fn main() -> std::io::Result<()> {
                     )
                     .build(),
             )
+            .wrap(cors)
             .app_data(web::Data::new(pool.clone()))
             .service(api::signup_endpoint)
             .service(api::login)

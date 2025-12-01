@@ -27,6 +27,7 @@ argon2 = { version = "0.5.3", features = ["std"] }
 snafu = { version = "0.8.9", features = ["rust_1_81", "alloc"] }
 chrono = { version = "0.4", features = ["serde"] }
 uuid = { version = "1", features = ["v4"] }
+actix-cors = "0.7.1"
 
 [dependencies]
 sqlite_session_store = { path = "./sqlite_session_store" }
@@ -49,3 +50,4 @@ email_address = "0.2.9"
 chrono = { workspace = true, features = ["serde"] }
 dotenvy = "0.15.7"
 base64 = "0.22.1"
+actix-cors = { workspace = true }

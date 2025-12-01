@@ -22,3 +22,4 @@ email_address = "0.2.9"
 chrono = { workspace = true, features = ["serde"] }
 bytestring = "1.5.0"
 uuid = { workspace = true, features = ["v4"] }
+# actix-cors = { workspace = true }
