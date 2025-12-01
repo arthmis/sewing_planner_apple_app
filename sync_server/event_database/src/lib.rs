@@ -3,7 +3,7 @@ use diesel_async::{RunQueryDsl, pg};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct CreateProjectData {
+pub struct CreateProjectEventData {
     user_id: i32,
     project_id: i32,
     title: String,
@@ -14,7 +14,7 @@ pub trait EventDb {
 
     fn handle_create_project(
         &mut self,
-        data: CreateProjectData,
+        data: CreateProjectEventData,
     ) -> impl Future<Output = Result<(), Self::Error>>;
 }
 
@@ -31,7 +31,7 @@ impl<'a> EventDatabase<'a> {
 impl<'a> EventDb for EventDatabase<'a> {
     type Error = diesel::result::Error;
 
-    async fn handle_create_project(&mut self, data: CreateProjectData) -> Result<(), Self::Error> {
+    async fn handle_create_project(&mut self, data: CreateProjectEventData) -> Result<(), Self::Error> {
         use app_db::schema::projects::dsl::*;
 
         let count = diesel::insert_into(projects)
@@ -119,7 +119,7 @@ mod tests {
 
         let mut db = EventDatabase::new(&mut conn);
 
-        let data = CreateProjectData {
+        let data = CreateProjectEventData {
             user_id: 1,
             project_id: 1,
             title: "Test Project".to_string(),

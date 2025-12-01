@@ -1,5 +1,5 @@
 use bytestring::ByteString;
-use event_database::{CreateProjectData, EventDb};
+use event_database::{CreateProjectEventData, EventDb};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -11,7 +11,7 @@ pub struct Event {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type")]
 pub enum EventData {
-    CreateProject(CreateProjectData),
+    CreateProject(CreateProjectEventData),
 }
 
 pub fn deserialize_event(event: ByteString) -> Result<Event, serde_json::Error> {
