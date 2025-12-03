@@ -29,10 +29,7 @@ struct ProjectTitle: View {
       return
     }
 
-    let event = project.handleEvent(event: .UpdatedProjectTitle(sanitizedName))
-    Task {
-      await project.handleEffect(effect: event, db: db)
-    }
+    project.send(event: .UpdatedProjectTitle(sanitizedName), db: db)
     isEditing = false
   }
   var body: some View {

@@ -134,7 +134,7 @@ struct ProjectView: View {
               matching: .images
             )
             .onChange(of: project.pickerItem) {
-              Task {
+              Task { @MainActor in
                 await project.handleOnChangePickerItem(db: db)
               }
             }
@@ -194,7 +194,7 @@ struct ErrorToast: Equatable {
   }
 }
 
-@Observable
+@Observable @MainActor
 final class ProjectViewModel {
   var projectData: ProjectData
   var projectsNavigation: [ProjectMetadata]
@@ -248,7 +248,7 @@ final class ProjectViewModel {
     showPhotoPicker = true
   }
 
-  func handleOnChangePickerItem(db: AppDatabase) async {
+  @MainActor func handleOnChangePickerItem(db: AppDatabase) async {
     do {
       try await handleOnChangePickerItemInner(db: db)
     } catch {
@@ -256,7 +256,7 @@ final class ProjectViewModel {
     }
   }
 
-  private func handleOnChangePickerItemInner(db: AppDatabase) async throws {
+  @MainActor private func handleOnChangePickerItemInner(db: AppDatabase) async throws {
     let result = try await pickerItem?.loadTransferable(type: Data.self)
 
     switch result {
@@ -281,46 +281,67 @@ final class ProjectViewModel {
 
 enum ProjectEvent {
   case UpdatedProjectTitle(String)
+  case RemoveSection(Int64)
 }
 
 extension ProjectViewModel {
-  @MainActor func handleEvent(event: ProjectEvent) -> Effect? {
+  public func handleEvent(_ event: ProjectEvent) -> Effect? {
     switch event {
       case .UpdatedProjectTitle(let newTitle):
         projectData.data.name = newTitle
         return Effect.updateProjectTitle(projectData: projectData.data)
+      case .RemoveSection(let sectionId):
+        self.projectData.sections.removeAll(where: { $0.section.id == sectionId })
+        self.projectData.cancelDeleteSection()
     }
+
+    return nil
   }
 
-  func handleEffect(effect: Effect?, db: AppDatabase) async {
+  func send(event: ProjectEvent, db: AppDatabase) {
+    let effect = handleEvent(event)
+    handleEffect(effect: effect, db: db)
+  }
+
+  nonisolated public func handleEffect(effect: Effect?, db: AppDatabase) {
     guard let effect = effect else {
       return
     }
 
     switch effect {
       case .deleteSection(let section):
-        do {
-          try await db.deleteProjectSection(section: section)
-          await removeSection(section: section)
-        } catch {
-          await cancelSectionDeletion(withError: .deleteSection)
+        Task {
+          do {
+            try await db.deleteProjectSection(section: section)
+
+            await MainActor.run {
+              _ = self.handleEvent(.RemoveSection(section.id))
+            }
+          } catch {
+            await MainActor.run {
+              self.cancelSectionDeletion(withError: .deleteSection)
+            }
+          }
         }
-        // TODO: show some kind of progress view to show section is being deleted
         return
+
       case .updateProjectTitle(let projectData):
-        do {
-          try await self.projectData.updateName(updatedProject: projectData, db: db)
-        } catch {
-          // TODO: log the error
-          handleError(error: .renameProject)
+        Task {
+          do {
+            try await db.updateProjectTitle(projectData: projectData)
+          } catch {
+            await MainActor.run {
+              self.handleError(error: .renameProject)
+            }
+          }
         }
         return
+
       case .doNothing:
         return
     }
   }
 
-  @MainActor
   private func removeSection(section: SectionRecord) {
     let updatedSections = projectData.sections.filter {
       projectSection in
@@ -330,7 +351,6 @@ extension ProjectViewModel {
     projectData.cancelDeleteSection()
   }
 
-  @MainActor
   private func cancelSectionDeletion(withError error: ProjectError) {
     projectError = error
     projectData.cancelDeleteSection()

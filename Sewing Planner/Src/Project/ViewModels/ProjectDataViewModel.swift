@@ -51,9 +51,9 @@ final class ProjectData {
   func updateName(updatedProject: ProjectMetadata, db: AppDatabase) async throws {
     try await db.getWriter().write { db in
       try updatedProject.update(db)
-
-      try self.updateProjectNameInSharedExtensionProjectList(project: updatedProject)
     }
+
+    try self.updateProjectNameInSharedExtensionProjectList(project: updatedProject)
   }
 
   func updateProjectNameInSharedExtensionProjectList(project: ProjectMetadata) throws {
