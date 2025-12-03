@@ -46,8 +46,14 @@ public struct AppLogger {
     line: UInt = #line
   ) {
     self.log(
-      level: .trace, message: message, metadata: metadata, source: source, file: file,
-      function: function, line: line)
+      level: .trace,
+      message: message,
+      metadata: metadata,
+      source: source,
+      file: file,
+      function: function,
+      line: line
+    )
   }
 
   public func debug(
@@ -59,8 +65,14 @@ public struct AppLogger {
     line: UInt = #line
   ) {
     self.log(
-      level: .debug, message: message, metadata: metadata, source: source, file: file,
-      function: function, line: line)
+      level: .debug,
+      message: message,
+      metadata: metadata,
+      source: source,
+      file: file,
+      function: function,
+      line: line
+    )
   }
 
   public func info(
@@ -72,8 +84,14 @@ public struct AppLogger {
     line: UInt = #line
   ) {
     self.log(
-      level: .info, message: message, metadata: metadata, source: source, file: file,
-      function: function, line: line)
+      level: .info,
+      message: message,
+      metadata: metadata,
+      source: source,
+      file: file,
+      function: function,
+      line: line
+    )
   }
 
   public func notice(
@@ -85,8 +103,14 @@ public struct AppLogger {
     line: UInt = #line
   ) {
     self.log(
-      level: .notice, message: message, metadata: metadata, source: source, file: file,
-      function: function, line: line)
+      level: .notice,
+      message: message,
+      metadata: metadata,
+      source: source,
+      file: file,
+      function: function,
+      line: line
+    )
   }
 
   public func warning(
@@ -98,8 +122,14 @@ public struct AppLogger {
     line: UInt = #line
   ) {
     self.log(
-      level: .warning, message: message, metadata: metadata, source: source, file: file,
-      function: function, line: line)
+      level: .warning,
+      message: message,
+      metadata: metadata,
+      source: source,
+      file: file,
+      function: function,
+      line: line
+    )
   }
 
   public func error(
@@ -111,8 +141,14 @@ public struct AppLogger {
     line: UInt = #line
   ) {
     self.log(
-      level: .error, message: message, metadata: metadata, source: source, file: file,
-      function: function, line: line)
+      level: .error,
+      message: message,
+      metadata: metadata,
+      source: source,
+      file: file,
+      function: function,
+      line: line
+    )
   }
 
   public func critical(
@@ -124,8 +160,14 @@ public struct AppLogger {
     line: UInt = #line
   ) {
     self.log(
-      level: .critical, message: message, metadata: metadata, source: source, file: file,
-      function: function, line: line)
+      level: .critical,
+      message: message,
+      metadata: metadata,
+      source: source,
+      file: file,
+      function: function,
+      line: line
+    )
   }
 }
 
@@ -218,7 +260,7 @@ extension Logger.MetadataValue {
   ///         "password": .mask(user.password)
   ///       ]
   ///     )
-  public static func mask(_ value: Any) -> Logger.MetadataValue {
+  public static func mask(_ value: String) -> Logger.MetadataValue {
     return .stringConvertible(MaskedValue(value, mask: .redact))
   }
 
@@ -235,24 +277,24 @@ extension Logger.MetadataValue {
   ///         "ip_address": .hash(user.ipAddress)
   ///       ]
   ///     )
-  public static func hash(_ value: Any) -> Logger.MetadataValue {
+  public static func hash(_ value: String) -> Logger.MetadataValue {
     return .stringConvertible(MaskedValue(value, mask: .hash))
   }
 }
 
 struct MaskedValue: CustomStringConvertible {
-  let underlying: Any
+  let underlying: String
 
   private let mask: Logger.MetadataValue.PrivacyMask
 
   var description: String {
     switch mask {
-    case .hash: return hash("\(underlying)")
-    case .redact: return "*****"
+      case .hash: return hash("\(underlying)")
+      case .redact: return "*****"
     }
   }
 
-  fileprivate init(_ value: Any, mask: Logger.MetadataValue.PrivacyMask) {
+  fileprivate init(_ value: String, mask: Logger.MetadataValue.PrivacyMask) {
     underlying = value
     self.mask = mask
   }
@@ -268,24 +310,24 @@ struct MaskedValue: CustomStringConvertible {
 extension OSLogType {
   static func fromSwiftLog(level: Logger.Level) -> Self {
     switch level {
-    case .trace:
-      /// `OSLog` doesn't have `trace`, so use `debug`
-      return .debug
-    case .debug:
-      return .debug
-    case .info:
-      return .info
-    case .notice:
-      // https://developer.apple.com/documentation/os/logging/generating_log_messages_from_your_code
-      // According to the documentation, `default` is `notice`.
-      return .default
-    case .warning:
-      /// `OSLog` doesn't have `warning`, so use `info`
-      return .info
-    case .error:
-      return .error
-    case .critical:
-      return .fault
+      case .trace:
+        /// `OSLog` doesn't have `trace`, so use `debug`
+        return .debug
+      case .debug:
+        return .debug
+      case .info:
+        return .info
+      case .notice:
+        // https://developer.apple.com/documentation/os/logging/generating_log_messages_from_your_code
+        // According to the documentation, `default` is `notice`.
+        return .default
+      case .warning:
+        /// `OSLog` doesn't have `warning`, so use `info`
+        return .info
+      case .error:
+        return .error
+      case .critical:
+        return .fault
     }
   }
 }
