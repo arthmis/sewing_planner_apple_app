@@ -1,11 +1,12 @@
 import Foundation
 import Logging
+import Synchronization
 
 private let CREATED_ONE_PROJECT = "Created Project First Time"
 
-class UserSettings {
+final class UserSettings: @unchecked Sendable {
   private let settingsManager: any Settings
-  private var createdOneProject: Bool
+  private let createdOneProjectLock: Mutex<Bool>
   private let logger: AppLogger
 
   init(
@@ -17,24 +18,36 @@ class UserSettings {
 
     logger.info("instantiating settings manager")
 
+    let initialValue: Bool
     do {
-      createdOneProject = try settingsManager.get(forKey: CREATED_ONE_PROJECT) ?? false
+      initialValue = try settingsManager.get(forKey: CREATED_ONE_PROJECT) ?? false
     } catch {
-      createdOneProject = false
+      initialValue = false
     }
+
+    createdOneProjectLock = Mutex(initialValue)
   }
 
   func userCreatedProjectFirstTime(val: Bool) throws {
-    let createdOneProject = val
+    let oldVal = createdOneProjectLock.withLock { createdOneProject in
+      let oldVal = createdOneProject
+      createdOneProject = val
+      return oldVal
+    }
 
     do {
-      try settingsManager.set(createdOneProject, forKey: CREATED_ONE_PROJECT)
+      try settingsManager.set(val, forKey: CREATED_ONE_PROJECT)
     } catch {
+      createdOneProjectLock.withLock { createdOneProject in
+        createdOneProject = oldVal
+      }
+
       let metadata: Logger.Metadata = [
         "error": .string(error.localizedDescription), "key": .string(CREATED_ONE_PROJECT),
         "value": .stringConvertible(val),
       ]
-      logger.error("couldn't get user created project setting", metadata: metadata)
+      logger.error("couldn't save user created project setting to disk", metadata: metadata)
+
       throw error
     }
   }

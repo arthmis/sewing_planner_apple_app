@@ -93,7 +93,7 @@ Uses SwiftUI's Environment system:
 
 ```swift
 extension EnvironmentValues {
-  @Entry var db = AppDatabase.db()
+  @Entry var db = AppDatabase.db
   @Entry var appLogger = AppLogger(label: "app logger")
 }
 
@@ -233,7 +233,7 @@ Sync events are stored persistently and can be replayed, though not full event s
 Records marked as deleted rather than removed, allowing sync and recovery.
 
 ### Factory Pattern
-`AppDatabase.db()` factory method for database creation and initialization.
+`AppDatabase.db` singleton instance for thread-safe database access (GRDB handles concurrency internally).
 
 ### Extension Pattern
 Swift extensions add functionality to types without modifying original definitions.

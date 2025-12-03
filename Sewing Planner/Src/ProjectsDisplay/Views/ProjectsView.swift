@@ -221,6 +221,6 @@ struct MaybeProjectImageView: View {
 }
 
 // #Preview {
-//   let db = AppDatabase.db()
+//   let db = AppDatabase.db
 //   ProjectsView(store: Store(db: db))
 // }

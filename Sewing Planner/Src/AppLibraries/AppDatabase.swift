@@ -274,9 +274,9 @@ extension AppDatabase {
 }
 
 extension AppDatabase {
-  static let db = {
-    makeDb(name: "db")
-  }
+  /// Shared database instance. Thread-safe lazy initialization.
+  /// GRDB's DatabaseQueue handles all thread synchronization internally.
+  static let db: AppDatabase = makeDb(name: "db")
 
   static func makeDb(name: String) -> AppDatabase {
     do {
