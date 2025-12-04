@@ -11,68 +11,121 @@ struct SectionView: View {
   @Binding var model: Section
   @Environment(ProjectViewModel.self) var project
   let db: AppDatabase
+  @State private var isEditingSectionName = false
+  @State private var bindedName: String = ""
+  @State private var validationError = ""
+  @State private var size: CGFloat = 0
+
+  private func sanitize(_ val: String) -> String {
+    return val.trimmingCharacters(in: .whitespacesAndNewlines)
+  }
+
+  private func saveNewName() {
+    let sanitizedName = sanitize(bindedName)
+    guard !sanitizedName.isEmpty else {
+      validationError = "Section name can't be empty."
+      return
+    }
+
+    do {
+      try model.updateSectionName(with: sanitizedName, db: db)
+      isEditingSectionName = false
+      validationError = ""
+    } catch {
+      validationError = "Failed to save section name."
+    }
+  }
 
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
-      // TODO: this if else can become a view called SectionName
       HStack {
-        if model.isRenamingSection {
-          HStack {
-            TextField("", text: $model.name)
-              .onSubmit {
-                model.updateName(db: db)
-              }
-              .textFieldStyle(.plain)
-              .padding(.bottom, 5)
-              //                            .overlay(Rectangle()
-              //                                .fill(Color(hex: 0x131944, opacity: 0.9))
-              //                                .frame(maxWidth: .infinity, maxHeight: 5),
-              //                                alignment: .bottom)
-              .font(.custom("SourceSans3-Medium", size: 16))
-            Button("Cancel") {
-              model.name = model.section.name
-              model.isRenamingSection = false
-            }
-            Button("Set") {
-              model.updateName(db: db)
+        Text(model.section.name)
+          .font(.custom("SourceSans3-Medium", size: 16))
+          .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
+          .contentShape(Rectangle())
+          .onTapGesture {
+            if !isEditingSectionName && !model.isEditingSection {
+              bindedName = model.section.name
+              isEditingSectionName = true
             }
           }
-          .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
-        } else {
-          Text(model.section.name)
-            .font(.custom("SourceSans3-Medium", size: 16))
-            .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
-            .contentShape(Rectangle())
-            .onTapGesture {
-              model.isRenamingSection = true
-              model.name = model.section.name
+          .sheet(isPresented: $isEditingSectionName) {
+            validationError = ""
+          } content: {
+            VStack {
+              HStack {
+                Spacer()
+                Button {
+                  isEditingSectionName = false
+                } label: {
+                  Image(systemName: "xmark.circle.fill")
+                    .font(.system(size: 32))
+                    .foregroundStyle(.gray)
+                }
+              }
+              TextField("Section Name", text: $bindedName)
+                .onSubmit {
+                  saveNewName()
+                }
+                .textFieldStyle(.automatic)
+                .padding(.vertical, 12)
+                .font(.custom("SourceSans3-Medium", size: 16))
+                .overlay(
+                  Rectangle()
+                    .frame(maxWidth: .infinity, maxHeight: 1)
+                    .foregroundStyle(Color.gray.opacity(0.5)),
+                  alignment: .bottom
+                )
+              HStack {
+                Text(validationError)
+                  .foregroundStyle(.red)
+                  .padding(.top, 2)
+                Spacer()
+              }
+              .transition(.move(edge: .top))
+
+              Button("Save") {
+                withAnimation(.easeOut(duration: 0.13)) {
+                  saveNewName()
+                }
+              }
+              .buttonStyle(SheetPrimaryButtonStyle())
+              .font(.system(size: 20))
+              .padding(.top, 16)
             }
-          //                        .overlay(Rectangle()
-          //                            .frame(maxWidth: .infinity, maxHeight: 3),
-          //                            alignment: .bottom)
-          if model.isEditingSection {
-            HStack {
-              Button("Cancel") {
+            .padding(12)
+            .onGeometryChange(for: CGFloat.self) { proxy in
+              proxy.size.height
+            } action: { newValue in
+              withAnimation(.easeOut(duration: 0.15)) {
+                size = newValue
+              }
+            }
+            .presentationDetents([.height(size)])
+          }
+
+        if model.isEditingSection {
+          HStack {
+            Button("Cancel") {
+              withAnimation(.smooth(duration: 0.2)) {
+                model.isEditingSection = false
+              }
+            }
+            Button {
+              do {
+                try model.deleteSelectedItems(db: db)
                 withAnimation(.smooth(duration: 0.2)) {
                   model.isEditingSection = false
                 }
+              } catch {
+                project.handleError(error: .deleteSectionItems)
               }
-              Button {
-                do {
-                  try model.deleteSelectedItems(db: db)
-                  withAnimation(.smooth(duration: 0.2)) {
-                    model.isEditingSection = false
-                  }
-                } catch {
-                  project.handleError(error: .deleteSectionItems)
-                }
-              } label: {
-                Image(systemName: "trash")
-                  .foregroundStyle(Color.red)
-                  .padding(.horizontal, 8)
-              }
-              .disabled(!model.hasSelections)
+            } label: {
+              Image(systemName: "trash")
+                .foregroundStyle(Color.red)
+                .padding(.horizontal, 8)
             }
+            .disabled(!model.hasSelections)
           }
         }
 

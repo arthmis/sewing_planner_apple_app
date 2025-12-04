@@ -19,8 +19,6 @@ class Section {
   var id: UUID
   var deletedItems: [SectionItemRecord] = []
   var selectedItems: Set<Int64> = []
-  var isRenamingSection = false
-  var name = ""
   var isAddingItem = false
   var draggedItem: SectionItem?
   var isEditingSection = false
@@ -48,21 +46,7 @@ class Section {
     }
   }
 
-  private var isNewNameValid: Bool {
-    !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-  }
 
-  func updateName(db: AppDatabase) {
-    // TODO: add a popup telling user that instruction can't be empty
-    guard isNewNameValid else { return }
-
-    isRenamingSection = false
-    do {
-      try updateSectionName(with: name, db: db)
-    } catch {
-      fatalError("\(error)")
-    }
-  }
 
   func addItem(text: String, note: String?, db: AppDatabase) throws {
     try db.getWriter().write { db in
