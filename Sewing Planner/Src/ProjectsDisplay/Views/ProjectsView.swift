@@ -154,7 +154,6 @@ struct ProjectCardView: View {
     HStack {
       if !projectData.error {
         MaybeProjectImageView(projectImage: projectData.image)
-          .padding(.horizontal, 2)
         HStack(alignment: .firstTextBaseline) {
           Text(projectData.project.name)
             .accessibilityIdentifier("ProjectName")
@@ -193,7 +192,7 @@ struct ProjectCardView: View {
 struct MaybeProjectImageView: View {
   let projectImage: ProjectDisplayImage?
 
-  var body: some View {
+  var image: UIImage {
     let displayedImage =
       if let imageData = projectImage {
         if let image = imageData.image {
@@ -204,19 +203,24 @@ struct MaybeProjectImageView: View {
       } else {
         UIImage(named: "vecteezy_sewing-machine-icon-style_8737393")
       }
-    Image(uiImage: displayedImage!)
+    return displayedImage!
+  }
+
+  var body: some View {
+    Image(uiImage: image)
       .resizable()
       .interpolation(.high)
-      .aspectRatio(contentMode: .fit)
-      .clipShape(
-        RoundedRectangle(cornerRadius: 8)
-      )
+      .aspectRatio(contentMode: .fill)
       .frame(
         minWidth: 100,
         maxWidth: .infinity,
         minHeight: 200,
         alignment: .center
       )
+      .clipShape(
+        RoundedRectangle(cornerRadius: 4)
+      )
+      .padding(4)
   }
 }
 
