@@ -217,6 +217,54 @@ Custom SQLite-based session store:
 
 ## Design Patterns Used
 
+### Event-Driven State Management (ProjectViewModel)
+The `ProjectViewModel` uses an event-driven architecture for handling state updates and side effects:
+
+**Event Pattern:**
+```swift
+enum ProjectEvent {
+  case UpdatedProjectTitle(String)
+  case UpdateSectionName(section: SectionRecord, oldName: String)
+  case markSectionForDeletion(SectionRecord)
+  case RemoveSection(Int64)
+  case ProjectError(ProjectError)
+}
+```
+
+**Effect Pattern:**
+```swift
+enum Effect: Equatable {
+  case deleteSection(section: SectionRecord)
+  case updateProjectTitle(projectData: ProjectMetadata)
+  case updateSectionName(section: SectionRecord, oldName: String)
+  case doNothing
+}
+```
+
+**Flow:**
+1. **Views call `project.send(event:db:)`** - Initiates state change
+2. **`handleEvent(_ event:)`** - Updates local state optimistically, returns Effect
+3. **`handleEffect(effect:db:)`** - Performs async database operations
+4. **Error handling** - On failure, sends ProjectError event to rollback state
+
+**Benefits:**
+- Optimistic UI updates (immediate feedback)
+- Centralized state management
+- Testable business logic
+- Clear separation of sync/async operations
+- Automatic error handling and rollback
+
+**Example Usage:**
+```swift
+// In SectionView.swift
+project.send(
+  event: .UpdateSectionName(section: section, oldName: model.section.name),
+  db: db
+)
+
+// ProjectViewModel handles the state update and database sync
+```
+
 ### Observable Pattern
 Swift's `@Observable` macro for reactive state updates in ViewModels and Store.
 

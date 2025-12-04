@@ -176,6 +176,7 @@ enum ProjectError: Error, Equatable {
   case deleteSectionItems
   case reOrderSectionItems
   case renameProject
+  case renameSectionName(sectionId: Int64, originalName: String)
   case deleteImages
   case loadImages
   case genericError
@@ -273,6 +274,7 @@ final class ProjectViewModel {
 
 enum ProjectEvent {
   case UpdatedProjectTitle(String)
+  case UpdateSectionName(section: SectionRecord, oldName: String)
   case markSectionForDeletion(SectionRecord)
   case RemoveSection(Int64)
   case ProjectError(ProjectError)
@@ -284,6 +286,13 @@ extension ProjectViewModel {
       case .UpdatedProjectTitle(let newTitle):
         projectData.data.name = newTitle
         return Effect.updateProjectTitle(projectData: projectData.data)
+
+      case .UpdateSectionName(let section, let oldName):
+        if let index = self.projectData.sections.firstIndex(where: { $0.section.id == section.id })
+        {
+          self.projectData.sections[index].section.name = section.name
+        }
+        return .updateSectionName(section: section, oldName: oldName)
 
       case .markSectionForDeletion(let section):
         if let index = self.projectData.sections.firstIndex(where: { $0.section.id == section.id })
@@ -327,6 +336,13 @@ extension ProjectViewModel {
             break
           case .renameProject:
             break
+          case .renameSectionName(let sectionId, let originalName):
+            if let index = self.projectData.sections.firstIndex(where: {
+              $0.section.id == sectionId
+            }) {
+              self.projectData.sections[index].section.name = originalName
+            }
+            self.handleError(error: error)
           case .updateSectionItemCompletion:
             break
           case .updateSectionItemText:
@@ -375,6 +391,20 @@ extension ProjectViewModel {
         }
         return
 
+      case .updateSectionName(let section, let oldName):
+        Task {
+          do {
+            try await db.updateSectionName(sectionId: section.id, newName: section.name)
+          } catch {
+            await MainActor.run {
+              _ = self.handleEvent(
+                .ProjectError(.renameSectionName(sectionId: section.id, originalName: oldName))
+              )
+            }
+          }
+        }
+        return
+
       case .doNothing:
         return
     }
@@ -398,6 +428,7 @@ extension ProjectViewModel {
 enum Effect: Equatable {
   case deleteSection(section: SectionRecord)
   case updateProjectTitle(projectData: ProjectMetadata)
+  case updateSectionName(section: SectionRecord, oldName: String)
   case doNothing
 }
 

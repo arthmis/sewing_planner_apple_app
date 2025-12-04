@@ -27,13 +27,15 @@ struct SectionView: View {
       return
     }
 
-    do {
-      try model.updateSectionName(with: sanitizedName, db: db)
-      isEditingSectionName = false
-      validationError = ""
-    } catch {
-      validationError = "Failed to save section name."
-    }
+    var section = model.section
+    section.name = sanitizedName
+    project.send(
+      event: .UpdateSectionName(section: section, oldName: model.section.name),
+      db: db
+    )
+
+    isEditingSectionName = false
+    validationError = ""
   }
 
   var body: some View {

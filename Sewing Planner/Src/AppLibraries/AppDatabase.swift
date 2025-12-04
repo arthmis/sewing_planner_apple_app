@@ -335,4 +335,14 @@ extension AppDatabase {
       try projectData.update(db)
     }
   }
+
+  func updateSectionName(sectionId: Int64, newName: String) async throws {
+    _ = try await dbWriter.write { db in
+      // TODO make this more efficient by just doing one db call
+      if var section = try SectionRecord.fetchOne(db, key: sectionId) {
+        section.name = newName
+        try section.update(db)
+      }
+    }
+  }
 }
