@@ -111,6 +111,7 @@ struct SectionView: View {
             Button("Cancel") {
               withAnimation(.smooth(duration: 0.2)) {
                 model.isEditingSection = false
+                model.selectedItems.removeAll()
               }
             }
             Button {
@@ -118,6 +119,7 @@ struct SectionView: View {
                 try model.deleteSelectedItems(db: db)
                 withAnimation(.smooth(duration: 0.2)) {
                   model.isEditingSection = false
+                  model.selectedItems.removeAll()
                 }
               } catch {
                 project.handleError(error: .deleteSectionItems)
@@ -160,6 +162,7 @@ struct SectionView: View {
             .onLongPressGesture {
               withAnimation(.smooth(duration: 0.2)) {
                 model.isEditingSection = true
+                model.selectedItems.insert(item.record.id)
               }
             }
             .padding(.top, 4)
@@ -200,7 +203,6 @@ struct SectionView: View {
 
 struct SelectedSectionItemView: View {
   @Binding var data: SectionItem
-  @State var isEditing = false
   @State var newText = ""
   @Binding var selected: Set<Int64>
   var updateText: (Int64, String, String?, AppDatabase) throws -> Void
