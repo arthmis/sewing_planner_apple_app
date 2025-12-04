@@ -172,7 +172,7 @@ enum ProjectError: Error, Equatable {
   case updateSectionItemText
   case updateSectionItemCompletion
   case importImage
-  case deleteSection
+  case deleteSection(SectionRecord)
   case deleteSectionItems
   case reOrderSectionItems
   case renameProject
@@ -232,14 +232,6 @@ final class ProjectViewModel {
     projectData.showDeleteSectionDialog = true
   }
 
-  func deleteSection(selectedSection: SectionRecord?) -> Effect {
-    guard let sectionToDelete = selectedSection else {
-      return .doNothing
-    }
-
-    return .deleteSection(section: sectionToDelete)
-  }
-
   func handleError(error: ProjectError) {
     projectError = error
   }
@@ -281,7 +273,9 @@ final class ProjectViewModel {
 
 enum ProjectEvent {
   case UpdatedProjectTitle(String)
+  case markSectionForDeletion(SectionRecord)
   case RemoveSection(Int64)
+  case ProjectError(ProjectError)
 }
 
 extension ProjectViewModel {
@@ -290,9 +284,54 @@ extension ProjectViewModel {
       case .UpdatedProjectTitle(let newTitle):
         projectData.data.name = newTitle
         return Effect.updateProjectTitle(projectData: projectData.data)
+
+      case .markSectionForDeletion(let section):
+        if let index = self.projectData.sections.firstIndex(where: { $0.section.id == section.id })
+        {
+          self.projectData.sections[index].isBeingDeleted = true
+        }
+        return .deleteSection(section: section)
+
       case .RemoveSection(let sectionId):
-        self.projectData.sections.removeAll(where: { $0.section.id == sectionId })
+        self.projectData.sections.removeAll(where: {
+          $0.section.id == sectionId && $0.isBeingDeleted
+        })
         self.projectData.cancelDeleteSection()
+
+      case .ProjectError(let error):
+        switch error {
+          case .addSection:
+            break
+          case .addSectionItem:
+            break
+          case .deleteImages:
+            break
+          case .deleteSection(let section):
+            if let index = self.projectData.sections.firstIndex(where: {
+              $0.section.id == section.id
+            }) {
+              self.projectData.sections[index].isBeingDeleted = false
+            }
+            self.projectData.cancelDeleteSection()
+            self.handleError(error: error)
+
+          case .deleteSectionItems:
+            break
+          case .genericError:
+            break
+          case .importImage:
+            break
+          case .loadImages:
+            break
+          case .reOrderSectionItems:
+            break
+          case .renameProject:
+            break
+          case .updateSectionItemCompletion:
+            break
+          case .updateSectionItemText:
+            break
+        }
     }
 
     return nil
@@ -313,13 +352,12 @@ extension ProjectViewModel {
         Task {
           do {
             try await db.deleteProjectSection(section: section)
-
             await MainActor.run {
               _ = self.handleEvent(.RemoveSection(section.id))
             }
           } catch {
             await MainActor.run {
-              self.cancelSectionDeletion(withError: .deleteSection)
+              _ = self.handleEvent(.ProjectError(.deleteSection(section)))
             }
           }
         }

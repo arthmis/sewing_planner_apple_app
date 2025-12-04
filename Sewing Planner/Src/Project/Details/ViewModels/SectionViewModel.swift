@@ -24,6 +24,7 @@ class Section {
   var isAddingItem = false
   var draggedItem: SectionItem?
   var isEditingSection = false
+  var isBeingDeleted = false
 
   init(id: UUID, name: SectionRecord) {
     section = name
@@ -148,7 +149,7 @@ class Section {
     }
   }
 
-  func deleteSelection(db: AppDatabase) throws {
+  func deleteSelectedItems(db: AppDatabase) throws {
     try db.getWriter().write { db in
       for id in selectedItems {
         let maybeIndex = items.firstIndex { val in

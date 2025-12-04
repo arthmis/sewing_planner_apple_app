@@ -59,7 +59,7 @@ struct SectionView: View {
               }
               Button {
                 do {
-                  try model.deleteSelection(db: db)
+                  try model.deleteSelectedItems(db: db)
                   withAnimation(.smooth(duration: 0.2)) {
                     model.isEditingSection = false
                   }

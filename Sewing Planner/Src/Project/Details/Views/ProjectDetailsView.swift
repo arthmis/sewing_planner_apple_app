@@ -45,14 +45,8 @@ struct ProjectDataView: View {
       isPresented: $projectBinding.projectData.showDeleteSectionDialog
     ) {
       Button("Delete", role: .destructive) {
-        Task {
-          await project.handleEffect(
-            effect: project.deleteSection(
-              selectedSection: project.projectData
-                .selectedSectionForDeletion
-            ),
-            db: db
-          )
+        if let sectionToDelete = project.projectData.selectedSectionForDeletion {
+          project.send(event: .markSectionForDeletion(sectionToDelete), db: db)
         }
       }
       Button("Cancel", role: .cancel) {
