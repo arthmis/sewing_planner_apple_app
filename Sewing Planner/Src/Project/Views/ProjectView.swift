@@ -228,7 +228,7 @@ final class ProjectViewModel {
     }
   }
 
-  func initiateDeleteSection(section: SectionRecord) {
+  func showDeleteSectionConfirmationDialog(section: SectionRecord) {
     projectData.selectedSectionForDeletion = section
     projectData.showDeleteSectionDialog = true
   }

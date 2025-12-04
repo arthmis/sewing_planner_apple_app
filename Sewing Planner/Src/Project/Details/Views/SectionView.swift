@@ -128,7 +128,10 @@ struct SectionView: View {
 
         Menu {
           Button("Delete") {
-            project.initiateDeleteSection(section: model.section)
+            project.showDeleteSectionConfirmationDialog(section: model.section)
+          }
+          Button("Delete Items") {
+            model.isEditingSection = true
           }
         } label: {
           Image(systemName: "ellipsis")
