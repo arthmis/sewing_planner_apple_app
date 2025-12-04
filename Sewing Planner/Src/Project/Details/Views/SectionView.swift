@@ -15,6 +15,7 @@ struct SectionView: View {
   @State private var bindedName: String = ""
   @State private var validationError = ""
   @State private var size: CGFloat = 0
+  @State private var showDeleteItemsDialog = false
 
   private func sanitize(_ val: String) -> String {
     return val.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -115,15 +116,7 @@ struct SectionView: View {
               }
             }
             Button {
-              do {
-                try model.deleteSelectedItems(db: db)
-                withAnimation(.smooth(duration: 0.2)) {
-                  model.isEditingSection = false
-                  model.selectedItems.removeAll()
-                }
-              } catch {
-                project.handleError(error: .deleteSectionItems)
-              }
+              showDeleteItemsDialog = true
             } label: {
               Image(systemName: "trash")
                 .foregroundStyle(Color.red)
@@ -198,6 +191,31 @@ struct SectionView: View {
         .padding(.top, 8)
     }
     .animation(.easeOut(duration: 0.15), value: model.isAddingItem)
+    .confirmationDialog(
+      "Delete Items",
+      isPresented: $showDeleteItemsDialog
+    ) {
+      Button("Delete", role: .destructive) {
+        do {
+          try model.deleteSelectedItems(db: db)
+          withAnimation(.easeOut(duration: 0.2)) {
+            model.isEditingSection = false
+            model.selectedItems.removeAll()
+          }
+        } catch {
+          project.handleError(error: .deleteSectionItems)
+        }
+      }
+      Button("Cancel", role: .cancel) {
+        showDeleteItemsDialog = false
+      }
+    } message: {
+      if model.selectedItems.count > 1 {
+        Text("Delete \(model.selectedItems.count) Items")
+      } else {
+        Text("Delete Item")
+      }
+    }
   }
 }
 
