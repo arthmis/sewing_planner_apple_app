@@ -66,6 +66,7 @@ struct ImagesView: View {
                 ImageButton(image: $image, selectedImage: $model.overlayedImage)
                   .onLongPressGesture {
                     model.didSetDeleteMode()
+                    model.selectedImages.insert(image.path)
                   }
                   .matchedTransitionSource(id: image.path, in: transitionNamespace)
               } else {
