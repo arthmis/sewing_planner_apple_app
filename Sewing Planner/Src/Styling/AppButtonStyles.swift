@@ -18,7 +18,6 @@ struct PrimaryButtonStyle: ButtonStyle {
   func makeBody(configuration: Configuration) -> some View {
     let isPressed = configuration.isPressed
     configuration.label
-      .font(.custom("CooperHewitt-Regular", size: fontSize))
       .padding([.top, .bottom], 12)
       .padding([.leading, .trailing], 16)
       .background(Color(hex: 0x131944, opacity: 1.0))
@@ -66,7 +65,6 @@ struct AddNewSectionButtonStyle: ButtonStyle {
   func makeBody(configuration: Configuration) -> some View {
     let isPressed = configuration.isPressed
     configuration.label
-      .font(.custom("CooperHewitt-Regular", size: 16))
       .padding(8)
       .background(Color(hex: 0x131944, opacity: 1.0))
       .foregroundColor(.white)

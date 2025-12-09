@@ -21,7 +21,6 @@ struct ProjectsView: View {
 
   func fetchProjects() {
     do {
-      print("fetching projects")
       let projects = try appDatabase.fetchProjectsAndProjectImage()
       store.projects = ProjectsViewModel(projects: projects)
     } catch {
