@@ -305,14 +305,12 @@ extension AppDatabase {
       let dbQueue = try DatabaseQueue(
         path: databaseUrl.path(percentEncoded: false)
       )
-      NSLog("Database stored at \(databaseUrl.path())")
 
-      // create AppDatabase
       let appDatabase = try AppDatabase(dbQueue)
 
       return appDatabase
     } catch {
-      fatalError("Some error happened: \(error)")
+      fatalError("Opening database error: \(error)")
     }
   }
 }
