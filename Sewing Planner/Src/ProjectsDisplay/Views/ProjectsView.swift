@@ -173,6 +173,7 @@ struct ProjectCardView: View {
       minWidth: 100,
       maxWidth: .infinity,
       minHeight: 200,
+      maxHeight: 200,
       alignment: .center
     )
     .background(
@@ -213,7 +214,8 @@ struct MaybeProjectImageView: View {
       .frame(
         minWidth: 100,
         maxWidth: .infinity,
-        minHeight: 200,
+        minHeight: 150,
+        maxHeight: 200,
         alignment: .center
       )
       .clipShape(
