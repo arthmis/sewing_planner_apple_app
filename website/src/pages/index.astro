@@ -1,18 +1,41 @@
 ---
 import GeneralLayout from "../layouts/GeneralLayout.astro";
+import { Image } from "astro:assets";
+import heroImage from "/src/assets/hero-image.png";
 ---
 
 <GeneralLayout>
-    <section>
-        <h1>Sewing Planner</h1>
-        <img src="" alt="" />
+    <section class="hero-section">
+        <div>
+            <h1>Sewing Planner</h1>
+            <p>Keep your sewing projects organized with the right tools.</p>
+        </div>
+        <Image src={heroImage} alt="" class="hero-image" />
     </section>
 </GeneralLayout>
 
-<style is:global>
-    body {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+<style>
+    .hero-section {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+    }
+
+    .hero-image {
+        max-width: 600px;
+        width: auto;
+        height: auto;
+    }
+
+    h1 {
+        font-size: 3rem;
+    }
+
+    @media (max-width: 768px) {
+        .hero-section {
+            flex-direction: column;
+            text-align: center;
+        }
     }
 </style>
