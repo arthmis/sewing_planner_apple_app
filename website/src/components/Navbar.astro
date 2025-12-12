@@ -1,0 +1,41 @@
+---
+// Navbar component with home link on the left
+---
+
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-link">Sewing Planner</a>
+    </div>
+</nav>
+
+<style>
+    .navbar {
+        background-color: #ffffff;
+        border-bottom: 1px solid #e5e7eb;
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-container {
+        max-width: var(--container-max-width);
+        margin: 0 auto;
+        padding: 0 1.5rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .nav-link {
+        color: #1f2937;
+        text-decoration: none;
+        font-size: 1.125rem;
+        font-weight: 600;
+        transition: color 0.2s ease;
+    }
+
+    .nav-link:hover {
+        color: #3b82f6;
+    }
+</style>
